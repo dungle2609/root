@@ -1,4 +1,7 @@
+<!doctype html>
+<html lang="vi">
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Đào Sâu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -738,6 +741,28 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
 .medit b,.txt b{font-weight:700}
 .medit.t-c b,.n.t-c>.row .txt b,.head.t-c .txt b{font-weight:800}
 .medit i,.txt i{font-style:italic}
+/* cloud sync */
+#btnSync .sdot{position:absolute;right:7px;bottom:8px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px var(--bg);background:var(--muted)}
+#btnSync[data-st="off"] .sdot{display:none}
+#btnSync[data-st="off"]{color:var(--muted)}
+#btnSync[data-st="ok"] .sdot{background:var(--ans)}
+#btnSync[data-st="sending"] .sdot,#btnSync[data-st="connecting"] .sdot,#btnSync[data-st="wait"] .sdot{background:var(--q);animation:syncblink 1s ease-in-out infinite}
+#btnSync[data-st="error"] .sdot{background:var(--danger)}
+#btnSync[data-st="conflict"] .sdot{background:var(--c)}
+@keyframes syncblink{50%{opacity:.35}}
+.syncbox .fld input{width:100%;height:40px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:15px var(--font);padding:0 12px}
+.sync-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.sync-st{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:14px}
+.sync-st .sdot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--muted)}
+.sync-st:has([data-st="ok"]) .sdot{background:var(--ans)}
+.sync-st:has([data-st="error"]) .sdot{background:var(--danger)}
+.sync-st:has([data-st="conflict"]) .sdot{background:var(--c)}
+.sync-st:has([data-st="sending"]) .sdot,.sync-st:has([data-st="connecting"]) .sdot{background:var(--q)}
+.sync-code{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sync-code code{flex:1 1 200px;min-width:0;padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--line);font:13px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.sync-opts{margin:0 0 8px;padding-left:20px;font-size:14px;color:var(--ink-2)}
+.sync-opts li{margin:5px 0}
+.linkbtn{color:var(--q);text-decoration:underline;text-underline-offset:2px;font:inherit}
 /* notes: the explanation under the content, 20% smaller and quieter */
 .medit .nt,.txt .nt{font-size:.8em;font-weight:400;color:var(--ink-2)}
 .medit .nt b,.txt .nt b,.n.t-c>.row .txt .nt b,.head.t-c .txt .nt b{font-weight:700}
@@ -853,6 +878,7 @@ button.ag-slot:hover{background:var(--surface-2)}
   <button class="ib" id="btnSearch" aria-label="Tìm trong mọi cây" title="Tìm trong mọi cây (⌘K)"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
   <button class="hbtn" id="btnLib" title="Kho dẫn chứng"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg><span>Kho dẫn chứng</span></button>
   <button class="openbtn" id="btnOpen" title="Chỗ lập luận còn hở"><span class="ring"></span><b id="openCount">0</b><span class="lbl">chỗ hở</span></button>
+  <button class="ib" id="btnSync" aria-label="Đồng bộ đám mây" title="Đồng bộ đám mây" data-st="off"><svg class="i" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.7 4.7 0 0 0 7 18.5z"/></svg><span class="sdot"></span></button>
   <button class="ib" id="btnMenu" aria-label="Tuỳ chọn" title="Tuỳ chọn" aria-haspopup="menu">
     <svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>
   </button>
@@ -862,6 +888,7 @@ button.ag-slot:hover{background:var(--surface-2)}
     <button data-act="copyBranch" role="menuitem">Sao chép nhánh này dạng văn bản</button>
     <button data-act="downloadBranch" role="menuitem">Tải nhánh này (.md)</button>
     <button data-act="import" role="menuitem">Nhập note cũ / văn bản</button>
+    <button data-act="sync" role="menuitem">Đồng bộ đám mây</button>
     <button data-act="backup" role="menuitem">Sao lưu &amp; chuyển máy</button>
     <button data-act="help" role="menuitem">Hướng dẫn &amp; phím tắt</button>
     <hr>
@@ -1311,6 +1338,13 @@ function stats(node){
 
 /* ---------- storage ---------- */
 let storageOK=true;
+// cloud sync (Firebase Realtime Database, the way the Vườn cam app does it): every device with the same sync code shares one copy
+const FB_DB='https://dao-sau-default-rtdb.asia-southeast1.firebasedatabase.app';
+const SYNCK='daosau.sync';
+const CS=(()=>{let o=null;try{o=JSON.parse(localStorage.getItem(SYNCK)||'null');}catch(e){}return o&&typeof o==='object'?o:{};})();
+if(!CS.dev)CS.dev=Math.random().toString(36).slice(2,10);
+if(!CS.imgs||typeof CS.imgs!=='object'||Array.isArray(CS.imgs))CS.imgs={};
+const SY={ready:false,es:null,timer:null,retry:null,chain:Promise.resolve(),pending:null,conflict:null,status:'off',msg:'',at:'',last:undefined,gen:0,etag:null,applying:false};
 function load(){
   try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&Array.isArray(d.trees))return d;}}
   catch(e){storageOK=false;}
@@ -1322,6 +1356,7 @@ function saveNow(){
   clearTimeout(saveTimer);
   try{localStorage.setItem(KEY,JSON.stringify(store));storageOK=true;}catch(e){storageOK=false;}
   const w=$('#warn');if(w)w.hidden=storageOK;
+  syncAfterSave();
 }
 window.addEventListener('pagehide',saveNow);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveNow();});
@@ -1473,7 +1508,7 @@ function ago(ts){
   if(s<86400)return Math.floor(s/3600)+' giờ trước';if(s<86400*7)return Math.floor(s/86400)+' ngày trước';
   const d=new Date(ts);return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
 }
-function needBackup(){return store.changedAt>store.lastBackup&&Date.now()-(store.lastBackup||store.createdAt)>7*DAY;}
+function needBackup(){return !(CS.code&&SY.status==='ok')&&store.changedAt>store.lastBackup&&Date.now()-(store.lastBackup||store.createdAt)>7*DAY;}
 
 /* ---------- caret ---------- */
 const CE=(()=>{const d=document.createElement('div');try{d.contentEditable='plaintext-only';}catch(e){}return d.contentEditable==='plaintext-only'?'plaintext-only':'true';})();
@@ -3161,7 +3196,7 @@ function doImport(){
 }
 function openBackup(){
   const body=document.createElement('div');
-  body.innerHTML='<p class="lead">Dữ liệu chỉ nằm trong trình duyệt của máy này. Sao lưu để không mất, và để chuyển sang máy khác (Mac ↔ iPhone).</p>'+
+  body.innerHTML='<p class="lead">'+(CS.code?'Đồng bộ đám mây đang bật: dữ liệu có bản trên Firebase. File sao lưu là bản dự phòng thêm.':'Dữ liệu chỉ nằm trong trình duyệt của máy này. Sao lưu để không mất, hoặc bật <button type="button" class="linkbtn" data-act="sync">Đồng bộ đám mây</button> để tự lưu lên mây.')+'</p>'+
     '<div class="bk"><button type="button" class="btn primary" id="bkDownload">Tải file sao lưu (.json)</button><button type="button" class="btn" id="bkCopy">Sao chép toàn bộ dữ liệu</button></div>'+
     '<p class="fine">Mac và iPhone cùng Apple ID: bấm “Sao chép” ở máy này, rồi dán vào ô bên dưới ở máy kia.</p>'+
     '<h3>Nhận dữ liệu từ máy khác</h3>'+
@@ -3177,6 +3212,262 @@ function openBackup(){
   body.querySelector('#bkCopy').addEventListener('click',()=>{copyText(JSON.stringify(backupObj()),'Đã sao chép toàn bộ dữ liệu',markBackup);});
   dialog('Sao lưu & chuyển máy',body,[{label:'Đóng'},{label:'Gộp dữ liệu vào máy này',kind:'primary',run:()=>{const v=$('#bkText').value;if(!v.trim()){toast('Hãy dán dữ liệu hoặc chọn file trước');return false;}return mergeBackup(v);}}]);
 }
+/* ---------- cloud sync: Firebase Realtime Database over REST, live through EventSource ---------- */
+// layout: daosau/<code>/data = {state, updatedAt, stamp, origin, device}; daosau/<code>/img/<key> = picture
+const syncURL=p=>FB_DB+'/daosau/'+encodeURIComponent(CS.code)+'/'+p+'.json';
+function csSave(){try{localStorage.setItem(SYNCK,JSON.stringify(CS));}catch(e){}}
+function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],hideSample:!!store.hideSample,gone:store.gone||{}};}
+const sharedSnap=()=>JSON.stringify(sharedOf());
+const untouchedSample=t=>t.sample&&t.updated===t.created;
+function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length));}
+const devName=()=>{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'Máy khác';};
+function syncErr(e){
+  const m=String(e&&e.message||e||'');
+  if(/permission|401|403/i.test(m))return 'Firebase từ chối truy cập. Mã đồng bộ cần dài ít nhất 16 ký tự, hoặc quy tắc bảo mật của database đã bị đổi.';
+  if(/failed to fetch|network|load failed|offline|aborted/i.test(m))return 'Không kết nối được Firebase. Kiểm tra mạng, app sẽ tự thử lại.';
+  return 'Lỗi đồng bộ: '+m.slice(0,140);
+}
+const hhmm=v=>{const d=v?new Date(v):new Date();return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+' ngày '+d.getDate()+'/'+(d.getMonth()+1);};
+const SYNC_TXT={off:'Chưa bật đồng bộ đám mây',connecting:'Đang kết nối Firebase…',wait:'Đang kiểm tra dữ liệu trên mây…',sending:'Đang gửi thay đổi lên mây…',offline:'Mất kết nối. Thay đổi vẫn lưu trên máy và sẽ tự gửi khi có mạng.',conflict:'Máy này và trên mây đang khác nhau: hãy chọn cách gộp.'};
+function syncLine(){return SY.status==='ok'?'Đã đồng bộ lúc '+SY.at:SY.status==='error'?SY.msg:SYNC_TXT[SY.status]||'';}
+function setSync(st,msg,at){
+  SY.status=st;SY.msg=msg||'';if(st==='ok')SY.at=hhmm(at);
+  const b=$('#btnSync');if(b){b.dataset.st=st;b.title='Đồng bộ đám mây: '+syncLine();}
+  const l=$('#syncLine');if(l){l.textContent=syncLine();l.dataset.st=st;}
+  const nd=$('#nudge');if(nd&&store)nd.hidden=!needBackup();
+}
+async function fbJSON(r){let t='';try{const j=await r.json();t=j&&j.error||'';}catch(_){}return new Error(r.status+' '+t);}
+
+// a local save marks the device as ahead of the cloud; the change leaves after a short pause in typing
+function syncAfterSave(){
+  if(!CS.code||SY.applying||SY.last===undefined)return;
+  const s=sharedSnap();if(s===SY.last)return;
+  if(!CS.dirty){CS.dirty=true;csSave();}
+  clearTimeout(SY.timer);SY.timer=setTimeout(pushNow,1200);
+}
+// write with the version we last saw (ETag): if another device wrote in between, merge first instead of overwriting it
+async function putData(body){
+  for(let i=0;i<3;i++){
+    const h={'X-Firebase-ETag':'true'};if(SY.etag)h['if-match']=SY.etag;
+    const r=await fetch(syncURL('data'),{method:'PUT',cache:'no-store',headers:h,body});
+    const et=r.headers.get('ETag');
+    if(r.status===412){
+      SY.etag=et;const cur=await r.json().catch(()=>null);
+      if(cur&&cur.origin!==CS.dev&&(+cur.stamp||0)>(CS.known||0))return {theirs:cur};
+      continue;   // the cloud holds a copy we already have: write over it
+    }
+    if(!r.ok)throw await fbJSON(r);
+    if(et)SY.etag=et;return {ok:true};
+  }
+  throw new Error('Dữ liệu trên mây đổi liên tục, sẽ thử lại');
+}
+function pushNow(force){
+  clearTimeout(SY.timer);
+  if(!CS.code)return Promise.resolve(false);
+  if(!SY.ready||SY.conflict||SY.pending){if(SY.ready&&!SY.conflict)setSync('wait');return Promise.resolve(false);}
+  const gen=SY.gen;
+  SY.chain=SY.chain.then(async()=>{
+    if(gen!==SY.gen||!CS.code)return false;
+    const s=sharedSnap();
+    if(!force&&s===SY.last){CS.dirty=false;csSave();setSync('ok');return true;}
+    const stamp=Math.max(Date.now(),(CS.known||0)+1);
+    setSync('sending');
+    const res=await putData(JSON.stringify({state:s,updatedAt:new Date().toISOString(),stamp,origin:CS.dev,device:devName()}));
+    if(gen!==SY.gen)return false;
+    if(res.theirs){handleCloud(res.theirs,false);return false;}
+    CS.known=stamp;SY.last=s;if(sharedSnap()===s)CS.dirty=false;csSave();setSync('ok');
+    pushImgs();
+    return true;
+  }).catch(e=>{if(gen===SY.gen){setSync(navigator.onLine===false?'offline':'error',syncErr(e));clearTimeout(SY.retry);SY.retry=setTimeout(()=>{if(CS.dirty)pushNow();},30000);}return false;});
+  return SY.chain;
+}
+
+// what a remote copy means depends on who changed what since this device last synced
+function syncBusy(){
+  const a=document.activeElement;
+  return !!(MAP.editing||activeTxt()||(a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))&&!a.closest('#syncBox'))||$$('.sheet').some(x=>!x.hidden&&!x.querySelector('#syncBox')));
+}
+function handleCloud(cloud,first){
+  if(!CS.code)return;
+  if(!first&&syncBusy()){SY.pending=cloud;return;}
+  SY.pending=null;
+  const local=sharedSnap();
+  if(!cloud||typeof cloud.state!=='string'){
+    // nothing on the cloud yet: this device fills it
+    if(hasOwnData()||CS.dirty)pushNow(true);else setSync('ok');
+    return;
+  }
+  const stamp=+cloud.stamp||0;
+  if(cloud.state===local){if(stamp>(CS.known||0))CS.known=stamp;SY.last=local;CS.dirty=false;csSave();setSync('ok',null,cloud.updatedAt);if(first)fetchImgs();return;}
+  if(cloud.origin===CS.dev&&cloud.state===SY.last){if(stamp>(CS.known||0)){CS.known=stamp;csSave();}return;}
+  if(first&&!CS.known){
+    if(!hasOwnData()){adopt(cloud,false);return;}
+    SY.conflict=cloud;setSync('conflict');askConflict();return;
+  }
+  if(SY.conflict){SY.conflict=cloud;return;}
+  if(stamp<=(CS.known||0)){if(CS.dirty)pushNow();else setSync('ok',null,cloud.updatedAt);return;}
+  if(CS.dirty)mergeIn(cloud);else adopt(cloud,!first);
+}
+function readCloud(cloud){try{const d=JSON.parse(cloud.state);return d&&Array.isArray(d.trees)?d:null;}catch(e){return null;}}
+// whatever this device is about to lose is kept once on the device, in case the choice was wrong
+function keepBefore(snap){try{localStorage.setItem('daosau.truoc-dong-bo',JSON.stringify({at:Date.now(),state:snap}));}catch(e){}}
+function applyShared(d){
+  const trees=(Array.isArray(d.trees)?d.trees:[]).filter(t=>t&&t.root).map(t=>Object.assign({},t,{root:normNode(t.root)}));
+  trees.forEach(t=>{ctxToNodes(t);migrateTree(t.root,true);});
+  if(!trees.length)trees.push(blankTree());
+  store.trees=trees;
+  if(d.lib&&Array.isArray(d.lib.items))store.lib=d.lib;
+  store.principles=Array.isArray(d.principles)?d.principles:[];
+  store.hideSample=!!d.hideSample;store.gone=d.gone&&typeof d.gone==='object'?d.gone:{};
+  if(!trees.some(t=>t.id===store.cur))store.cur=trees[0].id;
+  for(const k in hist)delete hist[k];
+  navStack.length=0;
+}
+function afterApply(){
+  SY.applying=true;saveNow();SY.applying=false;
+  reindex();if(MAP.sel&&!IDX.has(MAP.sel))MAP.sel=null;
+  render();fetchImgs();
+}
+function adopt(cloud,announce){
+  const d=readCloud(cloud);if(!d){setSync('error','Dữ liệu trên mây bị hỏng, không đọc được.');return;}
+  if(hasOwnData()&&CS.dirty)keepBefore(sharedSnap());
+  applyShared(d);
+  CS.known=+cloud.stamp||Date.now();CS.dirty=false;SY.last=sharedSnap();csSave();
+  afterApply();setSync('ok',null,cloud.updatedAt);
+  if(announce)toast('Đã nhận dữ liệu mới từ '+(cloud.device||'máy khác'));
+}
+function mergeIn(cloud,quiet){
+  const d=readCloud(cloud);if(!d){setSync('error','Dữ liệu trên mây bị hỏng, không đọc được.');return;}
+  applyShared(mergeShared(sharedOf(),d));
+  CS.known=Math.max(CS.known||0,+cloud.stamp||0);CS.dirty=true;SY.last=null;csSave();
+  afterApply();pushNow(true);
+  if(!quiet)toast('Đã gộp thay đổi của '+(cloud.device||'máy khác')+' với máy này');
+}
+// two copies become one: every tree and piece of evidence kept, the later edit wins, deleted trees stay deleted
+function mergeShared(a,b){
+  const gone=Object.assign({},a.gone);Object.keys(b.gone||{}).forEach(k=>{if(!(gone[k]>=b.gone[k]))gone[k]=b.gone[k];});
+  const A=(a.trees||[]).filter(t=>!(untouchedSample(t)&&(b.trees||[]).some(x=>x.sample)));
+  const B=(b.trees||[]).filter(t=>!(untouchedSample(t)&&A.some(x=>x.sample)));
+  const pick=new Map(),order=[];
+  A.concat(B).forEach(t=>{if(!t||!t.root)return;const ex=pick.get(t.id);if(!ex){pick.set(t.id,t);order.push(t.id);}else if((t.updated||0)>(ex.updated||0))pick.set(t.id,t);});
+  const trees=order.map(id=>pick.get(id)).filter(t=>!(gone[t.id]>=(t.updated||0)));
+  const byId=(x,y,newer)=>{const m=new Map();(x||[]).forEach(i=>{if(i&&i.id)m.set(i.id,i);});(y||[]).forEach(i=>{if(!i||!i.id)return;const ex=m.get(i.id);if(!ex||(newer&&(i.updated||0)>(ex.updated||0)))m.set(i.id,i);});return [...m.values()];};
+  const la=a.lib||{},lb=b.lib||{};
+  const lib=(a.lib||b.lib)?Object.assign({},lb,la,{groups:byId(la.groups,lb.groups),folders:byId(la.folders,lb.folders),items:byId(la.items,lb.items,true)}):null;
+  return {trees,lib,principles:byId(a.principles,b.principles,true),hideSample:!!(a.hideSample||b.hideSample),gone};
+}
+
+// pictures travel one by one, beside the data
+function pushImgs(){
+  if(!CS.code)return;
+  [...IMG.keys()].filter(k=>/^[\w-]{1,80}$/.test(k)&&CS.imgs[k]!==(IMG.get(k)||'').length).reduce((p,k)=>p.then(async()=>{
+    const v=IMG.get(k);if(!v)return;
+    const r=await fetch(syncURL('img/'+k),{method:'PUT',body:JSON.stringify(v)});
+    if(r.ok){CS.imgs[k]=v.length;csSave();}
+  }).catch(()=>{}),Promise.resolve());
+}
+async function fetchImgs(){
+  if(!CS.code)return;
+  const need=lib().items.filter(i=>i.img&&!IMG.has(i.id)&&/^[\w-]{1,80}$/.test(i.id)).map(i=>i.id);
+  for(const k of need){
+    try{const r=await fetch(syncURL('img/'+k),{cache:'no-store'});if(!r.ok)continue;const v=await r.json();if(typeof v==='string'&&v.startsWith('data:image/')){saveImg(k,v);CS.imgs[k]=v.length;}}catch(e){}
+  }
+  csSave();refreshImgs();
+}
+function dropCloudImg(k){if(!CS.code||!/^[\w-]{1,80}$/.test(k))return;delete CS.imgs[k];csSave();fetch(syncURL('img/'+k),{method:'DELETE'}).catch(()=>{});}
+
+// connect: read once (and learn the version), then listen for every later change
+async function syncStart(){
+  syncStop();
+  if(!CS.code){setSync('off');return;}
+  const gen=SY.gen;SY.ready=false;SY.conflict=null;SY.pending=null;SY.etag=null;
+  SY.last=CS.dirty?null:sharedSnap();
+  setSync('connecting');
+  try{
+    const r=await fetch(syncURL('data'),{cache:'no-store',headers:{'X-Firebase-ETag':'true'}});
+    if(!r.ok)throw await fbJSON(r);
+    const et=r.headers.get('ETag'),cloud=await r.json();
+    if(gen!==SY.gen)return;
+    SY.etag=et;SY.ready=true;handleCloud(cloud,true);
+  }catch(e){
+    if(gen!==SY.gen)return;
+    setSync(navigator.onLine===false?'offline':'error',syncErr(e));SY.retry=setTimeout(syncStart,30000);return;
+  }
+  listen(gen);
+}
+function listen(gen){
+  if(typeof EventSource==='undefined')return;
+  const es=new EventSource(syncURL('data'));SY.es=es;
+  const refetch=async()=>{
+    try{const r=await fetch(syncURL('data'),{cache:'no-store',headers:{'X-Firebase-ETag':'true'}});if(!r.ok)return;const et=r.headers.get('ETag'),c=await r.json();if(gen!==SY.gen)return;SY.etag=et;handleCloud(c,false);}catch(e){}
+  };
+  es.addEventListener('put',e=>{if(gen!==SY.gen)return;let d=null;try{d=JSON.parse(e.data);}catch(_){}if(d&&d.path==='/')handleCloud(d.data,false);else refetch();});
+  es.addEventListener('patch',()=>{if(gen===SY.gen)refetch();});
+  es.addEventListener('cancel',()=>{if(gen===SY.gen)setSync('error',syncErr('permission'));});
+  es.onerror=()=>{
+    if(gen!==SY.gen)return;
+    if(es.readyState===2){SY.es=null;clearTimeout(SY.retry);SY.retry=setTimeout(syncStart,30000);}
+    if(SY.status!=='error'&&SY.status!=='conflict')setSync('offline');
+  };
+  es.onopen=()=>{if(gen===SY.gen&&SY.status==='offline'){setSync('ok');refetch();}};
+}
+function syncStop(){SY.gen++;if(SY.es){SY.es.close();SY.es=null;}clearTimeout(SY.retry);clearTimeout(SY.timer);SY.ready=false;}
+// a remote change that arrived while writing waits for the pen to lift
+setInterval(()=>{if(SY.pending&&!syncBusy())handleCloud(SY.pending,false);},1500);
+window.addEventListener('online',()=>{if(CS.code&&(!SY.ready||!SY.es))syncStart();else if(CS.dirty)pushNow();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CS.code&&!SY.ready)syncStart();});
+
+// sync codes: long, random, easy to copy; the code is the key, so anyone holding it reads and writes
+function newSyncCode(){const a='abcdefghijkmnpqrstuvwxyz23456789',v=new Uint32Array(16);crypto.getRandomValues(v);let s='ds';v.forEach((x,i)=>{if(i%4===0)s+='-';s+=a[x%a.length];});return s;}
+const validCode=c=>/^[A-Za-z0-9_-]{16,64}$/.test(c);
+function openSync(){
+  const body=document.createElement('div');body.id='syncBox';body.className='syncbox';
+  if(!CS.code){
+    body.innerHTML='<p class="lead">Lưu mọi cây, kho dẫn chứng và ảnh lên đám mây (Firebase) và dùng chung giữa các máy. Xoá dữ liệu trình duyệt hay đổi máy cũng không mất: nhập lại mã là lấy về.</p>'+
+      '<label class="fld"><span>Mã đồng bộ</span><input id="syncCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Dán mã từ máy khác, hoặc bấm Tạo mã mới"></label>'+
+      '<div class="sync-row"><button type="button" class="btn sm" id="syncGen">Tạo mã mới</button><span class="fine">Ít nhất 16 ký tự: chữ, số, dấu gạch.</span></div>'+
+      '<p class="fine"><b>Giữ mã như mật khẩu.</b> Ai có mã là xem và sửa được dữ liệu. Chép mã vào Ghi chú hoặc trình quản lý mật khẩu; máy khác nhập đúng mã này là đồng bộ.</p>';
+    body.querySelector('#syncGen').addEventListener('click',()=>{const i=body.querySelector('#syncCode');i.value=newSyncCode();i.select();});
+    dialog('Đồng bộ đám mây',body,[{label:'Để sau'},{label:'Bật đồng bộ',kind:'primary',run:()=>{
+      const v=$('#syncCode').value.trim();
+      if(!validCode(v)){toast('Mã cần 16–64 ký tự, chỉ gồm chữ, số, dấu gạch');return false;}
+      CS.code=v;CS.known=0;CS.dirty=false;CS.imgs={};csSave();syncStart();setTimeout(openSync,50);return true;
+    }}]);
+    setTimeout(()=>{const i=$('#syncCode');if(i)i.focus();},60);
+    return;
+  }
+  const mask=CS.code.slice(0,3)+'••••••••'+CS.code.slice(-4);
+  body.innerHTML='<p class="sync-st"><span class="sdot"></span><span id="syncLine"></span></p>'+
+    '<div class="fld"><span>Mã đồng bộ của bạn</span><span class="sync-code"><code id="syncShow">'+esc(mask)+'</code><button type="button" class="btn sm" id="syncReveal">Hiện</button><button type="button" class="btn sm" id="syncCopy">Sao chép</button></span></div>'+
+    '<p class="fine">Máy khác: mở app, bấm biểu tượng đám mây trên cùng và dán mã này. Mỗi thay đổi được gửi lên sau khoảng một giây; các máy đang mở tự nhận bản mới.</p>'+
+    (SY.status==='conflict'?'<p><button type="button" class="btn primary" id="syncFix">Chọn cách gộp dữ liệu</button></p>':'')+
+    '<div class="sync-row"><button type="button" class="btn sm" id="syncNow">Đồng bộ ngay</button><button type="button" class="btn sm" id="syncOff">Tắt trên máy này</button></div>';
+  const line=body.querySelector('#syncLine');line.textContent=syncLine();line.dataset.st=SY.status;
+  body.querySelector('#syncReveal').addEventListener('click',e=>{const c=body.querySelector('#syncShow'),on=c.textContent===CS.code;c.textContent=on?mask:CS.code;e.target.textContent=on?'Hiện':'Ẩn';});
+  body.querySelector('#syncCopy').addEventListener('click',()=>copyText(CS.code,'Đã sao chép mã đồng bộ'));
+  const fix=body.querySelector('#syncFix');if(fix)fix.addEventListener('click',()=>{closeSheet('dlg');askConflict();});
+  body.querySelector('#syncNow').addEventListener('click',()=>{if(SY.status==='conflict'){closeSheet('dlg');askConflict();return;}if(!SY.ready){syncStart();return;}pushNow(true).then(ok=>{if(ok)toast('Đã đồng bộ');});});
+  body.querySelector('#syncOff').addEventListener('click',()=>{
+    syncStop();delete CS.code;CS.known=0;CS.dirty=false;CS.imgs={};csSave();setSync('off');closeSheet('dlg');
+    toast('Đã tắt đồng bộ trên máy này. Dữ liệu trên máy và trên mây vẫn còn nguyên.');
+  });
+  dialog('Đồng bộ đám mây',body,[{label:'Đóng',kind:'primary'}]);
+}
+function askConflict(){
+  const c=SY.conflict;if(!c)return;
+  const d=readCloud(c),n=d?d.trees.filter(t=>!untouchedSample(t)).length:0,mine=store.trees.filter(t=>!untouchedSample(t)).length;
+  const body=document.createElement('div');body.id='syncBox';
+  body.innerHTML='<p class="lead">Máy này đang có '+mine+' cây, trên mây đã có '+n+' cây (lưu từ '+esc(c.device||'máy khác')+' lúc '+esc(hhmm(c.updatedAt))+'). Bạn muốn làm gì?</p>'+
+    '<ul class="sync-opts"><li><b>Gộp cả hai</b>: giữ mọi cây của cả hai bên; cây nào có ở cả hai thì giữ bản sửa gần nhất.</li><li><b>Dùng bản trên mây</b>: máy này nhận đúng bản trên mây.</li><li><b>Dùng bản trên máy này</b>: bản trên mây được thay bằng bản của máy này.</li></ul>'+
+    '<p class="fine">Bên bị thay vẫn được giữ lại một bản trên máy này để phòng khi chọn nhầm.</p>';
+  const done=()=>{SY.conflict=null;};
+  dialog('Dữ liệu trên máy và trên mây khác nhau',body,[
+    {label:'Để sau'},
+    {label:'Dùng bản trên máy này',run:()=>{keepBefore(c.state);done();CS.known=Math.max(CS.known||0,+c.stamp||0);SY.last=null;CS.dirty=true;csSave();pushNow(true).then(ok=>{if(ok)toast('Đã đưa bản trên máy này lên mây');});}},
+    {label:'Dùng bản trên mây',run:()=>{keepBefore(sharedSnap());done();CS.dirty=false;adopt(c,false);toast('Đã lấy bản trên mây về máy này');}},
+    {label:'Gộp cả hai',kind:'primary',run:()=>{keepBefore(sharedSnap());done();mergeIn(c,true);toast('Đã gộp dữ liệu hai bên');}}
+  ]);
+}
 // one place for guidance: how to use the app, and every shortcut
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
@@ -3184,7 +3475,7 @@ const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ
   '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn. Ví dụ: nội dung “Kẹo làm sâu răng”, ghi chú “vì đường bám vào răng nếu không đánh răng”.</li><li><b>Kéo thả</b> một thẻ lên hoặc xuống để đổi thứ tự trong cùng khối cha (trên điện thoại: chạm giữ rồi kéo). Thứ tự câu hỏi và câu trả lời cũng là thứ tự suy nghĩ.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
   '<h3>Kho dẫn chứng</h3><ul><li>Nút <b>Kho dẫn chứng</b> trên cùng: lưu bài báo, hình ảnh, số liệu theo nhóm và thư mục, dùng chung cho mọi cây.</li><li>Chọn một luận cứ rồi bấm <b>Từ kho</b>: dẫn chứng nằm ngay trong luận cứ đó.</li></ul>'+
   '<h3>Trên điện thoại</h3><ul><li>Chạm một ý để chọn, chạm hai lần để sửa chữ. Thanh dưới cùng có những gì thêm được và các nút sửa, luận chứng, dẫn chứng, phóng vào, xoá.</li><li>Kéo để di chuyển, chụm hai ngón để phóng to.</li></ul>'+
-  '<h3>Dữ liệu</h3><ul><li>Lưu riêng trong trình duyệt của từng máy. Bấm <b>Đào Sâu</b> › Sao lưu &amp; chuyển máy để tải file hoặc chép dữ liệu sang máy khác.</li></ul>';
+  '<h3>Dữ liệu</h3><ul><li>Dữ liệu lưu trong trình duyệt của từng máy. Bật <b>Đồng bộ đám mây</b> (biểu tượng đám mây trên cùng) để lưu lên Firebase và dùng chung giữa các máy bằng một mã đồng bộ; xoá dữ liệu trình duyệt cũng không mất.</li><li>Bấm <b>Đào Sâu</b> › Sao lưu &amp; chuyển máy để tải file sao lưu dự phòng.</li></ul>';
 function openHelp(tab){
   tab=tab==='keys'?'keys':'use';
   if(!$('#dlg').hidden&&$('#dlg').dataset.kind==='help-'+tab){closeSheet('dlg');return;}
@@ -3256,11 +3547,12 @@ function confirmDeleteTree(){
   const body=document.createElement('div');
   body.innerHTML='<p class="lead">Xoá cây “'+esc(trunc(contentOf(t.root.text)||'Cây chưa đặt tên',90))+'” cùng '+s.total+' ý? Bạn có thể hoàn tác ngay sau khi xoá.</p>';
   dialog('Xoá cây này?',body,[{label:'Huỷ'},{label:'Xoá cây',kind:'danger',run:()=>{
-    const i=store.trees.indexOf(t);store.trees.splice(i,1);
+    const i=store.trees.indexOf(t);store.trees.splice(i,1);store.gone=store.gone||{};store.gone[t.id]=Date.now();
     if(!store.trees.length)store.trees.push(blankTree());
     store.cur=store.trees[0].id;store.changedAt=Date.now();saveNow();render();window.scrollTo(0,0);
     toast('Đã xoá cây',{label:'Hoàn tác',run:()=>{
       store.trees=store.trees.filter(x=>x.root.text.trim()||x.root.children.length);
+      if(store.gone)delete store.gone[t.id];t.updated=Date.now();
       store.trees.splice(Math.min(i,store.trees.length),0,t);store.cur=t.id;store.changedAt=Date.now();saveNow();render();
     }});
   }}]);
@@ -3619,7 +3911,7 @@ const IMGDB=(()=>{
 IMGDB.all().then(rows=>{rows.forEach(([k,v])=>IMG.set(k,v));refreshImgs();}).catch(()=>{});
 function refreshImgs(){$$('img[data-img]').forEach(im=>{const v=IMG.get(im.dataset.img);if(v&&im.getAttribute('src')!==v)im.src=v;});}
 function saveImg(k,v){IMG.set(k,v);IMGDB.put(k,v).catch(()=>toast('Trình duyệt không lưu được ảnh trên máy này. Hãy sao lưu thường xuyên.'));}
-function dropImg(k){IMG.delete(k);IMGDB.del(k).catch(()=>{});}
+function dropImg(k){IMG.delete(k);IMGDB.del(k).catch(()=>{});dropCloudImg(k);}
 function usage(){
   const m=new Map();
   store.trees.forEach(t=>{(function w(n){(n.refs||[]).forEach(r=>{if(!m.has(r))m.set(r,[]);m.get(r).push({tree:t,n});});n.children.forEach(w);})(t.root);});
@@ -4221,6 +4513,7 @@ const ACTS={
   newTree,
   import:()=>{closeAllSheets();openImport();},
   backup:()=>{closeAllSheets();openBackup();},
+  sync:()=>{closeAllSheets();if(SY.status==='conflict')askConflict();else openSync();},
   help:()=>{closeAllSheets();openHelp('use');},
   keys:()=>{closeAllSheets();openHelp('keys');},
   copyBranch:()=>{copyText(toMarkdown(N(zoomId())),'Đã sao chép nhánh dạng văn bản');},
@@ -4240,6 +4533,7 @@ document.addEventListener('click',e=>{
   menu.hidden=true;const f=ACTS[a.dataset.act];if(f)f();
 });
 $('#btnMenu').addEventListener('click',()=>{const m=$('#menu');m.hidden=!m.hidden;});
+$('#btnSync').addEventListener('click',()=>ACTS.sync());
 $('#btnHome').addEventListener('click',openHome);
 $('#btnOpen').addEventListener('click',()=>{insTab='open';renderInsights();openSheet('insSheet');});
 $('#btnTitle').addEventListener('click',()=>{const t=curTree();if(zoomId()!==t.root.id){zoomTo(t.root.id);return;}treeForm(t,()=>{render();});});
@@ -4270,5 +4564,8 @@ document.addEventListener('keydown',e=>{
 $$('kbd.modk').forEach(k=>{k.textContent=MODK;});
 render();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(store.view==='map'){MAP.key=null;renderMap();}});
+// cloud sync starts once the page is ready
+SY.last=CS.dirty?null:sharedSnap();
+if(CS.code)syncStart();else setSync('off');
 })();
 </script>
