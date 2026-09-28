@@ -738,6 +738,11 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
 .medit b,.txt b{font-weight:700}
 .medit.t-c b,.n.t-c>.row .txt b,.head.t-c .txt b{font-weight:800}
 .medit i,.txt i{font-style:italic}
+/* notes: the explanation under the content, 20% smaller and quieter */
+.medit .nt,.txt .nt{font-size:.8em;font-weight:400;color:var(--ink-2)}
+.medit .nt b,.txt .nt b,.n.t-c>.row .txt .nt b,.head.t-c .txt .nt b{font-weight:700}
+.mn .tx .nt{fill:var(--ink-2)}
+.mn.root .tx .nt{fill:var(--on-btn);fill-opacity:.75}
 /* dragging a card to reorder */
 .mn.dragging{opacity:.8;pointer-events:none}
 .mn.dragging>rect:not(.halo){filter:drop-shadow(0 6px 14px rgba(15,20,30,.22))}
@@ -1219,7 +1224,7 @@ function phOf(n,p){
   const r=roleOf(n,p);if(r)return r.ph;
   if(!p&&!n.type)return 'Chủ đề: một deal, một vấn đề, một phương pháp…';
   if(n.type==='q')return 'Câu hỏi: tại sao…? là gì…? làm thế nào…?';
-  if(n.type==='ans')return p&&p.type==='q'?'Trả lời: '+trunc(plainOf(p.text),40):'Câu trả lời…';
+  if(n.type==='ans')return p&&p.type==='q'?'Trả lời: '+trunc(contentOf(p.text),40):'Câu trả lời…';
   if(n.type==='c')return isSub(n)||(p&&p.type==='c')?'Luận điểm phụ: một phần của luận điểm trên…':'Luận điểm chính: điều bạn khẳng định…';
   return TYPES[n.type]?TYPES[n.type].ph:DIGT[n.type]&&DIGT[n.type].ph||'Viết ý…';
 }
@@ -1423,6 +1428,7 @@ function parseOutline(text){
       bstack.push({indent,node});lastBullet={indent,node};continue;
     }
     if(indent>0&&lastBullet&&indent>lastBullet.indent){
+      if(/^>\s/.test(s)){const nt=cleanText(s.slice(1));if(nt)lastBullet.node.text+='\n> '+nt;continue;}
       const extra=cleanText(s);if(extra)lastBullet.node.text+=' '+extra;continue;
     }
     if((m=s.match(/^(\d+)\s*\/\s*(.+)$/))){
@@ -1447,7 +1453,8 @@ function toMarkdown(node){
   const lines=[];
   (function w(n,d,p){
     const r=roleOf(n,p),m=n.type==='c'&&METHODS[n.method],pad='  '.repeat(d+1);
-    lines.push('  '.repeat(d)+'- '+(n.type&&TYPES[n.type]?TYPES[n.type].md+' ':'')+(r?'['+r.label+'] ':'')+n.text.replace(/\s*\n\s*/g,' ')+(m?' (luận chứng: '+m.label+')':''));
+    lines.push('  '.repeat(d)+'- '+(n.type&&TYPES[n.type]?TYPES[n.type].md+' ':'')+(r?'['+r.label+'] ':'')+n.text.split('\n').filter(l=>!l.startsWith('> ')).join(' ').replace(/\s+/g,' ').trim()+(m?' (luận chứng: '+m.label+')':''));
+    n.text.split('\n').filter(l=>l.startsWith('> ')&&l.slice(2).trim()).forEach(l=>lines.push(pad+'> '+l.slice(2).trim()));
     (n.ev||[]).forEach(v=>lines.push(pad+'- 📎 '+v));
     (n.refs||[]).forEach(id=>{const it=itemOf(id);if(it)lines.push(pad+'- 📎 '+it.title+(it.source?' ('+[it.source,it.date?it.date.slice(0,4):''].filter(Boolean).join(', ')+')':'')+(it.url?' '+it.url:''));});
     n.children.forEach(c=>w(c,d+1,n));
@@ -1477,43 +1484,116 @@ function getCaret(el){
   return pre.toString().length;
 }
 /* ---------- bold and italic: stored as Markdown (**đậm**, *nghiêng*), shown formatted ---------- */
+/* each line is either content or a note (ghi chú): a note explains the content, drawn 20% smaller; stored as a Markdown quote line "> …" */
+const ZW='​';
 function parseMarkup(s){
-  s=String(s||'');const runs=[];let b=false,i=false,buf='';
-  const push=()=>{if(buf){runs.push({t:buf,b,i});buf='';}};
+  s=String(s||'');const runs=[];let b=false,i=false,n=false,buf='',ls=true;
+  const push=()=>{if(buf){runs.push({t:buf,b,i,n});buf='';}};
   for(let k=0;k<s.length;){
+    if(ls){ls=false;if(s.startsWith('> ',k)){n=true;k+=2;continue;}}
     const c=s[k];
-    if(c==='\\'&&(s[k+1]==='*'||s[k+1]==='\\')){buf+=s[k+1];k+=2;continue;}
-    if(c==='*'){let n=1;while(s[k+n]==='*'&&n<3)n++;push();if(n===3){b=!b;i=!i;}else if(n===2)b=!b;else i=!i;k+=n;continue;}
-    if(c==='\n'){push();runs.push({t:'\n',b:false,i:false});b=false;i=false;k++;continue;}   // styles never cross a line
+    if(c==='\\'&&(s[k+1]==='*'||s[k+1]==='\\'||s[k+1]==='>')){buf+=s[k+1];k+=2;continue;}
+    if(c==='*'){let m=1;while(s[k+m]==='*'&&m<3)m++;push();if(m===3){b=!b;i=!i;}else if(m===2)b=!b;else i=!i;k+=m;continue;}
+    if(c==='\n'){push();runs.push({t:'\n',b:false,i:false,n:false});b=false;i=false;n=false;ls=true;k++;continue;}   // styles never cross a line
     buf+=c;k++;
   }
   push();return runs;
 }
 const plainOf=s=>parseMarkup(s).map(r=>r.t).join('');
-function markupToHTML(s){return parseMarkup(s).map(r=>{let h=esc(r.t);if(r.i)h='<i>'+h+'</i>';if(r.b)h='<b>'+h+'</b>';return h;}).join('');}
-function runsToMarkup(runs){
-  const flat=[];runs.forEach(r=>String(r.t).split(/(\n)/).forEach(p=>{if(p)flat.push({t:p,b:p!=='\n'&&r.b,i:p!=='\n'&&r.i});}));
-  const m=[];flat.forEach(r=>{const q=m[m.length-1];if(q&&q.t!=='\n'&&r.t!=='\n'&&q.b===r.b&&q.i===r.i)q.t+=r.t;else m.push({...r});});
-  return m.map(r=>{
-    const t=r.t.replace(/\\/g,'\\\\').replace(/\*/g,'\\*');
-    if(r.t==='\n'||!(r.b||r.i)||!r.t.trim())return t;
-    const mk=r.b&&r.i?'***':r.b?'**':'*',lead=t.match(/^\s*/)[0],trail=t.match(/\s*$/)[0];
-    return lead+mk+t.slice(lead.length,t.length-trail.length)+mk+trail;   // spaces stay outside the markers
-  }).join('');
+// the content lines only, for short labels (crumbs, cards, titles)
+const contentOf=s=>{const tidy=t=>t.replace(/\n{2,}/g,'\n').replace(/^\n+|\n+$/g,'');const rs=parseMarkup(s);return tidy(rs.filter(r=>!r.n).map(r=>r.t).join(''))||tidy(rs.map(r=>r.t).join(''));};
+function markupToHTML(s){
+  let out='',line='',note=false;
+  const flush=()=>{out+=note&&line?'<span class="nt">'+line+'</span>':line;line='';};
+  parseMarkup(s).forEach(r=>{
+    if(r.t==='\n'){flush();out+='\n';note=false;return;}
+    let h=esc(r.t);if(r.i)h='<i>'+h+'</i>';if(r.b)h='<b>'+h+'</b>';line+=h;note=note||r.n;
+  });
+  flush();return out;
 }
-function htmlToMarkup(root){
+// mixed: how a line holding both content and note text settles, 'first' (its first words decide, like merging two lines) or 'any' (any note text makes it a note)
+function runsToMarkup(runs,mixed){
+  const lines=[[]];
+  runs.forEach(r=>String(r.t).split(/(\n)/).forEach(p=>{if(!p)return;if(p==='\n')lines.push([]);else{const t=p.split(ZW).join('');if(t)lines[lines.length-1].push({t,b:!!r.b,i:!!r.i,n:!!r.n});}}));
+  return lines.map(l=>{
+    const real=l.filter(r=>r.t.trim()),note=real.length>0&&(mixed==='any'?real.some(r=>r.n):real[0].n);
+    const m=[];l.forEach(r=>{const q=m[m.length-1];if(q&&q.b===r.b&&q.i===r.i)q.t+=r.t;else m.push({...r});});
+    const s=m.map(r=>{
+      const t=r.t.replace(/\\/g,'\\\\').replace(/\*/g,'\\*');
+      if(!(r.b||r.i)||!r.t.trim())return t;
+      const mk=r.b&&r.i?'***':r.b?'**':'*',lead=t.match(/^\s*/)[0],trail=t.match(/\s*$/)[0];
+      return lead+mk+t.slice(lead.length,t.length-trail.length)+mk+trail;   // spaces stay outside the markers
+    }).join('');
+    return note?'> '+s:s.startsWith('>')?'\\'+s:s;
+  }).join('\n');
+}
+function htmlRuns(root){
   const runs=[];
-  (function walk(node,b,i){
+  (function walk(node,b,i,n){
     node.childNodes.forEach(ch=>{
-      if(ch.nodeType===3){if(ch.nodeValue)runs.push({t:ch.nodeValue,b,i});return;}
+      if(ch.nodeType===3){if(ch.nodeValue)runs.push({t:ch.nodeValue,b,i,n});return;}
       if(ch.nodeType!==1)return;
       const tag=ch.tagName,st=ch.style||{};
-      if(tag==='BR'){runs.push({t:'\n',b:false,i:false});return;}
-      if((tag==='DIV'||tag==='P')&&runs.length&&!/\n$/.test(runs[runs.length-1].t))runs.push({t:'\n',b:false,i:false});
-      walk(ch,b||tag==='B'||tag==='STRONG'||st.fontWeight==='bold'||+st.fontWeight>=600,i||tag==='I'||tag==='EM'||st.fontStyle==='italic');
+      if(tag==='BR'){runs.push({t:'\n',b:false,i:false,n:false});return;}
+      if((tag==='DIV'||tag==='P')&&runs.length&&!/\n$/.test(runs[runs.length-1].t))runs.push({t:'\n',b:false,i:false,n:false});
+      walk(ch,b||tag==='B'||tag==='STRONG'||st.fontWeight==='bold'||+st.fontWeight>=600,i||tag==='I'||tag==='EM'||st.fontStyle==='italic',n||ch.classList.contains('nt'));
     });
-  })(root,false,false);
-  return runsToMarkup(runs);
+  })(root,false,false,false);
+  return runs;
+}
+function htmlToMarkup(root,mixed){return runsToMarkup(htmlRuns(root),mixed||'any');}
+// caret as line and column of the plain text (zero-width anchors left out)
+function lcAt(el,node,off){
+  const r=document.createRange();r.selectNodeContents(el);try{r.setEnd(node,off);}catch(_){}
+  const t=r.toString().split(ZW).join(''),line=t.split('\n').length-1;
+  return {line,col:t.length-t.lastIndexOf('\n')-1};
+}
+function offLC(el,line,col){
+  const ls=el.textContent.split(ZW).join('').split('\n');let off=0;
+  for(let k=0;k<line&&k<ls.length;k++)off+=ls[k].length+1;
+  return off+Math.min(col,(ls[Math.min(line,ls.length-1)]||'').length);
+}
+// put the caret at a plain offset; where two pieces meet, stay on the side of the line's own kind (inside a note, outside content)
+function placeCaret(el,off,note){
+  const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n=0,t,pick=null,po=0;
+  while((t=w.nextNode())){
+    const L=t.nodeValue.length;
+    if(off>=n&&off<=n+L){const inN=!!(t.parentElement&&t.parentElement.closest('.nt'));if(!pick||(inN===!!note&&pick.inN!==!!note)){pick={t,inN};po=off-n;}}
+    if(n>off)break;n+=L;
+  }
+  const s=getSelection(),r=document.createRange();
+  if(pick){r.setStart(pick.t,po);r.collapse(true);}else{r.selectNodeContents(el);r.collapse(false);}
+  s.removeAllRanges();s.addRange(r);
+}
+// ⌥1 content, ⌥2 note: the lines the caret or selection touches change kind
+function setLineKind(el,note){
+  const sel=getSelection();if(!sel.rangeCount)return;const r=sel.getRangeAt(0);if(!el.contains(r.startContainer))return;
+  const one=r.collapsed,A=lcAt(el,r.startContainer,r.startOffset),B=one?A:lcAt(el,r.endContainer,r.endOffset);
+  const ls=htmlToMarkup(el).split('\n');
+  for(let k=A.line;k<=B.line&&k<ls.length;k++){
+    let x=ls[k];const was=x.startsWith('> ');if(was)x=x.slice(2);
+    if(!was&&x.startsWith('\\>'))x=x.slice(1);
+    ls[k]=note&&x.trim()?'> '+x:(x.startsWith('>')?'\\'+x:x);
+  }
+  el.innerHTML=markupToHTML(ls.join('\n'));
+  if(note&&A.line===B.line&&!(ls[A.line]||'').trim()){
+    // an empty line keeps a zero-width anchor so what is typed next is a note too
+    const o=offLC(el,A.line,0),rr=rangeAt(el,o,o),an=document.createElement('span');an.className='nt';an.textContent=ZW;rr.insertNode(an);
+    const nr=document.createRange();nr.setStart(an.firstChild,1);nr.collapse(true);sel.removeAllRanges();sel.addRange(nr);
+  }else if(one)placeCaret(el,offLC(el,A.line,A.col),note);
+  else{const rr=rangeAt(el,offLC(el,A.line,A.col),offLC(el,B.line,B.col));sel.removeAllRanges();sel.addRange(rr);}
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+// typing or deleting can leave content and note words on one line: settle the line and redraw it
+function settleLines(el,e){
+  if(e.isComposing||!el.querySelector('.nt'))return;
+  const runs=htmlRuns(el);let mixed=false,has=[false,false];
+  runs.forEach(r=>String(r.t).split(/(\n)/).forEach(p=>{if(p==='\n'){has=[false,false];return;}if(p.split(ZW).join('').trim()){has[r.n?1:0]=true;if(has[0]&&has[1])mixed=true;}}));
+  if(!mixed)return;
+  const s=getSelection(),at=s.rangeCount&&el.contains(s.anchorNode)?lcAt(el,s.anchorNode,s.anchorOffset):null;
+  const M=runsToMarkup(runs,(e.inputType||'').startsWith('delete')?'first':'any');
+  el.innerHTML=markupToHTML(M);
+  if(at)placeCaret(el,offLC(el,at.line,at.col),(M.split('\n')[at.line]||'').startsWith('> '));
 }
 // a DOM range between two plain-text offsets of an editable element
 function rangeAt(el,a,b){
@@ -1601,10 +1681,10 @@ function renderCrumbs(el){
   const steps=[];
   const dn=path.find(x=>x.type==='dig'),host=dn?P(dn.id):null;
   path.slice(0,-1).forEach((n,i)=>{
-    if(i===0){steps.push({label:plainOf(n.text)||'Cây',go:()=>zoomTo(n.id,{sel:host?host.id:null})});return;}
+    if(i===0){steps.push({label:contentOf(n.text)||'Cây',go:()=>zoomTo(n.id,{sel:host?host.id:null})});return;}
     if(isProof(n))return;
-    if(n.type==='dig'){const h=P(n.id);steps.push({label:'Đào sâu: '+(plainOf(h.text)||'(trống)'),go:()=>zoomTo(n.id)});return;}
-    steps.push({label:plainOf(n.text)||'(trống)',go:()=>zoomTo(n.id,{sel:path[i+1].id})});
+    if(n.type==='dig'){const h=P(n.id);steps.push({label:'Đào sâu: '+(contentOf(h.text)||'(trống)'),go:()=>zoomTo(n.id)});return;}
+    steps.push({label:contentOf(n.text)||'(trống)',go:()=>zoomTo(n.id,{sel:path[i+1].id})});
   });
   steps.forEach(st=>{
     const b=document.createElement('button');b.type='button';b.className='crumb';
@@ -1626,7 +1706,7 @@ function renderOutline(){
   const head=document.createElement('div');head.dataset.id=zid;
   head.innerHTML='<button class="bul big" tabindex="-1" aria-label="Đổi loại ý" title="Đổi loại ý"><i></i></button><div class="txt head-txt" spellcheck="false" autocapitalize="sentences"></div>';
   const ht=head.querySelector('.txt');ht.dataset.id=zid;
-  if(z.type==='dig'){ht.contentEditable='false';ht.textContent=(plainOf(P(zid).text)||'(trống)');ht.classList.add('dighead');}   // the questioned idea is edited in the proof
+  if(z.type==='dig'){ht.contentEditable='false';ht.textContent=(contentOf(P(zid).text)||'(trống)');ht.classList.add('dighead');}   // the questioned idea is edited in the proof
   else{ht.contentEditable='true';ht.innerHTML=markupToHTML(z.text);}
   ht.dataset.ph=phOf(z,P(zid));
   paintHead(head,z);
@@ -1653,7 +1733,7 @@ function renderOutline(){
 }
 function renderHeader(){
   const t=curTree();
-  $('#tname').textContent=plainOf(t.root.text).trim()||'Cây chưa đặt tên';
+  $('#tname').textContent=contentOf(t.root.text).trim()||'Cây chưa đặt tên';
   $('#btnView').hidden=store.view==='map';
   $('#menuView').textContent=store.view==='map'?'Xem dạng dàn ý':'Xem dạng sơ đồ';
   $('#openCount').textContent=stats(t.root).open;
@@ -1877,6 +1957,7 @@ outline.addEventListener('input',e=>{
   const el=e.target.closest('.txt');if(!el)return;
   const n=N(el.dataset.id);if(!n)return;
   if(!el.textContent&&el.childNodes.length&&!e.isComposing)el.textContent='';
+  settleLines(el,e);
   let t=htmlToMarkup(el);
   n.text=t;
   touch();
@@ -1939,6 +2020,7 @@ outline.addEventListener('keydown',e=>{
   const id=el.dataset.id,isHead=el.classList.contains('head-txt'),mod=e.metaKey||e.ctrlKey;
   if(e.key==='Enter'&&(e.altKey||e.shiftKey)){e.preventDefault();insertNewline(el);return;}
   if(mod&&!e.shiftKey&&!e.altKey&&(e.code==='KeyB'||e.code==='KeyI')){e.preventDefault();toggleFormat(e.code==='KeyB'?'bold':'italic');return;}
+  if(e.altKey&&!mod&&!e.shiftKey&&/^(Digit|Numpad)[12]$/.test(e.code)){e.preventDefault();setLineKind(el,e.code.endsWith('2'));return;}
   if(e.key==='Enter'){e.preventDefault();if(mod){setCollapsed(id,!N(id).collapsed);return;}onEnter(el,id,isHead);return;}
   if(e.key==='Tab'){e.preventDefault();if(isHead)return;if(e.shiftKey)outdent(id);else indent(id);return;}
   if(e.key==='Backspace'&&!isHead&&!hasSelection()&&getCaret(el)===0){if(onBackspace(el,id))e.preventDefault();return;}
@@ -2113,7 +2195,7 @@ function renderPalette(){
     h+='<div class="pal-sec">Cây gần đây</div>';
     [...store.trees].sort((a,b)=>(b.updated||0)-(a.updated||0)).slice(0,6).forEach(t=>{
       const s=stats(t.root);
-      add({kind:'tree',tree:t.id},'<span class="ico">'+IC_TREE+'</span><span class="it"><span class="it-t">'+esc(plainOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span><span class="it-p">'+s.total+' ý · '+s.open+' chỗ hở · sửa '+ago(t.updated)+'</span></span>');
+      add({kind:'tree',tree:t.id},'<span class="ico">'+IC_TREE+'</span><span class="it"><span class="it-t">'+esc(contentOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span><span class="it-p">'+s.total+' ý · '+s.open+' chỗ hở · sửa '+ago(t.updated)+'</span></span>');
     });
     h+='<div class="pal-sec">Lệnh</div>';
     CMDS.forEach(c=>add({kind:'cmd',act:c.act},'<span class="ico">'+IC_CMD+'</span><span class="it"><span class="it-t">'+esc(c.label)+'</span></span>'));
@@ -2129,7 +2211,7 @@ function renderPalette(){
     hits.sort((a,b)=>a.score-b.score);
     if(hits.length)h+='<div class="pal-sec">'+hits.length+' ý khớp</div>';
     hits.slice(0,60).forEach(x=>{
-      const n=x.n,ctx=x.path.length?(x.t.id===store.cur?'':(plainOf(x.t.root.text).trim()||'Cây chưa đặt tên')+' · ')+x.path.slice(-2).map(p=>trunc(plainOf(p.text),28)).join(' › '):'Gốc của cây'+(x.t.id===store.cur?'':' khác');
+      const n=x.n,ctx=x.path.length?(x.t.id===store.cur?'':(contentOf(x.t.root.text).trim()||'Cây chưa đặt tên')+' · ')+x.path.slice(-2).map(p=>trunc(contentOf(p.text),28)).join(' › '):'Gốc của cây'+(x.t.id===store.cur?'':' khác');
       add({kind:'node',tree:x.t.id,id:n.id},'<i class="badge '+(n.type?'t-'+n.type:'t-none')+(isOpen(n,x.path.length?x.path[x.path.length-1]:null)?' hollow':'')+'"></i><span class="it"><span class="it-t">'+hl(plainOf(n.text),words)+'</span><span class="it-p">'+esc(ctx)+'</span></span>');
     });
     const li=lib().items.filter(i=>words.every(x=>fold([i.title,i.proves,i.note,i.source,i.tags.join(' ')].join(' ')).includes(x))).slice(0,24);
@@ -2215,12 +2297,14 @@ function insertNewline(el){
 }
 // wrap each paragraph of an idea on its own, keeping the line breaks the writer typed
 // lines of styled pieces: each word measured in its own weight and slant
+const noteFs=fs=>Math.round(fs*8)/10;   // a note is 20% smaller than the content it explains
 function wrapRich(ctx,markup,maxW,fs,fw){
-  const bw=fw>=600?800:700,font=r=>(r.i?'italic ':'')+(r.b?bw:fw)+' '+fs+'px "Be Vietnam Pro", system-ui, sans-serif';
-  const lines=[],widths=[];let line=[],w=0;
-  const end=()=>{while(line.length&&!line[line.length-1].t.trim()){ctx.font=font(line[line.length-1]);w-=ctx.measureText(line[line.length-1].t).width;line.pop();}lines.push(line);widths.push(Math.max(0,w));line=[];w=0;};
+  const bw=fw>=600?800:700,font=r=>(r.i?'italic ':'')+(r.n?(r.b?700:400):(r.b?bw:fw))+' '+(r.n?noteFs(fs):fs)+'px "Be Vietnam Pro", system-ui, sans-serif';
+  const lines=[],widths=[],notes=[];let line=[],w=0,note=false;
+  const end=()=>{while(line.length&&!line[line.length-1].t.trim()){ctx.font=font(line[line.length-1]);w-=ctx.measureText(line[line.length-1].t).width;line.pop();}lines.push(line);widths.push(Math.max(0,w));notes.push(note);line=[];w=0;};
   parseMarkup(markup).forEach(r=>{
-    if(r.t==='\n'){end();return;}
+    if(r.t==='\n'){end();note=false;return;}
+    note=note||r.n;
     ctx.font=font(r);
     r.t.split(/(\s+)/).forEach(tok=>{
       if(!tok)return;
@@ -2232,7 +2316,7 @@ function wrapRich(ctx,markup,maxW,fs,fw){
     });
   });
   end();
-  return {lines:lines.map(l=>{const m=[];l.forEach(p=>{const q=m[m.length-1];if(q&&q.b===p.b&&q.i===p.i)q.t+=p.t;else m.push({...p});});return m;}),widths};
+  return {lines:lines.map(l=>{const m=[];l.forEach(p=>{const q=m[m.length-1];if(q&&q.b===p.b&&q.i===p.i)q.t+=p.t;else m.push({...p});});return m;}),widths,notes};
 }
 const richTspans=(line,bw)=>line.map(r=>r.b||r.i?'<tspan'+(r.b?' font-weight="'+bw+'"':'')+(r.i?' font-style="italic"':'')+'>'+esc(r.t)+'</tspan>':esc(r.t)).join('');
 function wrapParas(ctx,text,maxW){
@@ -2291,7 +2375,11 @@ function renderMap(){
       evH=12+evs.reduce((a,e)=>a+e.ls.length*16+4,0)+(more?16:0);
     }
     const top=10,labH=lab?16:0;
-    const w=Math.ceil(Math.max(tw,lw-12,24))+30,h=top+lines.length*lh+8+evH;
+    // baselines: note lines are shorter, with a little air where a note starts under content
+    const ys=[],nlh=Math.round(lh*0.8);let yy=top;
+    lines.forEach((ln,i)=>{const nt=wr.notes[i];if(nt&&i>0&&!wr.notes[i-1])yy+=3;const hh=nt?nlh:lh;ys.push(yy+Math.round(hh*0.72));yy+=hh;});
+    const textH=yy-top;
+    const w=Math.ceil(Math.max(tw,lw-12,24))+30,h=top+textH+8+evH;
     // the frame of the chosen way of arguing: roles nobody has filled yet show as dashed slots
     const ghosts=[];
     if(n.type==='c'&&METHODS[n.method])slotsOf(n).forEach(x=>{for(let i=0;i<x.ghosts;i++){
@@ -2305,7 +2393,7 @@ function renderMap(){
     // empty slots are affordances, not content, so the depth limit does not hide them
     const show=(n.children.length>0||ghosts.length>0)&&(root||(!n.collapsed&&(!limited||!n.children.length)));
     const kids=show?n.children.map(c=>build(c,depth+1,n,inClaim||n.type==='c')).concat(ghosts):[];
-    return {n,p,w,h,oh:h+labH,labH,lines,fs,lh,fw,root,sub,kids,show,depth,lab,top,evs,more,evTop:top+lines.length*lh+8};
+    return {n,p,w,h,oh:h+labH,labH,lines,notes:wr.notes,ys,fs,lh,fw,root,sub,kids,show,depth,lab,top,evs,more,evTop:top+textH+8};
   }
   const L=build(z,0,P(zid),pathTo(zid).slice(0,-1).some(x=>x.type==='c'));
   const gapOf2=l=>l.hidden?30:GY;   // separate main claims read as separate topics
@@ -2333,7 +2421,7 @@ function renderMap(){
     const rx=n.type==='a'||n.type==='ans'?6:n.type==='q'?16:10;
     let s='<g class="'+cls+'" data-id="'+n.id+'" transform="translate('+l.x+','+l.y+')">'+(sel?'<rect class="halo" x="-5" y="-5" width="'+(l.w+10)+'" height="'+(l.h+10)+'" rx="'+(rx+4)+'"/>':'')+'<rect width="'+l.w+'" height="'+l.h+'" rx="'+rx+'"/>';
     if(l.lab)s+='<text class="tl" x="4" y="-9">'+esc(l.lab)+'</text>';
-    s+='<text class="tx" style="font-size:'+l.fs+'px;font-weight:'+l.fw+'">'+l.lines.map((ln,i)=>'<tspan x="15" y="'+(l.top+i*l.lh+Math.round(l.lh*0.72))+'">'+richTspans(ln,l.fw>=600?800:700)+'</tspan>').join('')+'</text>';
+    s+='<text class="tx" style="font-size:'+l.fs+'px;font-weight:'+l.fw+'">'+l.lines.map((ln,i)=>'<tspan x="15" y="'+l.ys[i]+'"'+(l.notes[i]?' class="nt" style="font-size:'+noteFs(l.fs)+'px;font-weight:400"':'')+'>'+richTspans(ln,l.notes[i]?700:l.fw>=600?800:700)+'</tspan>').join('')+'</text>';
     if(l.evs.length){
       let y=l.evTop+4;
       s+='<g class="evg" data-evn="'+n.id+'"><line class="evd" x1="15" x2="'+(l.w-15)+'" y1="'+y+'" y2="'+y+'"/>';y+=8;
@@ -2622,6 +2710,7 @@ function commitMapEdit(keep){
 medit.addEventListener('input',e=>{
   const n=N(MAP.editing);if(!n)return;
   if(!medit.textContent&&medit.childNodes.length&&!e.isComposing)medit.textContent='';
+  settleLines(medit,e);
   n.text=htmlToMarkup(medit);
 });
 medit.addEventListener('blur',()=>{if(MAP.editing)commitMapEdit(false);});
@@ -2637,6 +2726,7 @@ medit.addEventListener('keydown',e=>{
   const empty=!medit.textContent.trim();
   if(e.key==='Enter'&&(e.altKey||e.metaKey||e.ctrlKey||e.shiftKey)){e.preventDefault();insertNewline(medit);return;}
   if((e.metaKey||e.ctrlKey)&&!e.shiftKey&&!e.altKey&&(e.code==='KeyB'||e.code==='KeyI')){e.preventDefault();toggleFormat(e.code==='KeyB'?'bold':'italic');return;}
+  if(e.altKey&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&/^(Digit|Numpad)[12]$/.test(e.code)){e.preventDefault();setLineKind(medit,e.code.endsWith('2'));return;}
   if(e.key==='Enter'){
     e.preventDefault();
     if(empty){
@@ -2911,9 +3001,9 @@ function renderTrees(){
   $('#homeGrid').innerHTML=list.map(t=>{
     const s=stats(t.root),mains=t.root.children.filter(c=>c.type==='c');
     return '<button type="button" class="hcard'+(t.id===store.cur?' cur':'')+'" data-tree="'+t.id+'">'+
-      '<span class="ht">'+esc(plainOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span>'+
+      '<span class="ht">'+esc(contentOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span>'+
       (t.root.ev&&t.root.ev.length?'<span class="hc">'+esc(t.root.ev[0])+'</span>':'')+
-      (mains.length?'<span class="hm">'+mains.slice(0,4).map(m=>'<i>'+esc(trunc(plainOf(m.text),40))+'</i>').join('')+(mains.length>4?'<i>+'+(mains.length-4)+'</i>':'')+'</span>':'<span class="hc">Chưa có luận điểm chính</span>')+
+      (mains.length?'<span class="hm">'+mains.slice(0,4).map(m=>'<i>'+esc(trunc(contentOf(m.text),40))+'</i>').join('')+(mains.length>4?'<i>+'+(mains.length-4)+'</i>':'')+'</span>':'<span class="hc">Chưa có luận điểm chính</span>')+
       '<span class="hs">'+mains.length+' luận điểm chính · '+(s.total-1)+' ý'+(s.open?' · '+s.open+' chỗ hở':'')+' · sửa '+ago(t.updated)+'</span></button>';
   }).join('');
   $('#backupLine').innerHTML='Dữ liệu lưu trong trình duyệt của máy này. Sao lưu gần nhất: <span class="'+(needBackup()?'late':'')+'">'+ago(store.lastBackup)+'</span>';
@@ -2969,7 +3059,7 @@ function renderInsights(){
     })(t.root,null);
   }
   const empty={open:'Không còn chỗ hở: luận điểm nào cũng có luận cứ và đủ khung luận chứng, luận cứ nào cũng có dẫn chứng.',m:'Chưa có luận điểm nào trong cây này.'};
-  $('#ilist').innerHTML=items.length?items.map(it=>'<button type="button" class="iitem" data-tree="'+t.id+'" data-id="'+it.n.id+'"><i class="badge '+it.cls+'"></i><span class="it"><span class="it-t">'+esc(plainOf(it.n.text)||'(chưa viết)')+'</span><span class="it-p">'+esc(trunc(it.ctx,80))+'</span></span></button>').join(''):'<p class="inote">'+empty[insTab]+'</p>';
+  $('#ilist').innerHTML=items.length?items.map(it=>'<button type="button" class="iitem" data-tree="'+t.id+'" data-id="'+it.n.id+'"><i class="badge '+it.cls+'"></i><span class="it"><span class="it-t">'+esc(contentOf(it.n.text)||'(chưa viết)')+'</span><span class="it-p">'+esc(trunc(it.ctx,80))+'</span></span></button>').join(''):'<p class="inote">'+empty[insTab]+'</p>';
 }
 $('#insSheet').addEventListener('click',e=>{
   const tab=e.target.closest('[data-tab]');if(tab){insTab=tab.dataset.tab;renderInsights();return;}
@@ -3091,7 +3181,7 @@ function openBackup(){
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
   '<h3>Đào sâu bằng câu hỏi</h3><ul><li>Chọn một luận điểm hay luận cứ rồi bấm <b>Đào sâu</b>: màn hình chỉ còn ý đó và các câu hỏi về nó.</li><li>Bấm một mẫu câu hỏi (Tại sao? · Là gì? · Làm thế nào? · Nếu có/Nếu không · Lợi ích/Rủi ro · 5W1H), trả lời, rồi hỏi tiếp câu trả lời. Ví dụ: “Cần đánh răng mỗi ngày” → Tại sao? → “Vì răng bẩn sẽ bị sâu” → Tại sao răng bẩn lại bị sâu? → …</li><li>Ý đã được đào sâu có dấu <b>?</b> kèm số câu hỏi trên sơ đồ chính. Bấm “Quay lại” hoặc Esc để về sơ đồ chính.</li></ul>'+
-  '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Kéo thả</b> một thẻ lên hoặc xuống để đổi thứ tự trong cùng khối cha (trên điện thoại: chạm giữ rồi kéo). Thứ tự câu hỏi và câu trả lời cũng là thứ tự suy nghĩ.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
+  '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn. Ví dụ: nội dung “Kẹo làm sâu răng”, ghi chú “vì đường bám vào răng nếu không đánh răng”.</li><li><b>Kéo thả</b> một thẻ lên hoặc xuống để đổi thứ tự trong cùng khối cha (trên điện thoại: chạm giữ rồi kéo). Thứ tự câu hỏi và câu trả lời cũng là thứ tự suy nghĩ.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
   '<h3>Kho dẫn chứng</h3><ul><li>Nút <b>Kho dẫn chứng</b> trên cùng: lưu bài báo, hình ảnh, số liệu theo nhóm và thư mục, dùng chung cho mọi cây.</li><li>Chọn một luận cứ rồi bấm <b>Từ kho</b>: dẫn chứng nằm ngay trong luận cứ đó.</li></ul>'+
   '<h3>Trên điện thoại</h3><ul><li>Chạm một ý để chọn, chạm hai lần để sửa chữ. Thanh dưới cùng có những gì thêm được và các nút sửa, luận chứng, dẫn chứng, phóng vào, xoá.</li><li>Kéo để di chuyển, chụm hai ngón để phóng to.</li></ul>'+
   '<h3>Dữ liệu</h3><ul><li>Lưu riêng trong trình duyệt của từng máy. Bấm <b>Đào Sâu</b> › Sao lưu &amp; chuyển máy để tải file hoặc chép dữ liệu sang máy khác.</li></ul>';
@@ -3135,6 +3225,8 @@ const SHORTCUTS=[
     [['Alt+Enter','Mod+Enter','Shift+Enter'],'Xuống dòng trong cùng ý'],
     [['Mod+B'],'In đậm chữ đang chọn (hoặc chữ sắp gõ)'],
     [['Mod+I'],'In nghiêng chữ đang chọn (hoặc chữ sắp gõ)'],
+    [['Alt+1'],'Dòng đang gõ là nội dung'],
+    [['Alt+2'],'Dòng đang gõ là ghi chú: chữ nhỏ hơn, diễn giải thêm cho nội dung'],
     [['Enter'],'Xong, viết tiếp ý ngang hàng'],
     [['Enter'],'Ở ô vừa tạo còn trống trong khung luận chứng: chuyển sang vai trò đang thiếu'],
     [['Tab'],'Xong, viết ý con'],
@@ -3147,6 +3239,7 @@ const SHORTCUTS=[
     [['Enter'],'Ý mới cùng cấp (ở ý trống: đưa ra một tầng)'],
     [['Alt+Enter','Shift+Enter'],'Xuống dòng trong cùng ý'],
     [['Mod+B','Mod+I'],'In đậm, in nghiêng'],
+    [['Alt+1','Alt+2'],'Dòng nội dung, dòng ghi chú'],
     [['Tab','Shift+Tab'],'Thụt vào, thụt ra'],
     [['Mod+Shift+↑','Mod+Shift+↓'],'Chuyển ý lên, xuống'],
     [['Mod+↑','Mod+↓'],'Thu gọn, mở rộng'],
@@ -3156,12 +3249,12 @@ const SHORTCUTS=[
 function keyHTML(combo){
   if(/^[A-ZĐa-zđ][a-zà-ỹ]+ [a-zà-ỹ]+$/.test(combo))return '<span class="kc"><kbd>'+esc(combo)+'</kbd></span>';
   if(combo.includes(' ')&&!combo.includes('+'))return '<span class="kc">'+combo.split(' ').map(k=>'<kbd>'+esc(k)+'</kbd>').join('')+'</span>';
-  return '<span class="kc">'+combo.split('+').map(k=>'<kbd>'+esc(k==='Mod'?MODK:k==='Shift'?(MAC?'⇧':'Shift'):k)+'</kbd>').join('')+'</span>';
+  return '<span class="kc">'+combo.split('+').map(k=>'<kbd>'+esc(k==='Mod'?MODK:k==='Shift'?(MAC?'⇧':'Shift'):k==='Alt'?(MAC?'⌥':'Alt'):k)+'</kbd>').join('')+'</span>';
 }
 function confirmDeleteTree(){
   const t=curTree(),s=stats(t.root);
   const body=document.createElement('div');
-  body.innerHTML='<p class="lead">Xoá cây “'+esc(trunc(plainOf(t.root.text)||'Cây chưa đặt tên',90))+'” cùng '+s.total+' ý? Bạn có thể hoàn tác ngay sau khi xoá.</p>';
+  body.innerHTML='<p class="lead">Xoá cây “'+esc(trunc(contentOf(t.root.text)||'Cây chưa đặt tên',90))+'” cùng '+s.total+' ý? Bạn có thể hoàn tác ngay sau khi xoá.</p>';
   dialog('Xoá cây này?',body,[{label:'Huỷ'},{label:'Xoá cây',kind:'danger',run:()=>{
     const i=store.trees.indexOf(t);store.trees.splice(i,1);
     if(!store.trees.length)store.trees.push(blankTree());
@@ -3591,7 +3684,7 @@ function renderLib(){
   if(LIB.folder!=='__all'&&LIB.folder!==''&&!folderOf(LIB.folder))LIB.folder='__all';
   const pk=$('#libPick'),pn=LIB.pickFor&&N(LIB.pickFor);
   if(pn){
-    pk.hidden=false;pk.querySelector('b').textContent=trunc(plainOf(pn.text)||'(trống)',70);
+    pk.hidden=false;pk.querySelector('b').textContent=trunc(contentOf(pn.text)||'(trống)',70);
     pk.querySelector('.how').textContent=pn.type==='a'?'Dẫn chứng bạn chọn sẽ nằm trong luận cứ này.':'Sẽ thêm một luận cứ mới bên dưới, lấy dòng “Chứng minh” của dẫn chứng làm lý lẽ.';
   }else pk.hidden=true;
   renderLibNav();renderLibHead();
@@ -3820,7 +3913,7 @@ function openItem(id,ctx){
     (i.note?'<blockquote class="evnote"></blockquote>':'')+
     (i.tags.length?'<div class="ctags evtags">'+i.tags.map(t=>'<span>'+esc(t)+'</span>').join('')+'</div>':'')+
     '<h3>Dùng ở '+uses.length+' ý</h3>'+
-    (uses.length?'<div class="ilist">'+uses.map(u=>'<button type="button" class="iitem" data-tree="'+u.tree.id+'" data-id="'+u.n.id+'"><i class="badge '+(u.n.type?'t-'+u.n.type:'t-none')+'"></i><span class="it"><span class="it-t">'+esc(plainOf(u.n.text)||'(trống)')+'</span><span class="it-p">'+esc(trunc(plainOf(u.tree.root.text)||'Cây chưa đặt tên',70))+'</span></span></button>').join('')+'</div>':'<p class="fine">Chưa gắn vào ý nào. Chọn một luận cứ trên sơ đồ rồi bấm “Từ kho” ở mục Dẫn chứng.</p>');
+    (uses.length?'<div class="ilist">'+uses.map(u=>'<button type="button" class="iitem" data-tree="'+u.tree.id+'" data-id="'+u.n.id+'"><i class="badge '+(u.n.type?'t-'+u.n.type:'t-none')+'"></i><span class="it"><span class="it-t">'+esc(contentOf(u.n.text)||'(trống)')+'</span><span class="it-p">'+esc(trunc(contentOf(u.tree.root.text)||'Cây chưa đặt tên',70))+'</span></span></button>').join('')+'</div>':'<p class="fine">Chưa gắn vào ý nào. Chọn một luận cứ trên sơ đồ rồi bấm “Từ kho” ở mục Dẫn chứng.</p>');
   if(i.proves){const p=body.querySelector('.evproves');p.appendChild(document.createTextNode(i.proves));}
   if(i.note)body.querySelector('.evnote').textContent=i.note;
   body.addEventListener('click',e=>{const u=e.target.closest('.iitem');if(u)navigateTo(u.dataset.tree,u.dataset.id);});
@@ -3863,7 +3956,7 @@ function openRefs(nodeId){
   const body=document.createElement('div');
   body.innerHTML=refs.length?'<div class="ilist">'+refs.map(i=>'<button type="button" class="iitem" data-item="'+i.id+'">'+refThumb(i)+'<span class="it"><span class="it-t">'+esc(i.title)+'</span><span class="it-p">'+esc([KINDS[i.kind].label,i.source,i.date?i.date.slice(0,4):''].filter(Boolean).join(' · '))+'</span></span></button>').join('')+'</div>':'<p class="lead">Ý này chưa có dẫn chứng đính kèm.</p>';
   body.addEventListener('click',e=>{const b=e.target.closest('[data-item]');if(b)openItem(b.dataset.item,{node:nodeId});});
-  dialog('Dẫn chứng của: '+trunc(plainOf(n.text)||'(trống)',50),body,[{label:'Gắn thêm từ kho',run:()=>{openLibrary({pickFor:nodeId});}},{label:'Đóng',kind:'primary'}]);
+  dialog('Dẫn chứng của: '+trunc(contentOf(n.text)||'(trống)',50),body,[{label:'Gắn thêm từ kho',run:()=>{openLibrary({pickFor:nodeId});}},{label:'Đóng',kind:'primary'}]);
   refreshImgs();
 }
 
@@ -3981,7 +4074,7 @@ function openEvidence(id,opt){
     '<p class="fine ev-keys">Enter: thêm ô mới · '+MODK+' Enter: lưu</p>'+
     '<div class="evrows"></div><button type="button" class="btn sm" data-evrow>+ Thêm ô</button>'+
     (top?'':'<div class="pk-sec">Từ kho dẫn chứng</div><div class="evrefs"></div>');
-  body.querySelector('.lead b').textContent=trunc(plainOf(n.text)||'(chưa viết)',140);
+  body.querySelector('.lead b').textContent=trunc(contentOf(n.text)||'(chưa viết)',140);
   const list=body.querySelector('.evrows');
   const addRow=(v,after)=>{const w=document.createElement('div');w.className='evrow';w.innerHTML='<textarea rows="2" placeholder="'+(top?'Ví dụ: Mục tiêu: …':'Ví dụ: Theo …, năm …, …')+'"></textarea><button type="button" class="ib" data-evdel aria-label="Xoá dẫn chứng này" title="Xoá dẫn chứng này"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';w.querySelector('textarea').value=v;if(after)after.after(w);else list.appendChild(w);return w;};
   const rows=(n.ev||[]).slice();if(opt.add||!rows.length)rows.push('');rows.forEach(v=>addRow(v));
@@ -4115,7 +4208,7 @@ $('#gloss').addEventListener('click',e=>{
 function placementIssue(n){
   const p=n&&P(n.id);if(!p||!n.type)return null;
   const pt=p.type;
-  if(n.type==='c'&&/\?\s*$/.test(plainOf(n.text)))return {msg:'Luận điểm đang viết dạng câu hỏi. Luận điểm là câu khẳng định: hãy viết lại thành câu trả lời (ví dụ “Có nên ăn nhiều kẹo không?” thành “Không nên ăn nhiều kẹo.”).',fixes:[]};
+  if(n.type==='c'&&/\?\s*$/.test(contentOf(n.text)))return {msg:'Luận điểm đang viết dạng câu hỏi. Luận điểm là câu khẳng định: hãy viết lại thành câu trả lời (ví dụ “Có nên ăn nhiều kẹo không?” thành “Không nên ăn nhiều kẹo.”).',fixes:[]};
   if(!n.text.trim()&&!evCount(n))return null;
   if(n.type==='a'&&!pt&&!P(p.id))return {msg:'Luận cứ đang nằm thẳng trong cây, không thuộc luận điểm nào. Luận cứ dùng để chứng minh một luận điểm; ý này có lẽ chính là một luận điểm.',fixes:[{k:'type:c',l:'Đổi thành luận điểm'}]};
   if(n.type==='a'&&pt==='a')return {msg:'Luận cứ đang nằm dưới một luận cứ khác. Dẫn chứng nằm trong luận cứ; còn nếu ý phía trên cần được chứng minh thêm, nó là luận điểm phụ.',fixes:(n.children.length?[]:[{k:'ev',l:'Gộp vào dẫn chứng của ý trên'}]).concat([{k:'parent:c',l:'Đổi ý trên thành luận điểm phụ'}])};
@@ -4131,7 +4224,7 @@ const ACTS={
   help:()=>{closeAllSheets();openHelp('use');},
   keys:()=>{closeAllSheets();openHelp('keys');},
   copyBranch:()=>{copyText(toMarkdown(N(zoomId())),'Đã sao chép nhánh dạng văn bản');},
-  downloadBranch:async()=>{const z=N(zoomId());if(await offerFile(slug(z.text)+'.md',toMarkdown(z)))toast('Đã tải file .md');},
+  downloadBranch:async()=>{const z=N(zoomId());if(await offerFile(slug(contentOf(z.text))+'.md',toMarkdown(z)))toast('Đã tải file .md');},
   deleteTree:()=>{closeAllSheets();confirmDeleteTree();},
   hideSample:()=>{store.hideSample=true;save();renderOutline();},
   addChild:addChildToZoom,
