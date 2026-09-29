@@ -871,6 +871,95 @@ button.ag-slot:hover{background:var(--surface-2)}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 
+<style>
+/* Mobile is a branch reader, with the map available as an overview. */
+.mobile-page,.mobile-nav{display:none}
+.mobile-copy{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+.mobile-copy .nt{font-size:80%;font-weight:400;color:var(--muted)}
+.mobile-editor{min-height:180px;flex:1;resize:none;font-size:16px;line-height:1.65}
+.mobile-format{display:flex;gap:8px;flex-wrap:wrap}
+.mobile-actions{display:grid;gap:8px}
+.mobile-actions .btn{justify-content:flex-start;height:auto;min-height:48px;text-align:left;padding:10px 14px}
+.mobile-actions .danger-text{color:var(--danger)}
+@media(max-width:699px){
+  :root{--hdr:64px;--mobile-nav:72px}
+  .top{height:calc(var(--hdr) + env(safe-area-inset-top,0px));top:0;padding:env(safe-area-inset-top,0px) 12px 0;gap:4px}
+  .ttl{flex-direction:column;align-items:flex-start;gap:0}
+  .brand{font-size:14px;padding:0 4px}
+  .tname{width:100%;font-size:13px;padding:2px 4px}
+  .top>.ib{width:44px;height:44px}
+  #btnGloss,#btnLib,#btnOpen,#btnSearch,#btnView{display:none}
+  .menu{position:fixed;top:calc(var(--hdr) + env(safe-area-inset-top,0px) + 6px);left:12px;right:12px;min-width:0;max-height:calc(100dvh - 100px);overflow:auto}
+  .menu button{min-height:48px}
+  body.mobile-reading .mobile-page{display:block;max-width:640px;margin:auto;padding:0 16px calc(100px + env(safe-area-inset-bottom,0px))}
+  body.mobile-reading #mapView,body.mobile-reading #outlinePage,body.mobile-reading #toolbar,body.mobile-reading .fab{display:none!important}
+  .mobile-path{display:flex;align-items:center;gap:4px;overflow-x:auto;white-space:nowrap;min-height:56px;scrollbar-width:none}
+  .mobile-path button{flex:none;min-height:44px;max-width:180px;overflow:hidden;text-overflow:ellipsis;padding:8px;color:var(--ink-2);font-size:13px}
+  .mobile-path .mobile-back{display:flex;align-items:center;padding-left:0;color:var(--q);font-weight:600}
+  .mobile-heading{margin:8px 0 18px}
+  .mobile-eyebrow{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .mobile-heading h1{font-family:var(--serif);font-size:25px;line-height:1.4;font-weight:600;margin:6px 0 12px;overflow-wrap:anywhere;white-space:pre-wrap}
+  .mobile-heading .mobile-copy{font-size:17px;margin:8px 0 12px}
+  .mobile-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;margin:22px 0 10px}
+  .mobile-card{border:1px solid var(--line);background:var(--surface);border-radius:16px;margin-bottom:12px;overflow:hidden}
+  .mobile-card-main{display:block;width:100%;padding:16px;text-align:left}
+  .mobile-card-main .mobile-copy{font-size:16px;margin:8px 0 10px;display:block}
+  .mobile-card-main .mobile-card-tail{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px}
+  .mobile-card-tail svg{width:16px;height:16px;color:var(--q)}
+  .mobile-card-footer{display:flex;border-top:1px solid var(--line)}
+  .mobile-card-footer button{flex:1;min-height:46px;font-size:13px;color:var(--ink-2)}
+  .mobile-card-footer button+button{border-left:1px solid var(--line)}
+  .mobile-kind{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--ink-2)}
+  .mobile-next{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .mobile-next .btn{height:auto;min-height:46px;padding:10px 14px}
+  .mobile-evidence{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);margin:12px 0}
+  .mobile-evidence p{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}
+  .mobile-evidence summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:600;list-style:none}
+  .mobile-evidence summary::after{content:'+';font-size:20px;color:var(--muted)}
+  .mobile-evidence[open] summary::after{content:'−'}
+  .mobile-evidence summary::-webkit-details-marker{display:none}
+  .mobile-evidence button{display:block;min-height:44px;text-align:left;color:var(--q);font-size:14px;overflow-wrap:anywhere}
+  .mobile-empty{padding:24px 16px;border:1px dashed var(--line-2);border-radius:14px;color:var(--ink-2);font-size:14px;line-height:1.7}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:35;border-top:1px solid var(--line);background:var(--surface);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));min-height:var(--mobile-nav);gap:4px}
+  .mobile-nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:54px;font-size:10.5px;color:var(--ink-2);border-radius:12px}
+  .mobile-nav button[aria-pressed="true"]{color:var(--q);background:var(--sel)}
+  .mobile-nav button svg{width:21px;height:21px}
+  body.modal .mobile-nav,body.keyboard-open .mobile-nav{display:none}
+  #toolbar{bottom:calc(var(--mobile-nav) + env(safe-area-inset-bottom,0px));padding-bottom:6px}
+  body.keyboard-open #toolbar{bottom:0}
+  body:not(.mobile-reading) .mapview{height:calc(100dvh - var(--hdr) - var(--mobile-nav) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+  .map-crumbs{top:64px;left:12px;right:12px}
+  .depthctl{top:10px;right:12px}
+  .depthctl button{min-width:40px;height:40px}
+  .legend{display:none}
+  .sheet.center{padding:0;align-items:flex-end}
+  .panel.dlg,.panel.dlg.wide{width:100%;max-height:calc(var(--mobile-vh,100dvh) - 12px);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+  .sheet{top:var(--mobile-vtop,0px);height:var(--mobile-vh,100dvh);bottom:auto}
+  .sheet .ib,.btn.sm,.chip{min-height:44px;min-width:44px}
+  .dlg-body{min-height:0;overscroll-behavior:contain}
+  .dlg-actions{flex-shrink:0;gap:8px;margin-top:12px}
+  .dlg-actions .btn{flex:1;min-height:46px}
+  .sheet input,.sheet textarea,.sheet select{font-size:16px!important}
+  #mobileEditorSheet .panel{height:calc(var(--mobile-vh,100dvh) - 12px)}
+  #mobileEditorSheet .dlg-body{display:flex;flex-direction:column;gap:12px;flex:1}
+  #mobileEditorSheet .fine{margin:0}
+  .home-top{padding:0 16px 12px;flex-wrap:wrap}
+  .home-grid{grid-template-columns:minmax(0,1fr);padding:4px 16px 20px}
+  .hcard{min-height:125px}
+  .home-foot{padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px))}
+  .home-foot .btn{flex:1;font-size:12px}
+  .home-foot .fine{margin:0;font-size:11px}
+  .lib-bar{flex-wrap:wrap}
+  .keysheet{grid-template-columns:minmax(0,1fr)}
+  .mc button,.mp-add,.ag-slot,.gl-tabs button{min-height:44px}
+  .tools{overflow-x:auto;justify-content:flex-start;gap:6px}
+  .tools button{flex:0 0 64px;max-width:none;min-height:56px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+  .tools button::after{content:attr(aria-label);font-size:10px;white-space:nowrap}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));font-size:13px}
+  body.modal .toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+}
+</style>
+
 <header class="top" id="top">
   <div class="ttl"><button class="brand" id="btnHome" title="Các cây của bạn">Đào Sâu<span class="nudge" id="nudge" hidden></span></button><button class="tname" id="btnTitle" title="Tên cây và bối cảnh"><span id="tname"></span></button></div>
   <button class="hbtn" id="btnView" title="Về sơ đồ" hidden><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="9.5" width="6" height="5" rx="1.5"/><rect x="15.5" y="3.5" width="6" height="4" rx="1.5"/><rect x="15.5" y="10" width="6" height="4" rx="1.5"/><rect x="15.5" y="16.5" width="6" height="4" rx="1.5"/><path d="M8.5 12h3m0 0V5.5h4M11.5 12h4M11.5 12v6.5h4"/></svg><span>Về sơ đồ</span></button>
@@ -884,6 +973,9 @@ button.ag-slot:hover{background:var(--surface-2)}
   </button>
   <div class="menu" id="menu" role="menu" hidden>
     <button data-act="toggleView" id="menuView" role="menuitem">Xem dạng dàn ý</button>
+    <button data-act="openIns" role="menuitem">Chỗ lập luận còn hở</button>
+    <button data-act="gloss" role="menuitem">Định nghĩa &amp; cách luận chứng</button>
+    <button data-act="undo" role="menuitem">Hoàn tác thay đổi</button>
     <hr>
     <button data-act="copyBranch" role="menuitem">Sao chép nhánh này dạng văn bản</button>
     <button data-act="downloadBranch" role="menuitem">Tải nhánh này (.md)</button>
@@ -900,6 +992,29 @@ button.ag-slot:hover{background:var(--surface-2)}
 <div class="page" id="outlinePage">
   <nav class="crumbs" id="crumbs" aria-label="Đường dẫn"></nav>
   <div id="outline"></div>
+</div>
+
+<main class="mobile-page" id="mobilePage" aria-label="Đọc từng nhánh"></main>
+<nav class="mobile-nav" id="mobileNav" aria-label="Điều hướng chính">
+  <button type="button" data-mobile-nav="home"><svg class="i" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/></svg><span>Các cây</span></button>
+  <button type="button" data-mobile-nav="branch" aria-pressed="true"><svg class="i" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Từng nhánh</span></button>
+  <button type="button" data-mobile-nav="map" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="9" width="6" height="6" rx="1"/><rect x="16" y="3" width="6" height="6" rx="1"/><rect x="16" y="15" width="6" height="6" rx="1"/><path d="M8 12h4V6h4M12 12v6h4"/></svg><span>Sơ đồ</span></button>
+  <button type="button" data-mobile-nav="search"><svg class="i" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><span>Tìm kiếm</span></button>
+  <button type="button" data-mobile-nav="library"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9M10 13h4"/></svg><span>Dẫn chứng</span></button>
+</nav>
+
+<div class="sheet center" id="mobileEditorSheet" hidden>
+  <div class="scrim" data-close></div>
+  <div class="panel dlg" role="dialog" aria-modal="true" aria-labelledby="mobileEditorTitle">
+    <div class="ph"><h2 id="mobileEditorTitle">Viết ý</h2><button class="ib" data-close aria-label="Đóng trình soạn thảo">×</button></div>
+    <div class="dlg-body">
+      <p class="fine" id="mobileEditorContext"></p>
+      <div class="mobile-format" aria-label="Định dạng"><button class="btn sm" data-mobile-format="bold"><b>Đậm</b></button><button class="btn sm" data-mobile-format="italic"><i>Nghiêng</i></button><button class="btn sm" data-mobile-format="note">Ghi chú</button></div>
+      <textarea class="mobile-editor" id="mobileEditor" aria-label="Nội dung ý" placeholder="Viết suy nghĩ của bạn…" autocapitalize="sentences"></textarea>
+      <p class="fine">Enter để xuống dòng. Nội dung tự lưu trên máy khi viết.</p>
+    </div>
+    <div class="dlg-actions"><button class="btn" id="mobileEditorNext">+ Ý cùng cấp</button><button class="btn primary" data-close>Xong</button></div>
+  </div>
 </div>
 
 <section class="mapview" id="mapView" hidden>
@@ -1213,7 +1328,15 @@ function isSub(n){let p=P(n.id);while(p){if(p.type==='c')return true;p=P(p.id);}
 // where an argument is still loose
 function gapOf(n,p){
   if(p===undefined)p=P(n.id);
-  if(n.type==='q')return n.text.trim()&&!n.children.some(c=>c.type==='ans'&&c.text.trim())?'chưa có câu trả lời':'';
+  if(n.type==='q'){
+    if(!n.text.trim())return '';
+    if(n.children.some(c=>c.type==='ans'&&c.text.trim()))return '';
+    // a question too big to answer at once is split; answering every smaller one answers it
+    const subs=n.children.filter(c=>c.type==='q'&&c.text.trim());
+    if(!subs.length)return 'chưa có câu trả lời';
+    const left=subs.filter(c=>isOpen(c,n)).length;
+    return left?'còn '+left+' câu hỏi nhỏ chưa trả lời':'';
+  }
   if(n.type==='ans'||n.type==='dig')return '';
   if(n.type==='a'){
     if(!n.text.trim())return evCount(n)?'chưa có lý lẽ':'';
@@ -1399,18 +1522,54 @@ function pathTo(id){const out=[];let n=N(id);while(n){out.unshift(n);n=P(n.id);}
 
 /* ---------- undo ---------- */
 const hist={};
-let lastTypeAt=0;
 function H(){const id=curTree().id;return hist[id]||(hist[id]={u:[],r:[]});}
 function snap(){const t=curTree();return JSON.stringify({root:t.root,zoom:store.zoom[t.id]||null,focus:focusId});}
-function pushUndo(){const h=H();h.u.push(snap());if(h.u.length>200)h.u.shift();h.r.length=0;lastTypeAt=0;}
+function pushUndo(){const h=H();h.u.push(snap());if(h.u.length>200)h.u.shift();h.r.length=0;}
+const rootOf=s=>{try{return JSON.stringify(JSON.parse(s).root);}catch(e){return '';}};
+// a step that would change nothing (a box already put back by its own undo) is skipped, never spent
+function takeStep(list,cur){const r=rootOf(cur);while(list.length){const s=list.pop();if(rootOf(s)!==r)return s;}return null;}
+const hasStep=list=>{const r=rootOf(snap());return list.some(s=>rootOf(s)!==r);};
 function restore(s){
   if(MAP.editing)commitMapEdit(false);
   const t=curTree();const d=JSON.parse(s);t.root=d.root;store.zoom[t.id]=d.zoom;
   if(store.view==='map')MAP.sel=d.focus||MAP.sel;
   touch();render();if(d.focus&&IDX.has(d.focus))focusNode(d.focus,'end');
 }
-function undo(){const h=H();if(!h.u.length){toast('Không còn thao tác để hoàn tác');return;}h.r.push(snap());restore(h.u.pop());}
-function redo(){const h=H();if(!h.r.length)return;h.u.push(snap());restore(h.r.pop());}
+function undo(){const h=H(),cur=snap(),s=takeStep(h.u,cur);if(!s){toast('Không còn thao tác để hoàn tác');return;}h.r.push(cur);restore(s);}
+function redo(){const h=H(),cur=snap(),s=takeStep(h.r,cur);if(!s)return;h.u.push(cur);restore(s);}
+
+/* ---------- undo inside the box you are writing in ----------
+   Mod+Z while writing steps back through the words, not through whole blocks; once the box is
+   back to how it started, the next Mod+Z falls through to the tree-level undo above. */
+const TU={el:null,stack:[],redo:[],cur:null,at:0,cat:'',applying:false,pushed:false};
+const tuState=el=>({h:el.innerHTML,c:getCaret(el)});
+const tuOn=()=>TU.el&&document.activeElement===TU.el&&document.body.contains(TU.el);
+function tuStart(el){TU.el=el;TU.stack=[];TU.redo=[];TU.cur=el?tuState(el):null;TU.at=0;TU.cat='';TU.pushed=false;}
+function tuEnd(){TU.el=null;TU.stack=[];TU.redo=[];TU.cur=null;TU.pushed=false;}
+function tuCat(it){return !it?'other':it.startsWith('delete')?'del':/^insert(Text|CompositionText|ReplacementText)$/.test(it)?'ins':'other';}
+// one entry per burst of typing: a pause, a change of direction, a word boundary, or any other kind of edit
+function tuNote(el,e){
+  if(TU.applying||TU.el!==el)return;
+  if(e&&e.isComposing)return;   // a word still being composed by the input method stays one step
+  const now=Date.now(),cat=tuCat(e&&e.inputType);
+  if(TU.cur&&(cat==='other'||cat!==TU.cat||now-TU.at>700)){
+    TU.stack.push(TU.cur);if(TU.stack.length>200)TU.stack.shift();TU.redo.length=0;
+  }
+  TU.cur=tuState(el);TU.cat=cat;
+  TU.at=(cat==='ins'&&/\s$/.test((e&&e.data)||''))?0:now;   // a space closes the word
+}
+function tuApply(st){
+  const el=TU.el;if(!el||!st)return;
+  TU.applying=true;
+  el.innerHTML=st.h;el.focus({preventScroll:true});setCaret(el,st.c);
+  el.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'historyUndo'}));
+  TU.applying=false;
+  TU.cur=tuState(el);TU.at=0;TU.cat='';
+}
+function tuUndo(){if(!tuOn()||!TU.stack.length)return false;TU.redo.push(TU.cur||tuState(TU.el));tuApply(TU.stack.pop());return true;}
+function tuRedo(){if(!tuOn()||!TU.redo.length)return false;TU.stack.push(TU.cur||tuState(TU.el));tuApply(TU.redo.pop());return true;}
+// the whole visit to one box is a single step for the tree-level undo
+function tuMark(){if(!TU.pushed){TU.pushed=true;pushUndo();}}
 
 /* ---------- parsing & export ---------- */
 function cleanText(s){
@@ -1779,6 +1938,8 @@ let countsTimer=null;
 function scheduleCounts(){clearTimeout(countsTimer);countsTimer=setTimeout(()=>{$('#openCount').textContent=stats(curTree().root).open;renderMeta();},200);}
 function render(){
   reindex();renderHeader();closeSlash();
+  document.body.classList.toggle('mobile-reading',mobileReading());
+  $$('#mobileNav [data-mobile-nav]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mobileNav===(mobileReading()?'branch':store.view==='map'?'map':''))));
   document.body.classList.toggle('mapmode',store.view==='map');
   if(store.view==='map'){
     $('#outlinePage').hidden=true;$('#mapView').hidden=false;
@@ -1988,6 +2149,8 @@ outline.addEventListener('focusout',e=>{
   const host=el.closest('.row')||el.closest('.head');if(host)host.classList.remove('focus');
   setTimeout(()=>{if(!activeTxt()&&store.view!=='map'){hideToolbar();focusId=null;}},160);
 });
+outline.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('.txt');if(el&&el!==TU.el)tuStart(el);});
+outline.addEventListener('focusout',e=>{if(e.target===TU.el)setTimeout(()=>{if(document.activeElement!==TU.el)tuEnd();},0);});
 outline.addEventListener('input',e=>{
   const el=e.target.closest('.txt');if(!el)return;
   const n=N(el.dataset.id);if(!n)return;
@@ -2001,6 +2164,7 @@ outline.addEventListener('input',e=>{
     if(n.id===curTree().root.id)$('#tname').textContent=t.trim()||'Cây chưa đặt tên';
   }else paint(el.closest('li'),n);
   scheduleCounts();
+  tuNote(el,e);
   if(SLASH.open)updateSlash(el);
   else if((e.inputType||'insertText').startsWith('insert')){
     const c=getCaret(el),m=el.textContent.slice(0,c).match(/(^|\s)\/([^\s\/]{0,24})$/);
@@ -2015,13 +2179,12 @@ outline.addEventListener('beforeinput',e=>{
   const it=e.inputType||'';
   if((it==='insertParagraph'||it==='insertLineBreak')&&SLASH.open&&SLASH.items.length){e.preventDefault();applySlash(SLASH.sel);return;}
   if(it==='insertParagraph'||it==='insertLineBreak'){e.preventDefault();onEnter(el,el.dataset.id,el.classList.contains('head-txt'));return;}
-  if(it==='historyUndo'){e.preventDefault();undo();return;}
-  if(it==='historyRedo'){e.preventDefault();redo();return;}
+  if(it==='historyUndo'){e.preventDefault();if(!tuUndo())undo();return;}
+  if(it==='historyRedo'){e.preventDefault();if(!tuRedo())redo();return;}
   if(it==='deleteContentBackward'&&!hasSelection()&&getCaret(el)===0&&!el.classList.contains('head-txt')){
     if(onBackspace(el,el.dataset.id)){e.preventDefault();return;}
   }
-  if(Date.now()-lastTypeAt>1500)pushUndo();
-  lastTypeAt=Date.now();
+  tuMark();
 });
 outline.addEventListener('paste',e=>{
   const el=e.target.closest('.txt');if(!el)return;
@@ -2098,6 +2261,7 @@ $('#typePop').innerHTML=TK.map(k=>'<button type="button" data-type="'+k+'"><i cl
 // desktop map: options float beside the selected idea; phones keep the bottom bar
 const floatUI=()=>store.view==='map'&&window.matchMedia('(hover:hover) and (pointer:fine)').matches&&window.innerWidth>=700;
 function showToolbar(){
+  if(mobileReading()){hideToolbar();return;}
   if(floatUI()){toolbar.hidden=true;$('#typePop').hidden=true;document.body.classList.remove('editing');showPanel();return;}
   hidePanel();
   toolbar.classList.toggle('map',store.view==='map');
@@ -2376,6 +2540,7 @@ function wrapText(ctx,text,maxW,maxLines){
   return lines;
 }
 function renderMap(){
+  if(mobileReading()){renderMobile();return;}
   const t=curTree(),zid=zoomId(),z=N(zid);
   renderCrumbs($('#mapCrumbs'));
   if(!mctx)mctx=document.createElement('canvas').getContext('2d');
@@ -2647,6 +2812,7 @@ function readableZoom(id){
 }
 function selectMap(id){
   if(!IDX.has(id))return;
+  if(mobileReading()){mobileGo(id);return;}
   if(id===curTree().root.id&&zoomId()===id){deselectMap();return;}
   MAP.hlP=MAP.hlC=null;MAP.sel=id;focusId=id;renderMap();showToolbar();updateToolbarState();readableZoom(id);ensureMapVisible(id);
 }
@@ -2708,6 +2874,7 @@ function ensureMapVisible(id){
   if(dx||dy){MAP.tx+=dx;MAP.ty+=dy;applyT();}
 }
 function startMapEdit(id,pos){
+  if(mobileReading()){openMobileEditor(id);return;}
   const n=N(id);if(!n)return;
   if(n.type==='dig'){toast('Ý đang được đào sâu: sửa chữ của nó ở sơ đồ chính.');return;}
   if(MAP.editing&&MAP.editing!==id)commitMapEdit(true);
@@ -2720,6 +2887,7 @@ function startMapEdit(id,pos){
   readableZoom(id);positionEditor();ensureMapVisible(id);
   medit.focus({preventScroll:true});
   const len=n.text.length;setCaret(medit,pos==='start'?0:(typeof pos==='number'?Math.max(0,Math.min(pos,len)):len));
+  tuStart(medit);
 }
 function commitMapEdit(keep){
   const id=MAP.editing;if(!id)return;MAP.editing=null;
@@ -2736,6 +2904,7 @@ function commitMapEdit(keep){
     touch();
   }
   if(MAP.created===id)MAP.created=null;
+  tuEnd();
   if(!keep){medit.hidden=true;if(document.activeElement===medit)medit.blur();}
   reindex();renderHeader();
   if(MAP.sel&&!IDX.has(MAP.sel))MAP.sel=null;
@@ -2747,6 +2916,7 @@ medit.addEventListener('input',e=>{
   if(!medit.textContent&&medit.childNodes.length&&!e.isComposing)medit.textContent='';
   settleLines(medit,e);
   n.text=htmlToMarkup(medit);
+  tuNote(medit,e);
 });
 medit.addEventListener('blur',()=>{if(MAP.editing)commitMapEdit(false);});
 medit.addEventListener('paste',e=>{
@@ -3006,8 +3176,8 @@ function switchTree(id){store.cur=id;focusId=null;hideToolbar();save();closeAllS
 /* ---------- sheets, dialogs, toast ---------- */
 function openSheet(id){if(MAP.editing)commitMapEdit(false);const a=activeTxt();if(a)a.blur();hideToolbar();$('#menu').hidden=true;$('#'+id).hidden=false;document.body.classList.add('modal');}
 function mapToolbarBack(){if(store.view==='map'&&MAP.sel&&IDX.has(MAP.sel)&&!$$('.sheet').some(s=>!s.hidden)){focusId=MAP.sel;showToolbar();updateToolbarState();}}
-function closeSheet(id){$('#'+id).hidden=true;if(!$$('.sheet').some(s=>!s.hidden))document.body.classList.remove('modal');mapToolbarBack();if(store.view==='map'&&MAP.sel&&IDX.has(MAP.sel)&&$$('.sheet').every(x=>x.hidden))ensureMapVisible(MAP.sel);}
-function closeAllSheets(){$$('.sheet').forEach(s=>s.hidden=true);$('#menu').hidden=true;document.body.classList.remove('modal');mapToolbarBack();}
+function closeSheet(id){if(id==='mobileEditorSheet')finishMobileEditor();$('#'+id).hidden=true;if(!$$('.sheet').some(s=>!s.hidden))document.body.classList.remove('modal');mapToolbarBack();if(store.view==='map'&&MAP.sel&&IDX.has(MAP.sel)&&$$('.sheet').every(x=>x.hidden))ensureMapVisible(MAP.sel);}
+function closeAllSheets(){if(!$('#mobileEditorSheet').hidden)finishMobileEditor();$$('.sheet').forEach(s=>s.hidden=true);$('#menu').hidden=true;document.body.classList.remove('modal');mapToolbarBack();}
 $$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet(s.id);}));
 function dialog(title,body,actions,opt){
   $('#dlgTitle').textContent=title;
@@ -3471,7 +3641,7 @@ function askConflict(){
 // one place for guidance: how to use the app, and every shortcut
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
-  '<h3>Đào sâu bằng câu hỏi</h3><ul><li>Chọn một luận điểm hay luận cứ rồi bấm <b>Đào sâu</b>: màn hình chỉ còn ý đó và các câu hỏi về nó.</li><li>Bấm một mẫu câu hỏi (Tại sao? · Là gì? · Làm thế nào? · Nếu có/Nếu không · Lợi ích/Rủi ro · 5W1H), trả lời, rồi hỏi tiếp câu trả lời. Ví dụ: “Cần đánh răng mỗi ngày” → Tại sao? → “Vì răng bẩn sẽ bị sâu” → Tại sao răng bẩn lại bị sâu? → …</li><li>Ý đã được đào sâu có dấu <b>?</b> kèm số câu hỏi trên sơ đồ chính. Bấm “Quay lại” hoặc Esc để về sơ đồ chính.</li></ul>'+
+  '<h3>Đào sâu bằng câu hỏi</h3><ul><li>Chọn một luận điểm hay luận cứ rồi bấm <b>Đào sâu</b>: màn hình chỉ còn ý đó và các câu hỏi về nó.</li><li>Bấm một mẫu câu hỏi (Tại sao? · Là gì? · Làm thế nào? · Nếu có/Nếu không · Lợi ích/Rủi ro · 5W1H), trả lời, rồi hỏi tiếp câu trả lời. Ví dụ: “Cần đánh răng mỗi ngày” → Tại sao? → “Vì răng bẩn sẽ bị sâu” → Tại sao răng bẩn lại bị sâu? → …</li><li>Câu hỏi quá rộng để trả lời một lần? Chọn nó rồi bấm <b>Câu hỏi nhỏ hơn</b> để tách. Trả lời hết các câu nhỏ thì câu hỏi gốc cũng hết nét đứt.</li><li>Ý đã được đào sâu có dấu <b>?</b> kèm số câu hỏi trên sơ đồ chính. Bấm “Quay lại” hoặc Esc để về sơ đồ chính.</li></ul>'+
   '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn. Ví dụ: nội dung “Kẹo làm sâu răng”, ghi chú “vì đường bám vào răng nếu không đánh răng”.</li><li><b>Kéo thả</b> một thẻ lên hoặc xuống để đổi thứ tự trong cùng khối cha (trên điện thoại: chạm giữ rồi kéo). Thứ tự câu hỏi và câu trả lời cũng là thứ tự suy nghĩ.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
   '<h3>Kho dẫn chứng</h3><ul><li>Nút <b>Kho dẫn chứng</b> trên cùng: lưu bài báo, hình ảnh, số liệu theo nhóm và thư mục, dùng chung cho mọi cây.</li><li>Chọn một luận cứ rồi bấm <b>Từ kho</b>: dẫn chứng nằm ngay trong luận cứ đó.</li></ul>'+
   '<h3>Trên điện thoại</h3><ul><li>Chạm một ý để chọn, chạm hai lần để sửa chữ. Thanh dưới cùng có những gì thêm được và các nút sửa, luận chứng, dẫn chứng, phóng vào, xoá.</li><li>Kéo để di chuyển, chụm hai ngón để phóng to.</li></ul>'+
@@ -3482,7 +3652,7 @@ function openHelp(tab){
   const body=document.createElement('div');body.className='helpdlg';
   const draw=()=>{
     body.innerHTML='<div class="htabs" role="tablist"><button type="button" role="tab" data-htab="use" aria-selected="'+(tab==='use')+'">Cách dùng</button><button type="button" role="tab" data-htab="keys" aria-selected="'+(tab==='keys')+'">Phím tắt</button></div>'+
-      (tab==='use'?HELP_USE:'<div class="keysheet">'+SHORTCUTS.map(sec=>'<section><h3>'+esc(sec.h)+'</h3>'+sec.rows.map(([ks,d])=>'<div class="ks-row"><span class="ks-d">'+esc(d)+'</span><span class="ks-k">'+ks.map(keyHTML).join('<span class="ko">hoặc</span>')+'</span></div>').join('')+'</section>').join('')+
+      (tab==='use'?(mobileQuery.matches?'<h3>Dùng trên điện thoại</h3><ol class="gl-steps"><li>Ở <b>Từng nhánh</b>, chạm vào một ý để đọc các ý con. Dùng <b>Quay lại</b> để lên một tầng.</li><li>Bấm <b>Sửa</b> để viết. Enter xuống dòng; <b>+ Ý cùng cấp</b> tạo ý tiếp theo. Nội dung tự lưu trên máy khi gõ.</li><li>Dùng nút bên dưới nhánh để thêm luận điểm, luận cứ hoặc câu trả lời. <b>Đào sâu câu hỏi</b> mở phần hỏi–đáp riêng.</li><li><b>Thao tác khác</b> cho phép đổi thứ tự, chọn vai trò hoặc xoá ý. Có thể hoàn tác sau khi xoá.</li><li>Mở <b>Sơ đồ</b> ở thanh dưới khi cần xem tổng thể. <b>Các cây</b>, <b>Tìm kiếm</b> và <b>Dẫn chứng</b> luôn ở thanh này.</li></ol><h3>Cách dùng sơ đồ</h3>':'')+HELP_USE:'<div class="keysheet">'+SHORTCUTS.map(sec=>'<section><h3>'+esc(sec.h)+'</h3>'+sec.rows.map(([ks,d])=>'<div class="ks-row"><span class="ks-d">'+esc(d)+'</span><span class="ks-k">'+ks.map(keyHTML).join('<span class="ko">hoặc</span>')+'</span></div>').join('')+'</section>').join('')+
         '<p class="fine ks-note">Phím L chỉ có tác dụng khi đang chọn một ý mà không gõ chữ, nên không trùng phím tắt của trình duyệt. Trên điện thoại, dùng thanh công cụ phía dưới.</p></div>');
     $('#dlg').dataset.kind='help-'+tab;
   };
@@ -3497,7 +3667,7 @@ const SHORTCUTS=[
     [['Mod+K'],'Tìm trong mọi cây, chạy lệnh'],
     [['Mod+/'],'Mở bảng phím tắt này'],
     [['?'],'Định nghĩa và các cách luận chứng'],
-    [['Mod+Z'],'Hoàn tác'],
+    [['Mod+Z'],'Hoàn tác. Khi đang viết trong một ô: hoàn tác từng chữ trong ô đó trước'],
     [MAC?['Mod+Shift+Z']:['Ctrl+Shift+Z','Ctrl+Y'],'Làm lại'],
     [['Esc'],'Thôi sửa, bỏ chọn, rồi quay lại chỗ trước']]},
   {h:'Sơ đồ',rows:[
@@ -3516,6 +3686,7 @@ const SHORTCUTS=[
     [['Alt+Enter','Mod+Enter','Shift+Enter'],'Xuống dòng trong cùng ý'],
     [['Mod+B'],'In đậm chữ đang chọn (hoặc chữ sắp gõ)'],
     [['Mod+I'],'In nghiêng chữ đang chọn (hoặc chữ sắp gõ)'],
+    [['Mod+Z'],'Hoàn tác từng chữ vừa gõ, ngay trong ô đang viết'],
     [['Alt+1'],'Dòng đang gõ là nội dung'],
     [['Alt+2'],'Dòng đang gõ là ghi chú: chữ nhỏ hơn, diễn giải thêm cho nội dung'],
     [['Enter'],'Xong, viết tiếp ý ngang hàng'],
@@ -3530,6 +3701,7 @@ const SHORTCUTS=[
     [['Enter'],'Ý mới cùng cấp (ở ý trống: đưa ra một tầng)'],
     [['Alt+Enter','Shift+Enter'],'Xuống dòng trong cùng ý'],
     [['Mod+B','Mod+I'],'In đậm, in nghiêng'],
+    [['Mod+Z'],'Hoàn tác từng chữ vừa gõ'],
     [['Alt+1','Alt+2'],'Dòng nội dung, dòng ghi chú'],
     [['Tab','Shift+Tab'],'Thụt vào, thụt ra'],
     [['Mod+Shift+↑','Mod+Shift+↓'],'Chuyển ý lên, xuống'],
@@ -4464,7 +4636,7 @@ function glossHTML(k){
         '<div><span class="mtype t-q">Câu hỏi</span>Tại sao răng bẩn lại bị sâu?</div>'+
         '<div><span class="mtype t-ans">Trả lời</span>Vì vi trùng ăn đồ ngọt còn dính trên răng rồi làm răng bị thủng.</div></div>'+
       '<h4>Các kiểu câu hỏi</h4><dl class="gl-dl">'+qx.map(([n,w,e])=>'<dt>'+esc(n)+'</dt><dd>'+esc(w)+' Ví dụ: “'+esc(e)+'”</dd>').join('')+'</dl>'+
-      '<h4>Tự kiểm tra</h4><ul class="gl-check"><li>Câu hỏi nào cũng có ít nhất một câu trả lời. Câu hỏi chưa trả lời có viền nét đứt.</li><li>Câu trả lời còn chưa rõ? Hỏi tiếp “Tại sao?” ngay dưới nó.</li></ul>';
+      '<h4>Tự kiểm tra</h4><ul class="gl-check"><li>Câu hỏi nào cũng có câu trả lời. Câu hỏi chưa trả lời có viền nét đứt.</li><li>Câu hỏi quá rộng thì tách thành vài câu hỏi nhỏ hơn (nút “Câu hỏi nhỏ hơn”). Trả lời hết các câu nhỏ thì câu hỏi gốc cũng coi như đã trả lời.</li><li>Câu trả lời còn chưa rõ? Hỏi tiếp “Tại sao?” ngay dưới nó.</li></ul>';
   }
   if(k==='m'){
     return '<p class="gl-lead">Luận chứng là cách tổ chức các luận cứ để dẫn tới luận điểm. Chọn một cách cho luận điểm trước khi thêm luận cứ: app dựng sẵn khung vai trò và hiện ô trống nét đứt cho phần còn thiếu.</p>'+
@@ -4509,6 +4681,152 @@ function placementIssue(n){
 }
 
 /* ---------- global wiring ---------- */
+/* Mobile navigation is local UI state; it never changes the saved tree structure. */
+const mobileQuery=window.matchMedia('(max-width:699px)');
+const MB={mode:'branch',id:null,key:null,edit:null,editUndo:false};
+function mobileReading(){return mobileQuery.matches&&MB.mode==='branch'&&store.view==='map';}
+function mobileCurrent(){
+  const key=curTree().id+'|'+zoomId();
+  if(MB.key!==key||!N(MB.id)){MB.key=key;MB.id=zoomId();}
+  return N(MB.id)||curTree().root;
+}
+function mobileGo(id){
+  if(!N(id))return;
+  MB.key=curTree().id+'|'+zoomId();MB.id=id;MAP.sel=null;focusId=null;
+  renderMobile();window.scrollTo(0,0);
+}
+function mobileNextHTML(n){
+  return nextFor(n).map(x=>'<button class="btn" data-mobile-next="'+esc(x.k)+'" data-node="'+esc(n.id)+'">+ '+esc(x.l.replace(/^\+\s*/,''))+'</button>').join('');
+}
+function renderMobile(){
+  const n=mobileCurrent(),root=n.id===curTree().root.id,host=n.type==='dig'?P(n.id):null;
+  const p=P(n.id),path=pathTo(n.id),label=host?'Đào sâu bằng câu hỏi':root?'Chủ đề':kindLabel(n,p,isSub(n));
+  let h='<nav class="mobile-path" aria-label="Vị trí trong cây">';
+  if(p)h+='<button class="mobile-back" data-mobile-go="'+esc(p.id)+'">'+IC.back+'Quay lại</button>';
+  else h+='<span class="mobile-eyebrow">Không gian tư duy</span>';
+  if(path.length>2)h+=path.slice(0,-1).map(x=>'<button data-mobile-go="'+esc(x.id)+'">'+esc(trunc(contentOf(x.type==='dig'?P(x.id).text:x.text)||'Cây',24))+'</button>').join('<span class="sep">/</span>');
+  h+='</nav><section class="mobile-heading"><span class="mobile-eyebrow">'+esc(label)+'</span>';
+  if(root)h+='<h1>'+esc(contentOf(n.text)||'Cây chưa đặt tên')+'</h1>';
+  else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>';
+  h+='<div class="mobile-next">';
+  if(root)h+='<button class="btn primary" data-mobile-next="c" data-node="'+esc(n.id)+'">'+IC.plus+' Luận điểm chính</button><button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
+  else if(!host)h+='<button class="btn" data-mobile-edit="'+esc(n.id)+'">Sửa nội dung</button><button class="btn" data-mobile-more="'+esc(n.id)+'">Thao tác khác</button>';
+  if(isProof(n))h+='<button class="btn" data-mobile-dig="'+esc(n.id)+'">Đào sâu câu hỏi'+(n.dig&&n.dig.children.length?' · '+n.dig.children.length:'')+'</button>';
+  h+='</div></section>';
+  if((n.ev||[]).length||(n.refs||[]).length){
+    h+=root?'<details class="mobile-evidence"><summary>Bối cảnh · '+((n.ev||[]).length+(n.refs||[]).length)+' nội dung</summary>':'<section class="mobile-evidence"><span class="mobile-eyebrow">Dẫn chứng</span>';
+    h+=(n.ev||[]).map(v=>'<p>'+esc(v)+'</p>').join('');
+    h+=(n.refs||[]).map(itemOf).filter(Boolean).map(i=>'<button data-mobile-item="'+esc(i.id)+'">'+IC.clip+' '+esc(i.title)+'</button>').join('');
+    h+='<button data-mobile-evidence="'+esc(n.id)+'">'+(root?'Sửa bối cảnh':'Sửa dẫn chứng')+'</button>'+(root?'</details>':'</section>');
+  }
+  if(n.type==='c')h+='<button class="btn wide" data-mobile-method="'+esc(n.id)+'">'+(METHODS[n.method]?esc(METHODS[n.method].label):'Chọn cách luận chứng')+'</button>';
+  h+='<div class="mobile-meta"><span>'+n.children.length+' ý trong nhánh này</span><span>Chạm vào ý để mở</span></div>';
+  if(!n.children.length)h+='<div class="mobile-empty">'+(n.type==='a'?'Bổ sung dẫn chứng để làm rõ luận cứ này.':root?'Bắt đầu bằng một luận điểm chính. Sau đó mở từng ý để triển khai tiếp.':'Nhánh này chưa có ý. Chọn bước tiếp theo bên dưới để viết.')+'</div>';
+  n.children.forEach(c=>{
+    h+='<article class="mobile-card"><button class="mobile-card-main" data-mobile-go="'+esc(c.id)+'"><span class="mobile-kind"><i class="badge t-'+(c.type||'none')+'"></i>'+esc(kindLabel(c,n,isSub(c))||'Ý')+'</span><span class="mobile-copy">'+markupToHTML(c.text||'(Chưa viết nội dung)')+'</span><span class="mobile-card-tail"><span>'+c.children.length+' ý con'+(evCount(c)?' · '+evCount(c)+' dẫn chứng':'')+'</span>'+IC.chev+'</span></button><div class="mobile-card-footer"><button data-mobile-edit="'+esc(c.id)+'">Sửa</button><button data-mobile-more="'+esc(c.id)+'">Thao tác khác</button></div></article>';
+  });
+  h+='<div class="mobile-next">'+mobileNextHTML(n)+'</div>';
+  $('#mobilePage').innerHTML=h;
+}
+function mobileMore(id){
+  const n=N(id);if(!n)return;const p=P(id),i=p?p.children.indexOf(n):-1;
+  const body=document.createElement('div');body.className='mobile-actions';
+  body.innerHTML='<p class="lead">'+esc(trunc(contentOf(n.text)||'Ý chưa viết',110))+'</p><button class="btn" data-choice="edit">Sửa nội dung</button>'+mobileNextHTML(n)+
+    (isProof(n)?'<button class="btn" data-choice="dig">Đào sâu bằng câu hỏi</button>':'')+
+    (p&&METHODS[p.method]?'<button class="btn" data-choice="role">Đổi vai trò trong luận chứng</button>':'')+
+    (i>0?'<button class="btn" data-choice="up">↑ Chuyển lên</button>':'')+
+    (i>=0&&i<p.children.length-1?'<button class="btn" data-choice="down">↓ Chuyển xuống</button>':'')+
+    (i>=0?'<button class="btn danger-text" data-choice="delete">Xoá ý'+(n.children.length?' và các ý con':'')+'</button>':'');
+  body.addEventListener('click',e=>{
+    const b=e.target.closest('[data-choice]');if(!b)return;
+    closeSheet('dlg');
+    const a=b.dataset.choice;
+    if(a==='edit')openMobileEditor(id);
+    if(a==='dig')mobileGo(digOf(n).id);
+    if(a==='role')openArgue(id);
+    if(a==='up'||a==='down')move(id,a==='up'?-1:1);
+    if(a==='delete'){
+      const prompt=document.createElement('p');prompt.className='lead';prompt.textContent='Xoá “'+trunc(contentOf(n.text)||'Ý chưa viết',90)+'”'+(n.children.length?' cùng các ý bên dưới':'')+'?';
+      dialog('Xoá ý',prompt,[{label:'Giữ lại'},{label:'Xoá',kind:'danger',run:()=>{if(MB.id===id)MB.id=p.id;delNode(id);}}]);
+    }
+  });
+  dialog('Thao tác với ý',body,[{label:'Đóng'}]);
+}
+function openMobileEditor(id){
+  const n=N(id);if(!n||n.type==='dig')return;
+  if(MB.edit)finishMobileEditor();
+  const p=P(id);MB.edit=id;MB.editUndo=false;
+  if(p&&MB.id!==id&&MB.id!==p.id){MB.key=curTree().id+'|'+zoomId();MB.id=p.id;}
+  $('#mobileEditorTitle').textContent=kindLabel(n,p,isSub(n))||'Viết ý';
+  $('#mobileEditorContext').textContent=p?'Trong: '+trunc(contentOf(p.type==='dig'?P(p.id).text:p.text)||'Chủ đề',100):'Chủ đề của cây';
+  const input=$('#mobileEditor');input.value=n.text;input.placeholder=MAP.editPh||phOf(n,p);MAP.editPh=null;
+  $('#mobileEditorNext').hidden=!p||n.type==='dig';
+  openSheet('mobileEditorSheet');input.focus();input.setSelectionRange(input.value.length,input.value.length);
+}
+function saveMobileEdit(){
+  const n=N(MB.edit);if(!n)return;
+  const value=$('#mobileEditor').value;
+  if(n.text===value)return;
+  if(!MB.editUndo&&MAP.created!==n.id){pushUndo();MB.editUndo=true;}
+  n.text=value;touch();
+}
+function finishMobileEditor(){
+  if(!MB.edit)return;
+  saveMobileEdit();const id=MB.edit,n=N(id);MB.edit=null;
+  if(n&&MAP.created===id&&!n.text.trim()&&!n.children.length&&!evCount(n)){
+    removeNode(id);const h=H();if(MAP.createdUndo===h.u.length)h.u.pop();
+  }
+  if(MAP.created===id)MAP.created=null;
+  $('#mobileEditor').blur();reindex();touch();saveNow();render();
+}
+$('#mobileEditor').addEventListener('input',saveMobileEdit);
+$('#mobileEditorNext').addEventListener('click',()=>{
+  const id=MB.edit,n=N(id);if(!n||!n.text.trim()){toast('Viết nội dung trước khi thêm ý tiếp theo');return;}
+  closeSheet('mobileEditorSheet');mapAddSibling(id);
+});
+$$('[data-mobile-format]').forEach(b=>b.addEventListener('click',()=>{
+  const el=$('#mobileEditor'),a=el.selectionStart,z=el.selectionEnd,k=b.dataset.mobileFormat;
+  const prefix=k==='note'?'> ':k==='bold'?'**':'*',suffix=k==='note'?'':prefix;
+  const start=k==='note'?el.value.lastIndexOf('\n',a-1)+1:a;
+  const chosen=el.value.slice(start,z);el.focus();el.setSelectionRange(start,z);
+  // Native text insertion keeps the keyboard's undo history available.
+  if(!document.execCommand('insertText',false,prefix+chosen+suffix))el.setRangeText(prefix+chosen+suffix,start,z,'end');
+  el.setSelectionRange(start+prefix.length,start+prefix.length+chosen.length);saveMobileEdit();
+}));
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-mobile-go],[data-mobile-edit],[data-mobile-more],[data-mobile-next],[data-mobile-dig],[data-mobile-method],[data-mobile-evidence],[data-mobile-item],[data-mobile-action]');
+  if(!b)return;const d=b.dataset;
+  if(d.mobileGo)mobileGo(d.mobileGo);
+  if(d.mobileEdit)openMobileEditor(d.mobileEdit);
+  if(d.mobileMore)mobileMore(d.mobileMore);
+  if(d.mobileNext){closeSheet('dlg');runNext(d.mobileNext,d.node);}
+  if(d.mobileDig)mobileGo(digOf(N(d.mobileDig)).id);
+  if(d.mobileMethod)openArgue(d.mobileMethod);
+  if(d.mobileEvidence)openEvidence(d.mobileEvidence);
+  if(d.mobileItem)openItem(d.mobileItem,{node:MB.id});
+  if(d.mobileAction==='title')treeForm(curTree(),render);
+});
+$('#mobileNav').addEventListener('click',e=>{
+  const b=e.target.closest('[data-mobile-nav]');if(!b)return;
+  const a=b.dataset.mobileNav;
+  if(a==='home')return openHome();
+  if(a==='search')return openPalette();
+  if(a==='library')return openLibrary();
+  if(MAP.editing)commitMapEdit(false);
+  const selected=MAP.sel;MB.mode=a;hideToolbar();MAP.key=null;
+  setView('map');
+  if(a==='branch'&&selected&&N(selected))mobileGo(selected);
+});
+function mobileViewport(){
+  const vv=window.visualViewport;
+  document.documentElement.style.setProperty('--mobile-vh',(vv?vv.height:window.innerHeight)+'px');
+  document.documentElement.style.setProperty('--mobile-vtop',(vv?vv.offsetTop:0)+'px');
+  document.body.classList.toggle('keyboard-open',mobileQuery.matches&&!!vv&&window.innerHeight-vv.height>140);
+}
+mobileQuery.addEventListener('change',()=>{if(MAP.editing)commitMapEdit(false);MAP.key=null;render();});
+if(window.visualViewport){visualViewport.addEventListener('resize',mobileViewport);visualViewport.addEventListener('scroll',mobileViewport);}
+mobileViewport();
+
 const ACTS={
   newTree,
   import:()=>{closeAllSheets();openImport();},
@@ -4524,6 +4842,7 @@ const ACTS={
   toggleView:()=>setView(store.view==='map'?'outline':'map'),
   openLib:()=>openLibrary(),
   gloss:()=>openGloss('m'),
+  undo:()=>undo(),
   openIns:()=>{insTab='open';renderInsights();openSheet('insSheet');}
 };
 document.addEventListener('click',e=>{
@@ -4547,8 +4866,17 @@ document.addEventListener('keydown',e=>{
   if(mod&&e.code==='Slash'&&!e.shiftKey&&!e.altKey){e.preventDefault();if(MAP.editing)commitMapEdit(false);openShortcuts();return;}
   if(mod&&e.code==='KeyK'){e.preventDefault();if($('#palSheet').hidden)openPalette();else closeSheet('palSheet');return;}
   const inCtx=e.target&&e.target.classList&&e.target.classList.contains('ci');
-  if(mod&&e.code==='KeyZ'&&!inField&&!inCtx&&$('#dlg').hidden){e.preventDefault();if(MAP.editing)commitMapEdit(false);if(e.shiftKey)redo();else undo();return;}
-  if(mod&&e.code==='KeyY'&&!inField&&$('#dlg').hidden){e.preventDefault();redo();return;}
+  if(mod&&(e.code==='KeyZ'||e.code==='KeyY')&&(e.isComposing||e.keyCode===229))return;   // leave the input method alone
+  if(mod&&e.code==='KeyZ'&&!inField&&!inCtx&&$('#dlg').hidden){
+    e.preventDefault();
+    if(e.shiftKey?tuRedo():tuUndo())return;   // still something to take back in the box being written
+    const h=H();
+    // nothing left at the tree level either: say so, but leave the box open
+    if(!hasStep(e.shiftKey?h.r:h.u)){if(!e.shiftKey)toast('Không còn thao tác để hoàn tác');return;}
+    if(MAP.editing)commitMapEdit(false);
+    if(e.shiftKey)redo();else undo();return;
+  }
+  if(mod&&e.code==='KeyY'&&!inField&&$('#dlg').hidden){e.preventDefault();if(tuRedo())return;if(MAP.editing&&hasStep(H().r))commitMapEdit(false);redo();return;}
   if(e.key==='Escape'){
     if(!$('#menu').hidden){$('#menu').hidden=true;e.preventDefault();return;}
     if(!$('#gloss').hidden&&!activeTxt()&&!MAP.editing&&!MAP.sel&&$$('.sheet').every(x=>x.hidden)){closeGloss();e.preventDefault();return;}
