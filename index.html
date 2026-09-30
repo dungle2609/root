@@ -333,6 +333,11 @@ body.dragging,body.dragging *{cursor:grabbing!important;-webkit-user-select:none
 .mn.root .tx{fill:var(--on-btn)}
 .mn.root .tl{fill:var(--muted);opacity:1}
 .mpanel{position:absolute;z-index:5;width:256px;max-height:calc(100% - 68px);overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;animation:pop .12s ease}
+.mpanel.free-tools{width:max-content;max-height:none;overflow:visible;padding:4px;border-radius:12px}
+.free-actions{display:flex;gap:2px}
+.free-actions button{display:grid;place-items:center;width:36px;height:36px;border-radius:8px;color:var(--ink-2)}
+.free-actions button:hover,.free-actions button:focus-visible{background:var(--surface-2);color:var(--ink)}
+.free-actions svg.i{width:21px;height:21px;stroke-width:2}
 .mpanel button:disabled{opacity:.3;cursor:default}
 .mp-head{display:flex;align-items:center;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--line)}
 .mp-type{display:flex;align-items:center;gap:7px;min-width:0;height:30px;padding:0 6px 0 5px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
@@ -1232,6 +1237,7 @@ const TPL=[
     {t:'Nếu không, thì sao?',type:'q',kids:[{t:'Lợi ích là gì?',type:'q'},{t:'Rủi ro là gì?',type:'q'}]}]},
   {k:'q-pr',label:'Lợi ích / Rủi ro',type:'q',dig:1,nodes:[{t:'Lợi ích là gì?|',type:'q'},{t:'Rủi ro là gì?',type:'q'}]},
   {k:'q-w',label:'5W1H',type:'q',dig:1,nodes:[{t:'Là gì (What)?|',type:'q'},{t:'Tại sao (Why)?',type:'q'},{t:'Ai (Who)?',type:'q'},{t:'Khi nào (When)?',type:'q'},{t:'Ở đâu (Where)?',type:'q'},{t:'Như thế nào (How)?',type:'q'}]},
+  {k:'q-6w1h',label:'6W1H',type:'f',nodes:[{t:'Là gì (What)?|',type:'f'},{t:'Tại sao (Why)?',type:'f'},{t:'Ai (Who)?',type:'f'},{t:'Ai khác (Who else)?',type:'f'},{t:'Khi nào (When)?',type:'f'},{t:'Ở đâu (Where)?',type:'f'},{t:'Như thế nào (How)?',type:'f'}]},
   {k:'q-free',label:'Câu hỏi khác',type:'q',dig:1,nodes:[{t:'|',type:'q'}]},
   {k:'ans',label:'Trả lời',type:'ans',dig:1,nodes:[{t:'|',type:'ans'}]}
 ];
@@ -1240,7 +1246,7 @@ const tplOf=k=>TPL.find(t=>t.k===k);
 // the few steps that make sense from an idea: a topic takes main claims, a claim splits or is argued, a reason takes evidence
 function nextFor(n){
   if(!n)return [];
-  if(freestyle())return [{k:'f',type:'f',l:n.type==='dig'?'Ý đào sâu':'Ý mới',s:n.type==='dig'?'Ý đào sâu':'Ý mới'},{k:'5w1h',type:'f',l:'Đặt câu hỏi 5W1H',s:'5W1H'}];
+  if(freestyle())return [{k:'f',type:'f',l:'Thêm ý',s:'Thêm ý'},{k:'6w1h',type:'f',l:'Đặt câu hỏi 6W1H',s:'6W1H'}];
   if(n.type==='q')return [{k:'ans',type:'ans',l:'Trả lời',s:'Trả lời'},{k:'q-free',type:'q',l:'Câu hỏi nhỏ hơn',s:'Câu hỏi nhỏ hơn'}];
   if(n.type==='dig'||n.type==='ans')return QTPL.map(k=>{const t=tplOf(k);return {k,type:'q',l:t.label,s:t.label};});
   if(!P(n.id)&&!n.type)return [{k:'c',type:'c',l:'Luận điểm chính',s:'Luận điểm chính'}];
@@ -1257,6 +1263,8 @@ const IC={
   check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
   circle:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" stroke-dasharray="3 3"/></svg>',
   plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  question:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5.1 2.1c-1.4 1.2-2.1 1.8-2.1 3.4"/><circle cx="12" cy="18" r=".8" fill="currentColor" stroke="none"/></svg>',
+  magnify:'<svg class="i" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>',
   proof:'<svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="12" cy="19" r="2.2"/><path d="M5 7v2.5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7M12 7v9.8"/></svg>',
   compass:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
   down:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
@@ -2108,7 +2116,7 @@ function goBack(){
 }
 function applyTpl(k,target,ph){
   const id=target||focusId||zoomId();const node=N(id);if(!node)return;
-  if(freestyle()&&k!=='f'&&k!=='q-w')return;
+  if(freestyle()&&k!=='f'&&k!=='q-6w1h')return;
   const tpl=TPL.find(x=>x.k===k);if(!tpl)return;
   pushUndo();let fs=null;
   const build=spec=>{
@@ -2128,7 +2136,7 @@ function applyTpl(k,target,ph){
 }
 function applyNext(i,id){const n=N(id);const it=n&&nextFor(n)[i];if(it)runNext(it.k,id,it.ph);}
 function runNext(k,id,ph){
-  if(k==='5w1h'&&freestyle())return applyTpl('q-w',id);
+  if(k==='6w1h'&&freestyle())return applyTpl('q-6w1h',id);
   if(k==='ev')return openEvidence(id,{add:true});
   if(k==='lib')return openLibrary({pickFor:id});
   if(k==='method')return pickMethod(id);
@@ -2578,7 +2586,6 @@ function renderMap(){
       const kids=n.collapsed&&false?[]:n.children.map(c=>build(c,1,n,false));
       ctx.font='600 12.5px '+FONT;const label=freestyle()?'+ Ý mới':'+ Luận điểm chính';
       kids.push({ghost:true,pid:n.id,r:{k:'__main',type:freestyle()?'f':'c',hint:freestyle()?'Thêm một ý mới':'Thêm một luận điểm chính: một chủ đề nhỏ của cây này'},label,w:Math.ceil(ctx.measureText(label).width)+30,h:34,kids:[],depth:1});
-      if(freestyle()){const ask='+ 5W1H';kids.push({ghost:true,pid:n.id,r:{k:'__5w1h',type:'f',hint:'Tạo sáu câu hỏi 5W1H'},label:ask,w:Math.ceil(ctx.measureText(ask).width)+30,h:34,kids:[],depth:1});}
       return {n,p,w:0,h:0,hidden:true,lines:[],kids,show:true,depth:0,root:true,evs:[],lab:'',top:0};
     }
     const host=n.type==='dig'?P(n.id):null,txt=host?host.text:n.text;
@@ -2608,17 +2615,13 @@ function renderMap(){
     const w=Math.ceil(Math.max(tw,lw-12,24))+30,h=top+textH+8+evH;
     // the frame of the chosen way of arguing: roles nobody has filled yet show as dashed slots
     const ghosts=[];
-    if(n.type==='c'&&METHODS[n.method])slotsOf(n).forEach(x=>{for(let i=0;i<x.ghosts;i++){
+    if(!freestyle()&&n.type==='c'&&METHODS[n.method])slotsOf(n).forEach(x=>{for(let i=0;i<x.ghosts;i++){
       const multi=x.r.min>1||x.count>0,label='+ '+x.r.label+(multi?' '+(x.count+i+1):'');
       ctx.font='600 12.5px '+FONT;ghosts.push({ghost:true,pid:n.id,r:x.r,label,w:Math.ceil(ctx.measureText(label).width)+30,h:32,kids:[],depth:depth+1});}});
     // in a dig: a question with no answer yet offers one; the dig itself offers a new question
     const slot=(k,label,type,hint)=>{ctx.font='600 12.5px '+FONT;return {ghost:true,pid:n.id,r:{k,type,hint},label,w:Math.ceil(ctx.measureText(label).width)+30,h:32,kids:[],depth:depth+1};};
-    if(n.type==='dig'){
-      ghosts.push(freestyle()?slot('__free','+ Ý đào sâu','f','Viết điều bạn muốn tìm hiểu tiếp'):slot('__q','+ Câu hỏi','q','Đặt một câu hỏi về ý này: tại sao, là gì, làm thế nào…'));
-      if(freestyle())ghosts.push(slot('__5w1h','+ 5W1H','f','Tạo sáu câu hỏi 5W1H'));
-    }
-    if(freestyle()&&n.type==='f'&&withinDig(n))ghosts.push(slot('__free','+ Ý con','f','Viết ý con để đào sâu thêm'));
-    if(n.type==='q'&&n.text.trim()&&!n.children.length)ghosts.push(slot('__ans','+ Trả lời','ans','Trả lời câu hỏi này'));
+    if(n.type==='dig'&&!freestyle())ghosts.push(slot('__q','+ Câu hỏi','q','Đặt một câu hỏi về ý này: tại sao, là gì, làm thế nào…'));
+    if(!freestyle()&&n.type==='q'&&n.text.trim()&&!n.children.length)ghosts.push(slot('__ans','+ Trả lời','ans','Trả lời câu hỏi này'));
     const limited=lim>0&&depth>=lim&&!MAP.open.has(n.id);
     // empty slots are affordances, not content, so the depth limit does not hide them
     const show=(n.children.length>0||ghosts.length>0)&&(root||(!n.collapsed&&(!limited||!n.children.length)));
@@ -2794,7 +2797,7 @@ function mapTap(target){
   const wn=target.closest('[data-why]');
   if(wn){if(MAP.editing)commitMapEdit(false);const n=N(wn.dataset.why);selectMap(wn.dataset.why);if(n&&!floatUI())openGloss(n.type);return;}
   const sl=target.closest('[data-slot]');
-  if(sl){const [pid,rk]=sl.dataset.slot.split('|');if(MAP.editing)commitMapEdit(false);if(rk==='__main')mapAddChild(pid,freestyle()?'f':'c');else if(rk==='__free')mapAddChild(pid,'f');else if(rk==='__5w1h')runNext('5w1h',pid);else if(rk==='__q')mapAddChild(pid,'q');else if(rk==='__ans')mapAddChild(pid,'ans');else addRoleChild(pid,rk);return;}
+  if(sl){const [pid,rk]=sl.dataset.slot.split('|');if(MAP.editing)commitMapEdit(false);if(rk==='__main')mapAddChild(pid,freestyle()?'f':'c');else if(rk==='__q')mapAddChild(pid,'q');else if(rk==='__ans')mapAddChild(pid,'ans');else addRoleChild(pid,rk);return;}
   const dg=target.closest('[data-dig]');
   if(dg){if(MAP.editing)commitMapEdit(false);zoomTo(dg.dataset.dig);return;}
 
@@ -3023,6 +3026,15 @@ function tbIcon(a){const b=toolbar.querySelector('[data-tb="'+a+'"] svg');return
 const IC_DOWN='<svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
 function renderPanel(){
   const n=N(MAP.sel);if(!n)return;
+  const freeTools=freestyle()&&(n.type==='f'||n.type==='dig');
+  mpanel.classList.toggle('free-tools',freeTools);
+  if(freeTools){
+    mpanel.innerHTML='<div class="free-actions" role="group" aria-label="Thao tác với ý">'+
+      '<button type="button" data-add="f" title="Thêm ý" aria-label="Thêm ý">'+IC.plus+'</button>'+
+      '<button type="button" data-free-6w1h title="Đặt câu hỏi 6W1H" aria-label="Đặt câu hỏi 6W1H">'+IC.question+'</button>'+
+      (n.type==='f'?'<button type="button" data-tb="zoom" title="Đào sâu" aria-label="Đào sâu">'+IC.magnify+'</button>':'')+'</div>';
+    MAP.panelFor=MAP.sel;MAP.panelSig=panelSig(n);return;
+  }
   const p=P(n.id),iss=placementIssue(n),r=roleOf(n,p),pm=p&&METHODS[p.method],sub=n.type==='c'&&(isSub(n)||(p&&p.type==='c'));
   const kind=freestyle()?kindLabel(n,p):!p&&!n.type?'Chủ đề':n.type==='c'?(sub?'Luận điểm phụ':'Luận điểm chính'):n.type==='a'?'Luận cứ':DIGT[n.type]?DIGT[n.type].label:'Ý';
   let h='<div class="mp-head'+(freestyle()&&n.type==='f'?' free-head':'')+'">'+(freestyle()&&n.type==='f'?'':'<i class="badge '+(n.type?'t-'+n.type:'t-top')+(sub?' sub':'')+'"></i><span class="mp-kind">'+kind+'</span>')+
@@ -3032,10 +3044,7 @@ function renderPanel(){
     (iss?'<div class="mp-warn">'+esc(iss.msg)+'<div class="acts">'+iss.fixes.map(f=>'<button type="button" class="fix" data-fix="'+f.k+'">'+esc(f.l)+'</button>').join('')+'</div></div>':'');
   const nq=n.dig?n.dig.children.length:0,digBtn='<button type="button" class="mp-add mp-dig" data-tb="zoom" title="'+(freestyle()?'Đào sâu ý này':'Đào sâu bằng câu hỏi')+' ('+MODK+'.)"><span class="qm">?</span>Đào sâu'+(nq?' · '+nq:'')+'</button>';
   const askHTML=lbl=>'<div class="mp-sec">'+lbl+'</div><div class="mp-q-row">'+QTPL.map(k=>'<button type="button" data-tpl="'+k+'">'+esc(tplOf(k).label)+'</button>').join('')+'<button type="button" data-tpl="q-free">Câu hỏi khác</button></div>';
-  if(freestyle()&&n.type==='f'){
-    h+='<div class="mp-acts"><button type="button" class="mp-add" data-add="f">Ý con</button><button type="button" class="mp-add" data-free-5w1h>Đặt câu hỏi 5W1H</button>'+(withinDig(n)?'<button type="button" class="mp-add mp-dig" data-tb="zoom">Phóng vào</button>':digBtn)+'</div>';
-  }else if(freestyle()&&n.type==='dig')h+='<div class="mp-acts"><button type="button" class="mp-add" data-add="f">Ý đào sâu</button><button type="button" class="mp-add" data-free-5w1h>Đặt câu hỏi 5W1H</button></div>';
-  else if(n.type==='c'){
+  if(n.type==='c'){
     h+='<div class="mp-acts"><button type="button" class="mp-add" data-add="c" title="Tách thành ý nhỏ hơn (Tab)"><i class="badge t-c sub"></i>Luận điểm phụ</button>'+digBtn+'</div>';
     h+=argueHTML(n,false);
   }else if(n.type==='a'){
@@ -3115,7 +3124,7 @@ mpanel.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventD
 mpanel.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.add){if(MAP.editing)commitMapEdit(false);mapAddChild(MAP.sel,b.dataset.add);return;}
-  if(b.hasAttribute('data-free-5w1h')){if(MAP.editing)commitMapEdit(false);runNext('5w1h',MAP.sel);return;}
+  if(b.hasAttribute('data-free-6w1h')){if(MAP.editing)commitMapEdit(false);runNext('6w1h',MAP.sel);return;}
   if(b.dataset.ref){if(MAP.editing)commitMapEdit(false);openItem(b.dataset.ref,{node:MAP.sel});return;}
   if(b.dataset.unref){if(MAP.editing)commitMapEdit(false);detachItem(b.dataset.unref,MAP.sel);return;}
   if(b.dataset.gl){openGloss(b.dataset.gl);return;}
@@ -3683,7 +3692,7 @@ function askConflict(){
 }
 // one place for guidance: how to use the app, and every shortcut
 const HELP_FREE='<p class="lead">Freestyle là nơi brainstorm tự do. Mỗi ý có thể là câu hỏi, câu trả lời, giả thuyết, ví dụ hoặc việc cần làm; app không gán loại và không chấm chỗ hở.</p>'+
-  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm <b>Ý mới</b>. Chọn một ý rồi thêm <b>Ý con</b> để tách suy nghĩ thành các nhánh.</li><li>Bấm <b>Đặt câu hỏi 5W1H</b> để tạo sáu câu hỏi: Là gì, Tại sao, Ai, Khi nào, Ở đâu, Như thế nào. Mỗi câu hỏi vẫn là một ý tự do, có thể sửa chữ và viết tiếp bên dưới.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc đặt câu hỏi 5W1H.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
+  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm <b>Đặt câu hỏi 6W1H</b> để tạo bảy câu hỏi: Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào. Mỗi câu hỏi vẫn là một ý tự do, có thể sửa chữ và viết tiếp bên dưới.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc đặt câu hỏi 6W1H.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
   '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp.</p>';
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
@@ -4758,9 +4767,9 @@ function renderMobile(){
   if(root)h+='<h1>'+esc(contentOf(n.text)||'Cây chưa đặt tên')+'</h1>';
   else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>';
   h+='<div class="mobile-next">';
-  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="5w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 5W1H</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
+  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
   else if(!host)h+='<button class="btn" data-mobile-edit="'+esc(n.id)+'">Sửa nội dung</button><button class="btn" data-mobile-more="'+esc(n.id)+'">Thao tác khác</button>';
-  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="5w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 5W1H</button>';
+  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button>';
   if(isProof(n)&&!withinDig(n))h+='<button class="btn" data-mobile-dig="'+esc(n.id)+'">'+(freestyle()?'Đào sâu':'Đào sâu câu hỏi')+(n.dig&&n.dig.children.length?' · '+n.dig.children.length:'')+'</button>';
   h+='</div></section>';
   if(((n.ev||[]).length||(n.refs||[]).length)&&(!freestyle()||root)){
