@@ -1271,7 +1271,7 @@ const tplOf=k=>TPL.find(t=>t.k===k);
 // the few steps that make sense from an idea: a topic takes main claims, a claim splits or is argued, a reason takes evidence
 function nextFor(n){
   if(!n)return [];
-  if(freestyle())return [{k:'f',type:'f',l:'Thêm ý',s:'Thêm ý'},{k:'6w1h',type:'f',l:'Đặt câu hỏi 6W1H',s:'6W1H'},{k:'struct',type:'f',l:'Mở ý theo cấu trúc',s:'Cấu trúc'}];
+  if(freestyle())return [{k:'f',type:'f',l:'Thêm ý',s:'Thêm ý'},{k:'struct',type:'f',l:'Mở ý theo cấu trúc',s:'Cấu trúc'}];
   if(n.type==='q')return [{k:'ans',type:'ans',l:'Trả lời',s:'Trả lời'},{k:'q-free',type:'q',l:'Câu hỏi nhỏ hơn',s:'Câu hỏi nhỏ hơn'}];
   if(n.type==='dig'||n.type==='ans')return QTPL.map(k=>{const t=tplOf(k);return {k,type:'q',l:t.label,s:t.label};});
   if(!P(n.id)&&!n.type)return [{k:'c',type:'c',l:'Luận điểm chính',s:'Luận điểm chính'}];
@@ -1509,6 +1509,8 @@ function freeCount(node){let count=node.type==='f'?1:0;node.children.forEach(c=>
 // The first one is the owner's own way of digging for a problem; like any other it can be renamed, changed or removed.
 // A fixed id lets every device that starts with it hold the same one; updated 0 means nobody has changed it yet.
 function seedStruct(){return {id:'st-tim-van-de',name:'Tìm ra vấn đề',items:['Fact','Desire','Gap','Impact','Root cause'],created:0,updated:0};}
+// the seven 6W1H questions used to be an icon of their own; they now sit in the list like any other structure
+function seed6w1h(){return {id:'st-6w1h',name:'6W1H',items:['Là gì (What)?','Tại sao (Why)?','Ai (Who)?','Ai khác (Who else)?','Khi nào (When)?','Ở đâu (Where)?','Như thế nào (How)?'],created:0,updated:0};}
 function normStruct(s){
   if(!s||typeof s!=='object'||typeof s.id!=='string'||!s.id)return null;
   const name=String(s.name==null?'':s.name).replace(/\s+/g,' ').trim();
@@ -1563,6 +1565,8 @@ if(!store){
 }
 if(Array.isArray(store.structs))store.structs=store.structs.map(normStruct).filter(Boolean);
 else{store.structs=[seedStruct()];saveNow();}
+// added once to every device; a 6W1H someone removed (its tombstone in gone) stays removed
+if(!structOf('st-6w1h')&&!(store.gone&&store.gone['st-6w1h'])){store.structs.push(seed6w1h());saveNow();}
 store.view='map';
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{});}catch(e){}
 
@@ -3075,7 +3079,6 @@ function renderPanel(){
   if(freeTools){
     mpanel.innerHTML='<div class="free-actions" role="group" aria-label="Thao tác với ý">'+
       '<button type="button" data-add="f" title="Thêm ý" aria-label="Thêm ý">'+IC.plus+'</button>'+
-      '<button type="button" data-free-6w1h title="Đặt câu hỏi 6W1H" aria-label="Đặt câu hỏi 6W1H">'+IC.question+'</button>'+
       (n.type==='f'?'<button type="button" data-tb="zoom" title="Đào sâu" aria-label="Đào sâu">'+IC.magnify+'</button>':'')+
       '<button type="button" data-free-struct title="Mở ý theo cấu trúc" aria-label="Mở ý theo cấu trúc" aria-haspopup="true" aria-expanded="'+!!MAP.structOpen+'">'+IC.struct+'</button></div>'+
       (MAP.structOpen?structMenuHTML():'');
@@ -3171,7 +3174,6 @@ mpanel.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventD
 mpanel.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.add){if(MAP.editing)commitMapEdit(false);mapAddChild(MAP.sel,b.dataset.add);return;}
-  if(b.hasAttribute('data-free-6w1h')){if(MAP.editing)commitMapEdit(false);runNext('6w1h',MAP.sel);return;}
   if(b.hasAttribute('data-free-struct')){if(MAP.editing)commitMapEdit(false);MAP.structOpen=!MAP.structOpen;updatePanelState();return;}
   if(b.dataset.struct){if(MAP.editing)commitMapEdit(false);applyStruct(b.dataset.struct,MAP.sel);return;}
   if(b.hasAttribute('data-structs-manage')){MAP.structBack=MAP.sel;openStructs();return;}
@@ -3754,7 +3756,7 @@ function askConflict(){
 }
 // one place for guidance: how to use the app, and every shortcut
 const HELP_FREE='<p class="lead">Freestyle là nơi brainstorm tự do. Mỗi ý có thể là câu hỏi, câu trả lời, giả thuyết, ví dụ hoặc việc cần làm; app không gán loại và không chấm chỗ hở.</p>'+
-  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm <b>Đặt câu hỏi 6W1H</b> để tạo bảy câu hỏi: Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào. Mỗi câu hỏi vẫn là một ý tự do, có thể sửa chữ và viết tiếp bên dưới.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần, ví dụ <b>Tìm ra vấn đề</b>: Fact, Desire, Gap, Impact, Root cause. Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc đặt câu hỏi 6W1H.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
+  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
   '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp.</p>';
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
@@ -4934,9 +4936,9 @@ function renderMobile(){
   if(root)h+='<h1>'+esc(contentOf(n.text)||'Cây chưa đặt tên')+'</h1>';
   else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>';
   h+='<div class="mobile-next">';
-  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button><button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
+  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
   else if(!host)h+='<button class="btn" data-mobile-edit="'+esc(n.id)+'">Sửa nội dung</button><button class="btn" data-mobile-more="'+esc(n.id)+'">Thao tác khác</button>';
-  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button><button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>';
+  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>';
   if(isProof(n)&&!withinDig(n))h+='<button class="btn" data-mobile-dig="'+esc(n.id)+'">'+(freestyle()?'Đào sâu':'Đào sâu câu hỏi')+(n.dig&&n.dig.children.length?' · '+n.dig.children.length:'')+'</button>';
   h+='</div></section>';
   if(((n.ev||[]).length||(n.refs||[]).length)&&(!freestyle()||root)){
