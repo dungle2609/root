@@ -338,6 +338,30 @@ body.dragging,body.dragging *{cursor:grabbing!important;-webkit-user-select:none
 .free-actions button{display:grid;place-items:center;width:36px;height:36px;border-radius:8px;color:var(--ink-2)}
 .free-actions button:hover,.free-actions button:focus-visible{background:var(--surface-2);color:var(--ink)}
 .free-actions svg.i{width:21px;height:21px;stroke-width:2}
+.free-actions button[aria-expanded="true"]{background:var(--sel);color:var(--ink)}
+/* named structures: the list the structure icon opens */
+.free-structs{display:flex;flex-direction:column;gap:1px;width:272px;max-height:min(340px,52vh);overflow-y:auto;overscroll-behavior:contain;margin-top:4px;padding:4px 0 0;border-top:1px solid var(--line)}
+.fs-h{padding:4px 8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.free-structs [data-struct]{display:flex;flex-direction:column;gap:1px;padding:6px 8px;border-radius:8px;text-align:left}
+.free-structs [data-struct]:hover,.free-structs [data-struct]:focus-visible{background:var(--surface-2)}
+.fs-n{font-size:13.5px;font-weight:600;line-height:1.35;color:var(--ink);overflow-wrap:anywhere}
+.fs-i{font-size:12px;line-height:1.4;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fs-empty{margin:2px 8px 6px;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.fs-set{display:flex;align-items:center;gap:7px;min-height:32px;margin-top:3px;padding:0 8px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-2);text-align:left}
+.fs-set:hover{color:var(--ink)}
+.fs-set svg.i{width:15px;height:15px}
+/* setting structures up, and picking one where there is no floating panel */
+.st-list{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+.st-row{display:flex;align-items:center;gap:6px;padding:10px 8px 10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.st-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.st-main b,.st-opt b{font-size:14.5px;font-weight:600;line-height:1.35;color:var(--ink);overflow-wrap:anywhere}
+.st-main span,.st-opt span{font-size:12.5px;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}
+.st-row .btn{flex:none}
+.st-empty{margin:0 0 12px;padding:14px;border:1px dashed var(--line-2);border-radius:12px;font-size:13.5px;color:var(--ink-2)}
+.st-pick{display:flex;flex-direction:column;gap:8px}
+.st-opt{display:flex;flex-direction:column;gap:2px;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left}
+.st-opt:hover{border-color:var(--f)}
+.stdlg .btn svg.i{width:17px;height:17px}
 .mpanel button:disabled{opacity:.3;cursor:default}
 .mp-head{display:flex;align-items:center;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--line)}
 .mp-type{display:flex;align-items:center;gap:7px;min-width:0;height:30px;padding:0 6px 0 5px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
@@ -982,6 +1006,7 @@ button.ag-slot:hover{background:var(--surface-2)}
     <button data-act="toggleView" id="menuView" role="menuitem">Xem dạng dàn ý</button>
     <button data-act="openIns" role="menuitem">Chỗ lập luận còn hở</button>
     <button data-act="gloss" role="menuitem">Định nghĩa &amp; cách luận chứng</button>
+    <button data-act="structs" role="menuitem">Cấu trúc mở ý</button>
     <button data-act="undo" role="menuitem">Hoàn tác thay đổi</button>
     <hr>
     <button data-act="copyBranch" role="menuitem">Sao chép nhánh này dạng văn bản</button>
@@ -1246,7 +1271,7 @@ const tplOf=k=>TPL.find(t=>t.k===k);
 // the few steps that make sense from an idea: a topic takes main claims, a claim splits or is argued, a reason takes evidence
 function nextFor(n){
   if(!n)return [];
-  if(freestyle())return [{k:'f',type:'f',l:'Thêm ý',s:'Thêm ý'},{k:'6w1h',type:'f',l:'Đặt câu hỏi 6W1H',s:'6W1H'}];
+  if(freestyle())return [{k:'f',type:'f',l:'Thêm ý',s:'Thêm ý'},{k:'6w1h',type:'f',l:'Đặt câu hỏi 6W1H',s:'6W1H'},{k:'struct',type:'f',l:'Mở ý theo cấu trúc',s:'Cấu trúc'}];
   if(n.type==='q')return [{k:'ans',type:'ans',l:'Trả lời',s:'Trả lời'},{k:'q-free',type:'q',l:'Câu hỏi nhỏ hơn',s:'Câu hỏi nhỏ hơn'}];
   if(n.type==='dig'||n.type==='ans')return QTPL.map(k=>{const t=tplOf(k);return {k,type:'q',l:t.label,s:t.label};});
   if(!P(n.id)&&!n.type)return [{k:'c',type:'c',l:'Luận điểm chính',s:'Luận điểm chính'}];
@@ -1265,6 +1290,8 @@ const IC={
   plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
   question:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5.1 2.1c-1.4 1.2-2.1 1.8-2.1 3.4"/><circle cx="12" cy="18" r=".8" fill="currentColor" stroke="none"/></svg>',
   magnify:'<svg class="i" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>',
+  struct:'<svg class="i" viewBox="0 0 24 24"><rect x="2" y="9.25" width="6" height="5.5" rx="1.6"/><path d="M8 12c3 0 3-6.5 6-6.5M8 12h6M8 12c3 0 3 6.5 6 6.5"/><path d="M16.5 5.5h4.5M16.5 12h4.5M16.5 18.5h4.5"/></svg>',
+  sliders:'<svg class="i" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>',
   proof:'<svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="12" cy="19" r="2.2"/><path d="M5 7v2.5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7M12 7v9.8"/></svg>',
   compass:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
   down:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
@@ -1478,6 +1505,20 @@ function stats(node){
   return {total,open,ev,maxD};
 }
 function freeCount(node){let count=node.type==='f'?1:0;node.children.forEach(c=>count+=freeCount(c));if(node.dig)node.dig.children.forEach(c=>count+=freeCount(c));return count;}
+// Cấu trúc mở ý: a named set of child ideas, set up once outside any tree and used on any idea of a Freestyle tree.
+// The first one is the owner's own way of digging for a problem; like any other it can be renamed, changed or removed.
+// A fixed id lets every device that starts with it hold the same one; updated 0 means nobody has changed it yet.
+function seedStruct(){return {id:'st-tim-van-de',name:'Tìm ra vấn đề',items:['Fact','Desire','Gap','Impact','Root cause'],created:0,updated:0};}
+function normStruct(s){
+  if(!s||typeof s!=='object'||typeof s.id!=='string'||!s.id)return null;
+  const name=String(s.name==null?'':s.name).replace(/\s+/g,' ').trim();
+  const items=(Array.isArray(s.items)?s.items:[]).map(v=>String(v==null?'':v).replace(/\s+/g,' ').trim()).filter(Boolean);
+  return name&&items.length?{id:s.id,name,items,created:+s.created||0,updated:+s.updated||0}:null;
+}
+function structList(){return store&&Array.isArray(store.structs)?store.structs:[];}
+const structOf=id=>structList().find(s=>s.id===id)||null;
+// two items, or two names, are the same when they read the same without accents, case or extra spaces
+const itemKey=t=>fold(t).replace(/\s+/g,' ').trim();
 
 /* ---------- storage ---------- */
 let storageOK=true;
@@ -1520,6 +1561,8 @@ if(!store){
   let moved=0;store.trees.forEach(t=>{moved+=(t.mode==='freestyle'?0:ctxToNodes(t)+migrateTree(t.root,true))+pruneEmpty(t.root);});
   if(moved||store.model!==2){store.model=2;saveNow();}
 }
+if(Array.isArray(store.structs))store.structs=store.structs.map(normStruct).filter(Boolean);
+else{store.structs=[seedStruct()];saveNow();}
 store.view='map';
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{});}catch(e){}
 
@@ -2137,6 +2180,7 @@ function applyTpl(k,target,ph){
 function applyNext(i,id){const n=N(id);const it=n&&nextFor(n)[i];if(it)runNext(it.k,id,it.ph);}
 function runNext(k,id,ph){
   if(k==='6w1h'&&freestyle())return applyTpl('q-6w1h',id);
+  if(k==='struct'&&freestyle())return openStructPicker(id);
   if(k==='ev')return openEvidence(id,{add:true});
   if(k==='lib')return openLibrary({pickFor:id});
   if(k==='method')return pickMethod(id);
@@ -2420,7 +2464,7 @@ function hl(text,words){
 }
 function renderPalette(){
   const raw=$('#palInput').value.trim(),q=fold(raw),words=q.split(/\s+/).filter(Boolean);
-  const CMDS=[{act:'openLib',label:'Mở kho dẫn chứng'},{act:'gloss',label:'Định nghĩa và các cách luận chứng'},{act:'newTree',label:'Tạo cây mới'},{act:'import',label:'Nhập note cũ / văn bản'},{act:'backup',label:'Sao lưu & chuyển máy'},{act:'help',label:'Hướng dẫn'},{act:'keys',label:'Phím tắt'}];
+  const CMDS=[{act:'openLib',label:'Mở kho dẫn chứng'},{act:'gloss',label:'Định nghĩa và các cách luận chứng'},{act:'structs',label:'Thiết lập cấu trúc mở ý'},{act:'newTree',label:'Tạo cây mới'},{act:'import',label:'Nhập note cũ / văn bản'},{act:'backup',label:'Sao lưu & chuyển máy'},{act:'help',label:'Hướng dẫn'},{act:'keys',label:'Phím tắt'}];
   palItems=[];let h='';
   const add=(item,html)=>{h+='<button type="button" class="pal-item" role="option" data-i="'+palItems.length+'">'+html+'</button>';palItems.push(item);};
   if(!words.length){
@@ -3032,7 +3076,9 @@ function renderPanel(){
     mpanel.innerHTML='<div class="free-actions" role="group" aria-label="Thao tác với ý">'+
       '<button type="button" data-add="f" title="Thêm ý" aria-label="Thêm ý">'+IC.plus+'</button>'+
       '<button type="button" data-free-6w1h title="Đặt câu hỏi 6W1H" aria-label="Đặt câu hỏi 6W1H">'+IC.question+'</button>'+
-      (n.type==='f'?'<button type="button" data-tb="zoom" title="Đào sâu" aria-label="Đào sâu">'+IC.magnify+'</button>':'')+'</div>';
+      (n.type==='f'?'<button type="button" data-tb="zoom" title="Đào sâu" aria-label="Đào sâu">'+IC.magnify+'</button>':'')+
+      '<button type="button" data-free-struct title="Mở ý theo cấu trúc" aria-label="Mở ý theo cấu trúc" aria-haspopup="true" aria-expanded="'+!!MAP.structOpen+'">'+IC.struct+'</button></div>'+
+      (MAP.structOpen?structMenuHTML():'');
     MAP.panelFor=MAP.sel;MAP.panelSig=panelSig(n);return;
   }
   const p=P(n.id),iss=placementIssue(n),r=roleOf(n,p),pm=p&&METHODS[p.method],sub=n.type==='c'&&(isSub(n)||(p&&p.type==='c'));
@@ -3091,14 +3137,15 @@ function evidenceHTML(n){
 function panelSig(n){
   const p=P(n.id);
   return JSON.stringify([n.type,n.method||'',n.role||'',p?[p.type,p.method||'',p.children.map(c=>c.role||'').join()]:0,n.ev||[],n.refs||[],!!n.text.trim(),/\?\s*$/.test(n.text),
-    n.children.map(c=>(c.type||'-')+(c.role||'')+(c.text.trim()||evCount(c)?1:0)).join(),!!MAP.methodsOpen]);
+    n.children.map(c=>(c.type||'-')+(c.role||'')+(c.text.trim()||evCount(c)?1:0)).join(),!!MAP.methodsOpen,MAP.structOpen?structList():0]);
 }
 function showPanel(){
   if(!MAP.sel||!IDX.has(MAP.sel)){hidePanel();return;}
-  if(MAP.panelFor!==MAP.sel){MAP.methodsOpen=false;renderPanel();}
+  // back from setting structures up: the list they were opened from comes back open
+  if(MAP.panelFor!==MAP.sel){MAP.methodsOpen=false;MAP.structOpen=MAP.structBack===MAP.sel;MAP.structBack=null;renderPanel();}
   mpanel.hidden=false;updatePanelState();
 }
-function hidePanel(){mpanel.hidden=true;MAP.methodsOpen=false;MAP.panelFor=null;}
+function hidePanel(){mpanel.hidden=true;MAP.methodsOpen=false;MAP.structOpen=false;MAP.panelFor=null;}
 function updatePanelState(){
   const n=N(MAP.sel);if(!n)return;
   if(MAP.panelSig!==panelSig(n))renderPanel();
@@ -3125,6 +3172,9 @@ mpanel.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.add){if(MAP.editing)commitMapEdit(false);mapAddChild(MAP.sel,b.dataset.add);return;}
   if(b.hasAttribute('data-free-6w1h')){if(MAP.editing)commitMapEdit(false);runNext('6w1h',MAP.sel);return;}
+  if(b.hasAttribute('data-free-struct')){if(MAP.editing)commitMapEdit(false);MAP.structOpen=!MAP.structOpen;updatePanelState();return;}
+  if(b.dataset.struct){if(MAP.editing)commitMapEdit(false);applyStruct(b.dataset.struct,MAP.sel);return;}
+  if(b.hasAttribute('data-structs-manage')){MAP.structBack=MAP.sel;openStructs();return;}
   if(b.dataset.ref){if(MAP.editing)commitMapEdit(false);openItem(b.dataset.ref,{node:MAP.sel});return;}
   if(b.dataset.unref){if(MAP.editing)commitMapEdit(false);detachItem(b.dataset.unref,MAP.sel);return;}
   if(b.dataset.gl){openGloss(b.dataset.gl);return;}
@@ -3140,7 +3190,8 @@ mpanel.addEventListener('click',e=>{
   if(d.evedit!==undefined){openEvidence(id,{focus:+d.evedit});return;}
   mapToolbar(b);
 });
-mpanel.addEventListener('wheel',onMapWheel,{passive:false});
+// the wheel moves the map, except over a list of structures long enough to scroll on its own
+mpanel.addEventListener('wheel',e=>{const l=e.target.closest('.free-structs');if(l&&l.scrollHeight>l.clientHeight&&!e.ctrlKey&&!e.metaKey)return;onMapWheel(e);},{passive:false});
 window.addEventListener('resize',()=>{if(store.view==='map'&&MAP.sel&&$$('.sheet').every(x=>x.hidden)){showToolbar();updateToolbarState();}});
 function mapNav(key){
   const id=MAP.sel,n=N(id);if(!n)return;let t=null;
@@ -3165,7 +3216,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Tab'){e.preventDefault();if(e.shiftKey)outdent(id,false);else mapAddChild(id);return;}
   if(e.key===' '||e.key==='F2'){e.preventDefault();startMapEdit(id,'end');return;}
   if((e.key==='Delete'||e.key==='Backspace')&&id!==zoomId()){e.preventDefault();delNode(id);return;}
-  if(e.key==='Escape'){e.preventDefault();if(MAP.methodsOpen){MAP.methodsOpen=false;updatePanelState();}else deselectMap();return;}
+  if(e.key==='Escape'){e.preventDefault();if(MAP.structOpen){MAP.structOpen=false;updatePanelState();}else if(MAP.methodsOpen){MAP.methodsOpen=false;updatePanelState();}else deselectMap();return;}
   if(mod&&e.shiftKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();if(id!==zoomId())move(id,e.key==='ArrowUp'?-1:1);return;}
   if(e.key.startsWith('Arrow')&&!mod&&!e.altKey){e.preventDefault();mapNav(e.key);return;}
   if(!mod&&!e.altKey&&!e.shiftKey&&e.code==='KeyL'){e.preventDefault();if(N(id).type==='c')pickMethod(id);else toast('Cách luận chứng chọn ở một luận điểm.');return;}
@@ -3357,7 +3408,7 @@ function fallbackCopy(text,okMsg,after){
   if(after)after();
   setTimeout(()=>{const t=$('#manualCopy');if(t){t.focus();t.select();}},60);
 }
-function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),lib:lib(),images:Object.fromEntries(IMG)};}
+function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),structs:structList(),lib:lib(),images:Object.fromEntries(IMG)};}
 function markBackup(){store.lastBackup=Date.now();saveNow();renderHeader();}
 function mergeBackup(text){
   let d;try{d=JSON.parse(text);}catch(e){toast('Dữ liệu không đọc được. Hãy dán đúng nội dung sao lưu.');return false;}
@@ -3376,9 +3427,18 @@ function mergeBackup(text){
   if(d&&Array.isArray(d.principles)){if(!Array.isArray(store.principles))store.principles=[];d.principles.forEach(r=>{if(!r||typeof r.id!=='string')return;const ex=prinOf(r.id),v={id:r.id,text:String(r.text||''),note:String(r.note||''),created:r.created||Date.now(),updated:r.updated||Date.now()};if(!ex)store.principles.push(v);else if(v.updated>(ex.updated||0))Object.assign(ex,v);});}
   store.trees.forEach(t=>{if(t.mode!=='freestyle'){ctxToNodes(t);migrateTree(t.root,true);}});
   const ia=mergeLib(d&&d.lib);
+  let sa=0;
+  if(d&&!Array.isArray(d)&&Array.isArray(d.structs)){
+    const gone=store.gone||{};
+    d.structs.map(normStruct).filter(Boolean).forEach(v=>{
+      if(gone[v.id]>=(v.updated||0))return;   // removed on this device after that backup was made
+      const ex=structOf(v.id);
+      if(!ex){store.structs.push(v);sa++;}else if(v.updated>(ex.updated||0)){Object.assign(ex,v);sa++;}
+    });
+  }
   if(d&&d.images&&typeof d.images==='object')Object.keys(d.images).forEach(k=>{const v=d.images[k];if(typeof v==='string'&&v.startsWith('data:image/'))saveImg(k,v);});
   store.changedAt=Date.now();saveNow();render();
-  toast('Đã gộp: thêm '+added+' cây, cập nhật '+updated+' cây'+(ia?', '+ia+' dẫn chứng':''));
+  toast('Đã gộp: thêm '+added+' cây, cập nhật '+updated+' cây'+(ia?', '+ia+' dẫn chứng':'')+(sa?', '+sa+' cấu trúc mở ý':''));
   return true;
 }
 function readFileInto(input,ta){
@@ -3424,7 +3484,7 @@ function openBackup(){
     '<h3>Nhận dữ liệu từ máy khác</h3>'+
     '<textarea id="bkText" rows="5" placeholder="Dán dữ liệu sao lưu vào đây…"></textarea>'+
     '<label class="file"><input type="file" id="bkFile" accept=".json,application/json"> Hoặc chọn file .json</label>'+
-    '<p class="fine">Bản sao lưu gồm mọi cây, kho dẫn chứng và ảnh. Khi gộp, cây và dẫn chứng trùng nhau giữ bản sửa gần nhất; không mục nào bị xoá.</p>'+
+    '<p class="fine">Bản sao lưu gồm mọi cây, kho dẫn chứng, cấu trúc mở ý và ảnh. Khi gộp, cây, dẫn chứng và cấu trúc trùng nhau giữ bản sửa gần nhất; không mục nào bị xoá.</p>'+
     '<p class="fine">Sao lưu gần nhất: '+ago(store.lastBackup)+' · '+store.trees.length+' cây trên máy này</p>';
   readFileInto(body.querySelector('#bkFile'),body.querySelector('#bkText'));
   body.querySelector('#bkDownload').addEventListener('click',async()=>{
@@ -3438,10 +3498,10 @@ function openBackup(){
 // layout: daosau/<code>/data = {state, updatedAt, stamp, origin, device}; daosau/<code>/img/<key> = picture
 const syncURL=p=>FB_DB+'/daosau/'+encodeURIComponent(CS.code)+'/'+p+'.json';
 function csSave(){try{localStorage.setItem(SYNCK,JSON.stringify(CS));}catch(e){}}
-function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],hideSample:!!store.hideSample,gone:store.gone||{}};}
+function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],structs:structList(),hideSample:!!store.hideSample,gone:store.gone||{}};}
 const sharedSnap=()=>JSON.stringify(sharedOf());
 const untouchedSample=t=>t.sample&&t.updated===t.created;
-function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length));}
+function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length))||structList().some(s=>s.updated);}
 const devName=()=>{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'Máy khác';};
 function syncErr(e){
   const m=String(e&&e.message||e||'');
@@ -3540,6 +3600,7 @@ function applyShared(d){
   store.trees=trees;
   if(d.lib&&Array.isArray(d.lib.items))store.lib=d.lib;
   store.principles=Array.isArray(d.principles)?d.principles:[];
+  if(Array.isArray(d.structs))store.structs=d.structs.map(normStruct).filter(Boolean);   // a copy from before structures existed keeps this device's own
   store.hideSample=!!d.hideSample;store.gone=d.gone&&typeof d.gone==='object'?d.gone:{};
   if(!trees.some(t=>t.id===store.cur))store.cur=trees[0].id;
   for(const k in hist)delete hist[k];
@@ -3576,7 +3637,8 @@ function mergeShared(a,b){
   const byId=(x,y,newer)=>{const m=new Map();(x||[]).forEach(i=>{if(i&&i.id)m.set(i.id,i);});(y||[]).forEach(i=>{if(!i||!i.id)return;const ex=m.get(i.id);if(!ex||(newer&&(i.updated||0)>(ex.updated||0)))m.set(i.id,i);});return [...m.values()];};
   const la=a.lib||{},lb=b.lib||{};
   const lib=(a.lib||b.lib)?Object.assign({},lb,la,{groups:byId(la.groups,lb.groups),folders:byId(la.folders,lb.folders),items:byId(la.items,lb.items,true)}):null;
-  return {trees,lib,principles:byId(a.principles,b.principles,true),hideSample:!!(a.hideSample||b.hideSample),gone};
+  const structs=byId(a.structs,b.structs,true).filter(s=>!(gone[s.id]>=(s.updated||0)));
+  return {trees,lib,principles:byId(a.principles,b.principles,true),structs,hideSample:!!(a.hideSample||b.hideSample),gone};
 }
 
 // pictures travel one by one, beside the data
@@ -3645,7 +3707,7 @@ const validCode=c=>/^[A-Za-z0-9_-]{16,64}$/.test(c);
 function openSync(){
   const body=document.createElement('div');body.id='syncBox';body.className='syncbox';
   if(!CS.code){
-    body.innerHTML='<p class="lead">Lưu mọi cây, kho dẫn chứng và ảnh lên đám mây (Firebase) và dùng chung giữa các máy. Xoá dữ liệu trình duyệt hay đổi máy cũng không mất: nhập lại mã là lấy về.</p>'+
+    body.innerHTML='<p class="lead">Lưu mọi cây, kho dẫn chứng, cấu trúc mở ý và ảnh lên đám mây (Firebase) và dùng chung giữa các máy. Xoá dữ liệu trình duyệt hay đổi máy cũng không mất: nhập lại mã là lấy về.</p>'+
       '<label class="fld"><span>Mã đồng bộ</span><input id="syncCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Dán mã từ máy khác, hoặc bấm Tạo mã mới"></label>'+
       '<div class="sync-row"><button type="button" class="btn sm" id="syncGen">Tạo mã mới</button><span class="fine">Ít nhất 16 ký tự: chữ, số, dấu gạch.</span></div>'+
       '<p class="fine"><b>Giữ mã như mật khẩu.</b> Ai có mã là xem và sửa được dữ liệu. Chép mã vào Ghi chú hoặc trình quản lý mật khẩu; máy khác nhập đúng mã này là đồng bộ.</p>';
@@ -3692,7 +3754,7 @@ function askConflict(){
 }
 // one place for guidance: how to use the app, and every shortcut
 const HELP_FREE='<p class="lead">Freestyle là nơi brainstorm tự do. Mỗi ý có thể là câu hỏi, câu trả lời, giả thuyết, ví dụ hoặc việc cần làm; app không gán loại và không chấm chỗ hở.</p>'+
-  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm <b>Đặt câu hỏi 6W1H</b> để tạo bảy câu hỏi: Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào. Mỗi câu hỏi vẫn là một ý tự do, có thể sửa chữ và viết tiếp bên dưới.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc đặt câu hỏi 6W1H.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
+  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm <b>Đặt câu hỏi 6W1H</b> để tạo bảy câu hỏi: Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào. Mỗi câu hỏi vẫn là một ý tự do, có thể sửa chữ và viết tiếp bên dưới.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần, ví dụ <b>Tìm ra vấn đề</b>: Fact, Desire, Gap, Impact, Root cause. Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc đặt câu hỏi 6W1H.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
   '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp.</p>';
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
@@ -4738,6 +4800,111 @@ function placementIssue(n){
   return null;
 }
 
+/* ---------- cấu trúc mở ý: named sets of child ideas, set up here and used on any idea ---------- */
+function structPreview(s){return s.items.join(' · ');}
+// the list the structure icon of the floating panel opens
+function structMenuHTML(){
+  const list=structList();
+  return '<div class="free-structs" role="group" aria-label="Chọn cấu trúc mở ý"><div class="fs-h">Mở ý theo cấu trúc</div>'+
+    (list.length?list.map(s=>'<button type="button" data-struct="'+esc(s.id)+'" title="Thêm '+s.items.length+' ý: '+esc(s.items.join(', '))+'"><span class="fs-n">'+esc(s.name)+'</span><span class="fs-i">'+esc(structPreview(s))+'</span></button>').join('')
+      :'<p class="fs-empty">Chưa có cấu trúc nào. Tạo một bộ ý con có tên, ví dụ “Tìm ra vấn đề”: Fact, Desire, Gap, Impact, Root cause.</p>')+
+    '<button type="button" class="fs-set" data-structs-manage>'+IC.sliders+(list.length?'Thiết lập cấu trúc':'Tạo cấu trúc')+'</button></div>';
+}
+// where there is no floating panel (outline, phones): the same choice in a dialog
+function openStructPicker(id){
+  const n=N(id);if(!n)return;
+  const host=n.type==='dig'?P(n.id):n,list=structList();
+  const body=document.createElement('div');body.className='stdlg';
+  body.innerHTML='<p class="lead">Thêm các ý con cho “'+esc(trunc(contentOf(host.text)||'(trống)',80))+'”.</p>'+
+    (list.length?'<div class="st-pick">'+list.map(s=>'<button type="button" class="st-opt" data-struct="'+esc(s.id)+'"><b>'+esc(s.name)+'</b><span>'+s.items.length+' ý: '+esc(structPreview(s))+'</span></button>').join('')+'</div>'
+      :'<p class="st-empty">Chưa có cấu trúc nào. Bấm “Thiết lập cấu trúc” để tạo một bộ ý con có tên.</p>');
+  body.addEventListener('click',e=>{const b=e.target.closest('[data-struct]');if(b){closeSheet('dlg');applyStruct(b.dataset.struct,id);}});
+  dialog('Mở ý theo cấu trúc',body,[{label:'Thiết lập cấu trúc',run:()=>{openStructs({back:()=>openStructPicker(id)});return false;}},{label:'Đóng',kind:'primary'}],{kind:'structpick'});
+}
+// every item of the structure becomes a child idea; those the idea already has are left as they are
+function applyStruct(sid,id){
+  const s=structOf(sid),n=N(id);if(!s||!n||!freestyle())return;
+  const host=n.type==='dig'?P(n.id):n,name=trunc(contentOf(host.text)||'Ý này',40);
+  const have=new Set(n.children.map(c=>itemKey(contentOf(c.text))));
+  const add=s.items.filter(t=>!have.has(itemKey(t)));
+  if(!add.length){
+    if(MAP.structOpen){MAP.structOpen=false;updatePanelState();}
+    toast('“'+name+'” đã có đủ '+s.items.length+' ý của “'+trunc(s.name,40)+'”');return;
+  }
+  pushUndo();
+  const nodes=add.map(t=>mk(runsToMarkup([{t,b:false,i:false}]),'f'));
+  n.children.push(...nodes);n.collapsed=false;
+  if(store.view==='map')MAP.open.add(id);
+  afterStruct(nodes[0].id,'end');
+  if(mobileReading())mobileGo(id);
+  const skip=s.items.length-add.length;
+  toast('Đã mở theo “'+trunc(s.name,40)+'”: thêm '+add.length+' ý'+(skip?', giữ nguyên '+skip+' ý đã có':''),{label:'Hoàn tác',run:undo});
+}
+// setting structures up happens here, apart from any tree
+function openStructs(opt){
+  opt=opt||{};
+  const list=structList();
+  const body=document.createElement('div');body.className='stdlg';
+  body.innerHTML='<p class="lead">Mỗi cấu trúc là một bộ ý con có tên, dùng chung cho mọi cây Freestyle. Trên sơ đồ, chọn một ý, bấm icon <b>Mở ý theo cấu trúc</b> rồi chọn tên cấu trúc: cả bộ ý con được thêm trong một lần bấm.</p>'+
+    (list.length?'<div class="st-list">'+list.map(s=>'<div class="st-row"><div class="st-main"><b>'+esc(s.name)+'</b><span>'+s.items.length+' ý: '+esc(structPreview(s))+'</span></div>'+
+      '<button type="button" class="btn sm" data-st-edit="'+esc(s.id)+'">Sửa</button><button type="button" class="btn sm quiet" data-st-del="'+esc(s.id)+'">Xoá</button></div>').join('')+'</div>'
+      :'<p class="st-empty">Chưa có cấu trúc nào.</p>')+
+    '<button type="button" class="btn" data-st-new>'+IC.plus+'Cấu trúc mới</button>';
+  body.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.stEdit){const s=structOf(b.dataset.stEdit);if(s)structForm(s,opt);}
+    else if(b.dataset.stDel)deleteStruct(b.dataset.stDel,opt);
+    else if(b.hasAttribute('data-st-new'))structForm(null,opt);
+  });
+  dialog('Cấu trúc mở ý',body,(opt.back?[{label:'Quay lại',run:()=>{opt.back();return false;}}]:[]).concat({label:'Đóng',kind:'primary'}),{kind:'structs'});
+}
+// one line per child idea; bullets and numbers pasted from a note are dropped
+function structItemsOf(text){
+  const seen=new Set();
+  return String(text||'').split('\n').map(l=>l.replace(/^\s*(?:[-*+•●○◦▪–]|\d+[.)])\s+/,'').replace(/\s+/g,' ').trim()).filter(t=>{const k=itemKey(t);if(!t||seen.has(k))return false;seen.add(k);return true;});
+}
+function structForm(s,opt){
+  const isNew=!s;
+  const body=document.createElement('div');body.className='evform';
+  body.innerHTML='<label class="fld"><span>Tên cấu trúc</span><input id="sfName" autocomplete="off" maxlength="80" placeholder="Ví dụ: Tìm ra vấn đề"></label>'+
+    '<label class="fld"><span>Các ý con, mỗi dòng một ý theo đúng thứ tự</span><textarea id="sfItems" rows="7" placeholder="Fact&#10;Desire&#10;Gap&#10;Impact&#10;Root cause"></textarea></label>'+
+    '<p class="fine">Sửa cấu trúc chỉ áp dụng cho những lần mở ý sau; các ý đã mở trước đó giữ nguyên.</p>';
+  body.querySelector('#sfName').value=s?s.name:'';
+  body.querySelector('#sfItems').value=s?s.items.join('\n'):'';
+  const submit=()=>{
+    const name=$('#sfName').value.replace(/\s+/g,' ').trim(),items=structItemsOf($('#sfItems').value);
+    if(!name){toast('Hãy đặt tên cho cấu trúc');$('#sfName').focus();return false;}
+    if(structList().some(x=>x!==s&&itemKey(x.name)===itemKey(name))){toast('Đã có cấu trúc tên “'+trunc(name,40)+'”. Hãy chọn tên khác.');$('#sfName').focus();return false;}
+    if(!items.length){toast('Thêm ít nhất một ý con, mỗi dòng một ý');$('#sfItems').focus();return false;}
+    const now=Date.now();
+    if(isNew)store.structs.push({id:'st-'+uid(),name,items,created:now,updated:now});
+    else Object.assign(s,{name,items,updated:now});
+    store.changedAt=now;save();
+    openStructs(opt);
+    toast(isNew?'Đã tạo cấu trúc “'+trunc(name,40)+'”':'Đã lưu cấu trúc “'+trunc(name,40)+'”');
+    return false;
+  };
+  body.addEventListener('keydown',e=>{
+    if(e.isComposing||e.keyCode===229)return;
+    if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();submit();return;}
+    if(e.key==='Enter'&&e.target.id==='sfName'){e.preventDefault();$('#sfItems').focus();}
+  });
+  dialog(isNew?'Cấu trúc mới':'Sửa cấu trúc',body,[{label:'Huỷ',run:()=>{openStructs(opt);return false;}},{label:isNew?'Tạo cấu trúc':'Lưu',kind:'primary',run:submit}],{kind:'structform'});
+  const inp=body.querySelector('#sfName');inp.focus();if(!isNew)inp.select();
+}
+function deleteStruct(sid,opt){
+  const i=structList().findIndex(s=>s.id===sid);if(i<0)return;
+  const s=store.structs.splice(i,1)[0];
+  store.gone=store.gone||{};store.gone[s.id]=Date.now();store.changedAt=Date.now();save();
+  openStructs(opt);
+  toast('Đã xoá cấu trúc “'+trunc(s.name,40)+'”',{label:'Hoàn tác',run:()=>{
+    if(store.gone)delete store.gone[s.id];s.updated=Date.now();
+    if(!structOf(s.id))store.structs.splice(Math.min(i,store.structs.length),0,s);
+    store.changedAt=Date.now();save();
+    if(!$('#dlg').hidden&&$('#dlg').dataset.kind==='structs')openStructs(opt);
+  }});
+}
+
 /* ---------- global wiring ---------- */
 /* Mobile navigation is local UI state; it never changes the saved tree structure. */
 const mobileQuery=window.matchMedia('(max-width:699px)');
@@ -4767,9 +4934,9 @@ function renderMobile(){
   if(root)h+='<h1>'+esc(contentOf(n.text)||'Cây chưa đặt tên')+'</h1>';
   else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>';
   h+='<div class="mobile-next">';
-  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
+  if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button><button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
   else if(!host)h+='<button class="btn" data-mobile-edit="'+esc(n.id)+'">Sửa nội dung</button><button class="btn" data-mobile-more="'+esc(n.id)+'">Thao tác khác</button>';
-  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button>';
+  if(freestyle()&&!root)h+='<button class="btn" data-mobile-next="6w1h" data-node="'+esc(n.id)+'">Đặt câu hỏi 6W1H</button><button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>';
   if(isProof(n)&&!withinDig(n))h+='<button class="btn" data-mobile-dig="'+esc(n.id)+'">'+(freestyle()?'Đào sâu':'Đào sâu câu hỏi')+(n.dig&&n.dig.children.length?' · '+n.dig.children.length:'')+'</button>';
   h+='</div></section>';
   if(((n.ev||[]).length||(n.refs||[]).length)&&(!freestyle()||root)){
@@ -4901,6 +5068,7 @@ const ACTS={
   toggleView:()=>setView(store.view==='map'?'outline':'map'),
   openLib:()=>openLibrary(),
   gloss:()=>openGloss('m'),
+  structs:()=>{closeAllSheets();openStructs();},
   undo:()=>undo(),
   openIns:()=>{insTab='open';renderInsights();openSheet('insSheet');}
 };
