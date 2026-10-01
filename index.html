@@ -12,6 +12,7 @@
   --line:#DCE1E8; --line-2:#C2C9D5; --sel:#E5ECFA; --ring:rgba(37,99,235,.35); --dots:#D3D9E2;
   --q:#2563EB; --c:#C47400; --a:#0B8A8F; --f:#6E56CF; --p:#8A6A4C; --e:#56657E; --x:#6E56CF; --ans:#2F8A4E;
   --on-type:#FFFFFF; --btn:#151D2C; --on-btn:#FFFFFF; --danger:#C62A1E;
+  --k-y:#C99A06; --k-r:#E0444A; --k-g:#2E9A58; --k-b:#1F74D6; --k-s:#8A919E;
   --shadow:0 1px 2px rgba(21,29,44,.06),0 10px 28px rgba(21,29,44,.10);
   --font:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --serif:"Literata",Georgia,"Times New Roman",serif;
@@ -23,6 +24,7 @@
     --line:#252F40; --line-2:#354257; --sel:#1A273B; --ring:rgba(106,165,255,.45); --dots:#1E2735;
     --q:#6AA5FF; --c:#F2B441; --a:#45C7C9; --f:#B4A5F5; --p:#CDB294; --e:#9AA8BD; --x:#B4A5F5; --ans:#6FCF97;
     --on-type:#0E131B; --btn:#E7EBF2; --on-btn:#0E131B; --danger:#FF7A6E;
+  --k-y:#F2C94C; --k-r:#FF6B6E; --k-g:#5BD08A; --k-b:#5EA8FF; --k-s:#9AA3B2;
     --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.45);
     color-scheme:dark;
   }
@@ -32,6 +34,7 @@
   --line:#252F40; --line-2:#354257; --sel:#1A273B; --ring:rgba(106,165,255,.45); --dots:#1E2735;
   --q:#6AA5FF; --c:#F2B441; --a:#45C7C9; --f:#B4A5F5; --p:#CDB294; --e:#9AA8BD; --x:#B4A5F5; --ans:#6FCF97;
   --on-type:#0E131B; --btn:#E7EBF2; --on-btn:#0E131B; --danger:#FF7A6E;
+  --k-y:#F2C94C; --k-r:#FF6B6E; --k-g:#5BD08A; --k-b:#5EA8FF; --k-s:#9AA3B2;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.45);
   color-scheme:dark;
 }
@@ -793,6 +796,55 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
 .sync-opts{margin:0 0 8px;padding-left:20px;font-size:14px;color:var(--ink-2)}
 .sync-opts li{margin:5px 0}
 .linkbtn{color:var(--q);text-decoration:underline;text-underline-offset:2px;font:inherit}
+/* Freestyle colours: the card takes one of five colours; the legend says what each one means */
+.k-y{--kc:var(--k-y)}.k-r{--kc:var(--k-r)}.k-g{--kc:var(--k-g)}.k-b{--kc:var(--k-b)}.k-s{--kc:var(--k-s)}
+.mn.kc,.n.kc,.badge.kc{--tc:var(--kc);--tf:color-mix(in srgb,var(--kc) 18%,var(--surface))}
+.mn.kc>rect:not(.halo){stroke-width:2.2}
+.n.kc>.row .bul i{width:15px;height:15px;border-width:2px;background:color-mix(in srgb,var(--kc) 55%,var(--surface))}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;background:color-mix(in srgb,var(--kc) 30%,var(--surface));border:2px solid var(--kc);flex:none}
+.sw.none{background:transparent;border:1.5px dashed var(--muted)}
+.free-actions .sw{width:18px;height:18px}
+.free-colors{display:flex;flex-direction:column;gap:1px;width:232px;margin-top:4px;padding:4px 0 0;border-top:1px solid var(--line)}
+.free-colors [data-color]{display:flex;align-items:center;gap:9px;min-height:32px;padding:0 8px;border-radius:8px;text-align:left;font-size:13.5px;color:var(--ink)}
+.free-colors [data-color]:hover,.free-colors [data-color]:focus-visible{background:var(--surface-2)}
+.free-colors [data-color][aria-pressed="true"]{background:var(--sel);font-weight:600}
+.free-colors .fc-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.free-colors kbd,.cl-opt kbd{font:500 11px var(--font);color:var(--muted)}
+.cl-pick{display:flex;flex-direction:column;gap:8px}
+.cl-opt{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:left;font-size:15px}
+.cl-opt[aria-pressed="true"]{border-color:var(--kc,var(--ink-2));background:color-mix(in srgb,var(--kc,var(--ink-2)) 10%,var(--surface));font-weight:600}
+.cl-opt .sw{width:18px;height:18px}
+.cl-opt span:nth-child(2){flex:1}
+.cl-names{display:flex;flex-direction:column;gap:10px;margin:0 0 6px}
+.cl-names label{display:flex;align-items:center;gap:10px}
+.cl-names label>span:nth-child(2){flex:none;width:86px;font-size:13px;color:var(--ink-2)}
+.cl-names input{flex:1;min-width:0;height:40px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:15px var(--font);padding:0 12px}
+.legend>button[aria-pressed="true"]{background:var(--sel);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--kc,var(--ink-2))}
+.legend>button .sw{width:12px;height:12px}
+.legend .lg-n{font-variant-numeric:tabular-nums;color:var(--muted)}
+.legend .lg-set{color:var(--muted)}
+/* picking a colour in the legend: the other cards step back, folded branches holding that colour say so */
+#mapG.cfocus .mn:not(.hit)>:not(.fold){opacity:.22}
+#mapG.cfocus .mn.root:not(.hit)>:not(.fold){opacity:.6}
+#mapG.cfocus .edges{opacity:.35}
+.fold.hit rect{stroke:var(--kc);stroke-width:2;fill:color-mix(in srgb,var(--kc) 22%,var(--surface))}
+.fold.hit text{fill:var(--ink)}
+/* notes folded away: a small tab on the card says there is more, a tap opens it */
+.ntk{cursor:pointer}
+.ntk rect{fill:var(--surface);stroke:var(--line-2);stroke-width:1.2}
+.ntk path{fill:none;stroke:var(--ink-2);stroke-width:1.5;stroke-linecap:round}
+.ntk:hover rect{stroke:var(--ink-2)}
+.ntk.on rect{fill:var(--sel);stroke:var(--q)}
+.depthctl .dsep{width:1px;height:18px;margin:0 4px;padding:0;background:var(--line)}
+.depthctl #noteTog{display:flex;align-items:center;gap:5px}
+.depthctl #noteTog svg.i{width:15px;height:15px}
+.mobile-card.kc{border-left:4px solid var(--kc)}
+.mobile-ctag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.mobile-ctag .sw{width:11px;height:11px}
+.ins-colors{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.ins-colors button{display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:15px;border:1px solid var(--line-2);font-size:12.5px;color:var(--ink-2)}
+.ins-colors button[aria-pressed="true"]{background:var(--sel);color:var(--ink);border-color:var(--kc,var(--ink-2))}
+.ins-colors .sw{width:11px;height:11px}
 /* notes: the explanation under the content, 20% smaller and quieter */
 .medit .nt,.txt .nt{font-size:.8em;font-weight:400;color:var(--ink-2)}
 .medit .nt b,.txt .nt b,.n.t-c>.row .txt .nt b,.head.t-c .txt .nt b{font-weight:700}
@@ -1057,6 +1109,7 @@ button.ag-slot:hover{background:var(--surface-2)}
   <svg id="mapSvg" role="img" aria-label="Sơ đồ tư duy của nhánh đang xem"><g id="mapG"></g></svg>
   <div class="depthctl" role="group" aria-label="Hiện tới tầng" id="depthCtl">
     <span>Độ sâu</span><button data-depth="1">1</button><button data-depth="2">2</button><button data-depth="3">3</button><button data-depth="0">Tất cả</button>
+    <i class="dsep" id="noteSep" hidden></i><button id="noteTog" type="button" hidden></button>
   </div>
   <div class="legend" id="legend"></div>
   <div class="mapctl">
@@ -1081,6 +1134,7 @@ button.ag-slot:hover{background:var(--surface-2)}
       <button class="mm" data-tb="addSib" title="Thêm ý cùng cấp (Enter)" aria-label="Thêm ý cùng cấp"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="10" height="6" rx="1.5"/><path d="M9 13v8M5 17h8"/></svg></button>
       <button class="mm" data-tb="edit" title="Sửa chữ (Space)" aria-label="Sửa chữ"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></button>
       <button class="om" data-tb="type" title="Đổi loại ý" aria-label="Đổi loại ý"><i class="badge t-none" id="tbType"></i></button>
+      <button data-tb="color" title="Tô màu" aria-label="Tô màu" hidden><i class="sw none" id="tbColor"></i></button>
       <button data-tb="argue" title="Cách luận chứng" aria-label="Cách luận chứng"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="12" cy="19" r="2.2"/><path d="M5 7v2.5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7M12 7v9.8"/></svg></button>
       <button data-tb="attach" title="Dẫn chứng" aria-label="Dẫn chứng"><svg class="i" viewBox="0 0 24 24"><path d="M20.5 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l8.6-8.6a3.4 3.4 0 0 1 4.8 4.8l-8.5 8.5a1.8 1.8 0 0 1-2.5-2.5l7.8-7.8"/></svg></button>
       <button data-tb="zoom" title="Phóng vào ý này (⌘.)" aria-label="Phóng vào ý này"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4"/><circle cx="12" cy="12" r="2.5"/></svg></button>
@@ -1207,6 +1261,9 @@ const LEGACY={q:1,e:1,p:1,x:1};
 const TYPE_BY_EMOJI=[['🧭','x'],['❓','q'],['💡','c'],['🧩','a'],['🧱','a'],['📎','e'],['⚠️','a'],['⚠','a'],['✅','c']];
 const STATUS={done:{label:'Đã rõ',md:'✔'},bottom:{label:'Chạm đáy',md:'⬛'}};
 const SORDER=[null,'done','bottom'];
+// Freestyle colours: five, named once for every Freestyle tree (Đặt tên màu); a card has one colour or none
+const COLORS={y:{name:'Quan trọng',label:'Vàng',md:'🟡'},r:{name:'Cần xét',label:'Đỏ',md:'🔴'},g:{name:'Đã chốt',label:'Xanh lá',md:'🟢'},b:{name:'Hỏi lại khách',label:'Xanh dương',md:'🔵'},s:{name:'Để sau',label:'Xám',md:'⚪'}};
+const CK=['y','r','g','b','s'];
 
 // Luận chứng: the standard ways of arranging reasons to prove a claim. Each is a frame of roles the claim's children fill.
 const METHODS={
@@ -1295,6 +1352,8 @@ const IC={
   proof:'<svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="12" cy="19" r="2.2"/><path d="M5 7v2.5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7M12 7v9.8"/></svg>',
   compass:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
   down:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
+  eye:'<svg class="i" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeOff:'<svg class="i" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>',
   keys:'<svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.2"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17.5 10h.01M8 14h8"/></svg>'
 };
 const MAC=/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent||'');
@@ -1351,9 +1410,22 @@ function normNode(n){
   if(Array.isArray(n.ev)){const ev=n.ev.map(v=>String(v==null?'':v).replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);if(ev.length)o.ev=ev;}
   if(METHODS[n.method])o.method=n.method;
   if(typeof n.role==='string'&&n.role)o.role=n.role;
+  if(COLORS[n.color])o.color=n.color;
   return o;
 }
 const evCount=n=>((n.ev&&n.ev.length)||0)+((n.refs&&n.refs.length)||0);
+const colorName=k=>(store&&store.colors&&store.colors.names[k])||COLORS[k].name;
+const colorOf=n=>freestyle()&&n&&n.type==='f'&&COLORS[n.color]?n.color:'';
+function colorCounts(root){const c={};(function w(n){const k=colorOf(n);if(k)c[k]=(c[k]||0)+1;n.children.forEach(w);if(n.dig)w(n.dig);})(root);return c;}
+const hasColor=(n,k)=>n.children.some(c=>colorOf(c)===k||hasColor(c,k))||!!(n.dig&&hasColor(n.dig,k));
+function normColors(c){
+  const names={};
+  if(c&&c.names&&typeof c.names==='object')CK.forEach(k=>{const v=String(c.names[k]==null?'':c.names[k]).replace(/\s+/g,' ').trim().slice(0,40);if(v)names[k]=v;});
+  return {names,updated:+(c&&c.updated)||0};
+}
+// notes can be folded away on the map of a Freestyle tree; a view choice kept on this device only
+const notesHidden=()=>freestyle()&&!!(store.noteHide&&store.noteHide[curTree().id]);
+const stripNotes=s=>{s=String(s||'');const k=s.split('\n').filter(l=>!l.startsWith('> ')).join('\n').replace(/^\n+|\n+$/g,'');return k.trim()?k:s;};
 // the role an idea plays in its parent's frame, if the parent has chosen a way to argue
 function roleOf(n,p){if(!n.role||!p||!p.method)return null;const m=METHODS[p.method];return m?m.roles.find(r=>r.k===n.role)||null:null;}
 function slotsOf(n){
@@ -1567,6 +1639,7 @@ if(Array.isArray(store.structs))store.structs=store.structs.map(normStruct).filt
 else{store.structs=[seedStruct()];saveNow();}
 // added once to every device; a 6W1H someone removed (its tombstone in gone) stays removed
 if(!structOf('st-6w1h')&&!(store.gone&&store.gone['st-6w1h'])){store.structs.push(seed6w1h());saveNow();}
+store.colors=normColors(store.colors);
 store.view='map';
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{});}catch(e){}
 
@@ -1665,7 +1738,12 @@ function mkParsed(raw){
 }
 function parseOutline(text,free){
   const out=[];let heads=[],container=null,bstack=[],lastBullet=null;
-  const make=free?raw=>{const t=cleanText(raw);return t?mk(t,'f'):null;}:mkParsed;
+  const make=free?raw=>{
+    let t=cleanText(raw),color=null;
+    for(const k of CK){if(t.startsWith(COLORS[k].md)){color=k;t=t.slice(COLORS[k].md.length).replace(/^\uFE0F/,'').trim();break;}}
+    if(!t||/^Chú thích màu:/.test(t))return null;
+    const n=mk(t,'f');if(color)n.color=color;return n;
+  }:mkParsed;
   const attach=(parent,node)=>{(parent?parent.children:out).push(node);};
   const top=()=>heads.length?heads[heads.length-1].node:null;
   const sectionParent=()=>container||top();
@@ -1716,12 +1794,14 @@ function toMarkdown(node){
   const lines=[];
   (function w(n,d,p){
     const r=roleOf(n,p),m=n.type==='c'&&METHODS[n.method],pad='  '.repeat(d+1);
-    lines.push('  '.repeat(d)+'- '+(n.type&&TYPES[n.type]?TYPES[n.type].md+' ':'')+(r?'['+r.label+'] ':'')+n.text.split('\n').filter(l=>!l.startsWith('> ')).join(' ').replace(/\s+/g,' ').trim()+(m?' (luận chứng: '+m.label+')':''));
+    lines.push('  '.repeat(d)+'- '+(n.type&&TYPES[n.type]&&TYPES[n.type].md?TYPES[n.type].md+' ':'')+(colorOf(n)?COLORS[n.color].md+' ':'')+(r?'['+r.label+'] ':'')+n.text.split('\n').filter(l=>!l.startsWith('> ')).join(' ').replace(/\s+/g,' ').trim()+(m?' (luận chứng: '+m.label+')':''));
     n.text.split('\n').filter(l=>l.startsWith('> ')&&l.slice(2).trim()).forEach(l=>lines.push(pad+'> '+l.slice(2).trim()));
     (n.ev||[]).forEach(v=>lines.push(pad+'- 📎 '+v));
     (n.refs||[]).forEach(id=>{const it=itemOf(id);if(it)lines.push(pad+'- 📎 '+it.title+(it.source?' ('+[it.source,it.date?it.date.slice(0,4):''].filter(Boolean).join(', ')+')':'')+(it.url?' '+it.url:''));});
     n.children.forEach(c=>w(c,d+1,n));
   })(node,0,P(node.id));
+  const cnt=colorCounts(node),used=CK.filter(k=>cnt[k]);
+  if(used.length)lines.push('','Chú thích màu: '+used.map(k=>COLORS[k].md+' '+colorName(k)).join(' · '));
   return lines.join('\n');
 }
 function slug(s){
@@ -1902,7 +1982,7 @@ function buildLi(n){
 }
 function paint(li,n){
   const p=P(n.id),sub=n.type==='c'&&isSub(n);
-  li.className='n '+(n.type?'t-'+n.type:'t-none')+(sub?' sub':'')+(n.children.length?' has-kids':'')+(n.collapsed&&n.children.length?' collapsed':'')+(isOpen(n,p)?' open':'');
+  li.className='n '+(n.type?'t-'+n.type:'t-none')+(sub?' sub':'')+(n.children.length?' has-kids':'')+(n.collapsed&&n.children.length?' collapsed':'')+(isOpen(n,p)?' open':'')+(colorOf(n)?' kc k-'+n.color:'');
   const row=li.firstElementChild;
   const tl=row.querySelector('.tl'),iss=placementIssue(n);tl.className='tl'+(n.type?' t-'+n.type:'');tl.textContent=freestyle()?'':labelLine(n,p,true,sub);
   if(iss){const w=document.createElement('b');w.className='wtag';w.textContent=' · đặt sai chỗ';tl.appendChild(w);}tl.title=iss?iss.msg:(n.type&&!freestyle()?'Xem định nghĩa':'');
@@ -2118,6 +2198,13 @@ function setType(id,t){
   if(freestyle())return;
   const n=N(id);if(!n)return;if((n.type||null)===(t||null))return;
   pushUndo();n.type=t||null;if(n.type!=='c')delete n.method;touch();repaint(id);if(store.view!=='map')n.children.forEach(c=>repaint(c.id));scheduleCounts();updateToolbarState();
+}
+// Freestyle only: one of five colours, or none; Undo takes it back
+function setColor(id,k){
+  const n=N(id);if(!n||!freestyle()||n.type!=='f')return;
+  k=COLORS[k]?k:null;MAP.colorOpen=false;
+  if((n.color||null)!==k){pushUndo();if(k)n.color=k;else delete n.color;touch();repaint(id);}
+  updateToolbarState();if(!mpanel.hidden)updatePanelState();
 }
 function delNode(id){
   if(id===zoomId())return;
@@ -2356,6 +2443,7 @@ function updateToolbarState(){
   $$('[data-tb]',toolbar).forEach(b=>{if(['outdent','indent','up','down','zoom','del','addSib'].includes(b.dataset.tb))b.disabled=isHead;});
   const tb=$('#tbType');tb.className='badge '+(n.type?'t-'+n.type:'t-none');tb.textContent='';
   $$('[data-tb="type"],[data-tb="argue"],[data-tb="attach"]',toolbar).forEach(b=>b.hidden=freestyle());
+  toolbar.querySelector('[data-tb="color"]').hidden=!(freestyle()&&n.type==='f');$('#tbColor').className='sw '+(colorOf(n)?'k-'+n.color:'none');
   $$('#typePop button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.type||null)===(n.type||null))));
   renderChips(n);
   if(!$('#mapPanel').hidden)updatePanelState();
@@ -2395,6 +2483,7 @@ bindTap(toolbar,b=>{
   else if(a==='down')move(id,1);
   else if(a==='attach')attachFor(id);
   else if(a==='argue')openArgue(id);
+  else if(a==='color')openColorPicker(id);
   else if(a==='zoom')zoomTo(id);
   else if(a==='del')delNode(id);
 });
@@ -2562,7 +2651,7 @@ function moveTo(id,tid,mode){
 }
 
 /* ---------- map ---------- */
-const MAP={k:1,tx:0,ty:0,key:null,w:0,h:0,rootY:0,open:new Set(),lay:new Map(),sel:null,editing:null,editNext:false,created:null,createdUndo:-1,editSnap:null,editOrig:'',pendingEdit:null};
+const MAP={k:1,tx:0,ty:0,key:null,w:0,h:0,rootY:0,open:new Set(),lay:new Map(),sel:null,editing:null,editNext:false,created:null,createdUndo:-1,editSnap:null,editOrig:'',pendingEdit:null,peek:new Set(),cfocus:null,cfTree:null,colorOpen:false,colorBack:null};
 // how many levels below the branch the map shows; 0 = all. Nodes past the limit fold into "+N" without touching the outline.
 const mapDepth=()=>(typeof store.mapDepth==='number'?store.mapDepth:(window.innerWidth<600?2:3));
 const svg=$('#mapSvg');let mctx=null;
@@ -2623,6 +2712,9 @@ function wrapText(ctx,text,maxW,maxLines){
 function renderMap(){
   if(mobileReading()){renderMobile();return;}
   const t=curTree(),zid=zoomId(),z=N(zid);
+  if(MAP.cfTree!==t.id){MAP.cfTree=t.id;MAP.cfocus=null;MAP.peek.clear();}
+  if(MAP.cfocus&&!colorCounts(z)[MAP.cfocus])MAP.cfocus=null;
+  renderNoteTog();
   renderCrumbs($('#mapCrumbs'));
   if(!mctx)mctx=document.createElement('canvas').getContext('2d');
   const ctx=mctx,GX=46,GY=12,lim=mapDepth();
@@ -2636,7 +2728,8 @@ function renderMap(){
       kids.push({ghost:true,pid:n.id,r:{k:'__main',type:freestyle()?'f':'c',hint:freestyle()?'Thêm một ý mới':'Thêm một luận điểm chính: một chủ đề nhỏ của cây này'},label,w:Math.ceil(ctx.measureText(label).width)+30,h:34,kids:[],depth:1});
       return {n,p,w:0,h:0,hidden:true,lines:[],kids,show:true,depth:0,root:true,evs:[],lab:'',top:0};
     }
-    const host=n.type==='dig'?P(n.id):null,txt=host?host.text:n.text;
+    const host=n.type==='dig'?P(n.id):null,full=host?host.text:n.text,short=!host&&notesHidden()?stripNotes(full):full;
+    const nts=short!==full?(MAP.peek.has(n.id)||MAP.editing===n.id?'open':'shut'):'',txt=nts==='shut'?short:full;
     const len=txt.trim().length,root=depth===0,sub=n.type==='c'&&inClaim,fs=root?16:14,lh=root?22:20;
     const maxW=Math.round(Math.min(root?440:420,Math.max(root?260:220,(root?260:220)+(len-(root?80:100))*0.8)));
     const fw=root||n.type==='c'?600:400;
@@ -2660,7 +2753,7 @@ function renderMap(){
     const ys=[],nlh=Math.round(lh*0.8);let yy=top;
     lines.forEach((ln,i)=>{const nt=wr.notes[i];if(nt&&i>0&&!wr.notes[i-1])yy+=3;const hh=nt?nlh:lh;ys.push(yy+Math.round(hh*0.72));yy+=hh;});
     const textH=yy-top;
-    const w=Math.ceil(Math.max(tw,lw-12,24))+30,h=top+textH+8+evH;
+    const w=Math.ceil(Math.max(tw,lw-12,24))+30,h=top+textH+8+evH+(nts?6:0);
     // the frame of the chosen way of arguing: roles nobody has filled yet show as dashed slots
     const ghosts=[];
     if(!freestyle()&&n.type==='c'&&METHODS[n.method])slotsOf(n).forEach(x=>{for(let i=0;i<x.ghosts;i++){
@@ -2674,7 +2767,7 @@ function renderMap(){
     // empty slots are affordances, not content, so the depth limit does not hide them
     const show=(n.children.length>0||ghosts.length>0)&&(root||(!n.collapsed&&(!limited||!n.children.length)));
     const kids=show?n.children.map(c=>build(c,depth+1,n,inClaim||n.type==='c')).concat(ghosts):[];
-    return {n,p,w,h,oh:h+labH,labH,lines,notes:wr.notes,ys,fs,lh,fw,root,sub,kids,show,depth,lab,top,evs,more,evTop:top+textH+8};
+    return {n,p,w,h,oh:h+labH,labH,lines,notes:wr.notes,ys,fs,lh,fw,root,sub,kids,show,depth,lab,top,evs,more,evTop:top+textH+8,nts};
   }
   const L=build(z,0,P(zid),pathTo(zid).slice(0,-1).some(x=>x.type==='c'));
   const gapOf2=l=>l.hidden?30:GY;   // separate main claims read as separate topics
@@ -2698,9 +2791,10 @@ function renderMap(){
     }
     const n=l.n;
     const sel=n.id===MAP.sel;
-    const cls='mn '+(n.type?'t-'+n.type:'t-none')+(l.sub?' sub':'')+(isOpen(n,l.p)?' open':'')+(l.root?' root':'')+(sel?' sel':'');
+    const kc=colorOf(n);
+    const cls='mn '+(n.type?'t-'+n.type:'t-none')+(l.sub?' sub':'')+(isOpen(n,l.p)?' open':'')+(l.root?' root':'')+(sel?' sel':'')+(kc?' kc k-'+kc:'')+(MAP.cfocus&&kc===MAP.cfocus?' hit':'');
     const rx=n.type==='a'||n.type==='ans'?6:n.type==='q'?16:10;
-    let s='<g class="'+cls+'" data-id="'+n.id+'" transform="translate('+l.x+','+l.y+')">'+(sel?'<rect class="halo" x="-5" y="-5" width="'+(l.w+10)+'" height="'+(l.h+10)+'" rx="'+(rx+4)+'"/>':'')+'<rect width="'+l.w+'" height="'+l.h+'" rx="'+rx+'"/>';
+    let s='<g class="'+cls+'" data-id="'+n.id+'" transform="translate('+l.x+','+l.y+')">'+(kc?'<title>'+esc(colorName(kc))+'</title>':'')+(sel?'<rect class="halo" x="-5" y="-5" width="'+(l.w+10)+'" height="'+(l.h+10)+'" rx="'+(rx+4)+'"/>':'')+'<rect width="'+l.w+'" height="'+l.h+'" rx="'+rx+'"/>';
     if(l.lab)s+='<text class="tl" x="4" y="-9">'+esc(l.lab)+'</text>';
     s+='<text class="tx" style="font-size:'+l.fs+'px;font-weight:'+l.fw+'">'+l.lines.map((ln,i)=>'<tspan x="15" y="'+l.ys[i]+'"'+(l.notes[i]?' class="nt" style="font-size:'+noteFs(l.fs)+'px;font-weight:400"':'')+'>'+richTspans(ln,l.notes[i]?700:l.fw>=600?800:700)+'</tspan>').join('')+'</text>';
     if(l.evs.length){
@@ -2714,6 +2808,7 @@ function renderMap(){
       if(l.more)s+='<text class="evmore" x="27" y="'+(y+11)+'">+'+l.more+' dẫn chứng khác</text>';
       s+='</g>';
     }
+    if(l.nts)s+='<g class="ntk'+(l.nts==='open'?' on':'')+'" data-peek="'+n.id+'" transform="translate(14,'+l.h+')"><title>'+(l.nts==='open'?'Ẩn lại ghi chú của ý này':'Xem ghi chú của ý này')+'</title><rect y="-8" width="26" height="16" rx="8"/><path d="M7.5 -3h11M7.5 0h11M7.5 3h6.5"/></g>';
     // a claim or reason that has been questioned carries a small count; it opens the dig
     const nq=isProof(n)&&n.dig?n.dig.children.length:0;
     if(nq)s+='<g class="dg" data-dig="'+n.id+'" transform="translate('+(l.w-6)+','+l.h+')"><title>Đào sâu: '+nq+' ý</title><rect x="-18" y="-9" width="30" height="18" rx="9"/><text x="-3" y="4" text-anchor="middle">?'+nq+'</text></g>';
@@ -2722,11 +2817,13 @@ function renderMap(){
     if(l.root&&zid!==t.root.id)s+='<g class="up" data-up="1" transform="translate(-20,'+(l.h/2)+')"><title>Ra một tầng (Esc)</title><circle r="12"/><path d="M2.5 -5l-5 5 5 5"/></g>';
     if(n.children.length&&!l.root){
       const lbl=l.show?'−':'+'+(stats(n).total-1),pw=Math.max(20,lbl.length*7+10);
-      s+='<g class="fold" data-fold="'+n.id+'" data-depth="'+l.depth+'" data-show="'+(l.show?1:0)+'" transform="translate('+l.w+','+(l.h/2)+')"><rect x="'+(-pw/2)+'" y="-10" width="'+pw+'" height="20" rx="10"/><text y="4" text-anchor="middle">'+lbl+'</text></g>';
+      const fh=MAP.cfocus&&!l.show&&hasColor(n,MAP.cfocus);
+      s+='<g class="fold'+(fh?' hit k-'+MAP.cfocus:'')+'" data-fold="'+n.id+'" data-depth="'+l.depth+'" data-show="'+(l.show?1:0)+'" transform="translate('+l.w+','+(l.h/2)+')"><rect x="'+(-pw/2)+'" y="-10" width="'+pw+'" height="20" rx="10"/><text y="4" text-anchor="middle">'+lbl+'</text></g>';
     }
     nodes+=s+'</g>';
   })(L);
   $('#mapG').innerHTML='<g class="edges">'+edges+'</g>'+nodes;
+  $('#mapG').classList.toggle('cfocus',!!MAP.cfocus);
   renderLegend();
   MAP.w=maxX;MAP.h=L.sh;MAP.rootY=L.y+L.h/2;
   const key=t.id+':'+zid;
@@ -2848,6 +2945,8 @@ function mapTap(target){
   if(sl){const [pid,rk]=sl.dataset.slot.split('|');if(MAP.editing)commitMapEdit(false);if(rk==='__main')mapAddChild(pid,freestyle()?'f':'c');else if(rk==='__q')mapAddChild(pid,'q');else if(rk==='__ans')mapAddChild(pid,'ans');else addRoleChild(pid,rk);return;}
   const dg=target.closest('[data-dig]');
   if(dg){if(MAP.editing)commitMapEdit(false);zoomTo(dg.dataset.dig);return;}
+  const pk=target.closest('[data-peek]');
+  if(pk){const id=pk.dataset.peek;if(MAP.editing)commitMapEdit(false);if(MAP.peek.has(id))MAP.peek.delete(id);else MAP.peek.add(id);renderMap();return;}
 
   const up=target.closest&&target.closest('[data-up]');
   if(up){if(MAP.editing)commitMapEdit(false);zoomOut();return;}
@@ -2965,6 +3064,7 @@ function startMapEdit(id,pos){
   medit.className='medit t-'+(n.type||'none');
   medit.dataset.ph=MAP.editPh||phOf(n);MAP.editPh=null;
   medit.innerHTML=markupToHTML(n.text);medit.hidden=false;
+  if(notesHidden()&&stripNotes(n.text)!==n.text)renderMap();
   readableZoom(id);positionEditor();ensureMapVisible(id);
   medit.focus({preventScroll:true});
   const len=n.text.length;setCaret(medit,pos==='start'?0:(typeof pos==='number'?Math.max(0,Math.min(pos,len)):len));
@@ -3066,6 +3166,7 @@ function mapToolbar(b){
       else if(a==='del')delNode(id);
       else if(a==='attach')attachFor(id);
       else if(a==='argue')openArgue(id);
+      else if(a==='color')openColorPicker(id);
     }
   });
 }
@@ -3080,8 +3181,9 @@ function renderPanel(){
     mpanel.innerHTML='<div class="free-actions" role="group" aria-label="Thao tác với ý">'+
       '<button type="button" data-add="f" title="Thêm ý" aria-label="Thêm ý">'+IC.plus+'</button>'+
       (n.type==='f'?'<button type="button" data-tb="zoom" title="Đào sâu" aria-label="Đào sâu">'+IC.magnify+'</button>':'')+
-      '<button type="button" data-free-struct title="Mở ý theo cấu trúc" aria-label="Mở ý theo cấu trúc" aria-haspopup="true" aria-expanded="'+!!MAP.structOpen+'">'+IC.struct+'</button></div>'+
-      (MAP.structOpen?structMenuHTML():'');
+      '<button type="button" data-free-struct title="Mở ý theo cấu trúc" aria-label="Mở ý theo cấu trúc" aria-haspopup="true" aria-expanded="'+!!MAP.structOpen+'">'+IC.struct+'</button>'+
+      (n.type==='f'?'<button type="button" data-free-color title="Tô màu (phím 1–5, phím 0 bỏ màu)" aria-label="Tô màu" aria-haspopup="true" aria-expanded="'+!!MAP.colorOpen+'"><i class="sw '+(colorOf(n)?'k-'+n.color:'none')+'"></i></button>':'')+'</div>'+
+      (MAP.structOpen?structMenuHTML():'')+(MAP.colorOpen&&n.type==='f'?colorMenuHTML(n):'');
     MAP.panelFor=MAP.sel;MAP.panelSig=panelSig(n);return;
   }
   const p=P(n.id),iss=placementIssue(n),r=roleOf(n,p),pm=p&&METHODS[p.method],sub=n.type==='c'&&(isSub(n)||(p&&p.type==='c'));
@@ -3140,15 +3242,15 @@ function evidenceHTML(n){
 function panelSig(n){
   const p=P(n.id);
   return JSON.stringify([n.type,n.method||'',n.role||'',p?[p.type,p.method||'',p.children.map(c=>c.role||'').join()]:0,n.ev||[],n.refs||[],!!n.text.trim(),/\?\s*$/.test(n.text),
-    n.children.map(c=>(c.type||'-')+(c.role||'')+(c.text.trim()||evCount(c)?1:0)).join(),!!MAP.methodsOpen,MAP.structOpen?structList():0]);
+    n.children.map(c=>(c.type||'-')+(c.role||'')+(c.text.trim()||evCount(c)?1:0)).join(),!!MAP.methodsOpen,MAP.structOpen?structList():0,n.color||'',!!MAP.colorOpen,MAP.colorOpen?CK.map(colorName).join():0]);
 }
 function showPanel(){
   if(!MAP.sel||!IDX.has(MAP.sel)){hidePanel();return;}
   // back from setting structures up: the list they were opened from comes back open
-  if(MAP.panelFor!==MAP.sel){MAP.methodsOpen=false;MAP.structOpen=MAP.structBack===MAP.sel;MAP.structBack=null;renderPanel();}
+  if(MAP.panelFor!==MAP.sel){MAP.methodsOpen=false;MAP.structOpen=MAP.structBack===MAP.sel;MAP.structBack=null;MAP.colorOpen=MAP.colorBack===MAP.sel;MAP.colorBack=null;renderPanel();}
   mpanel.hidden=false;updatePanelState();
 }
-function hidePanel(){mpanel.hidden=true;MAP.methodsOpen=false;MAP.structOpen=false;MAP.panelFor=null;}
+function hidePanel(){mpanel.hidden=true;MAP.methodsOpen=false;MAP.structOpen=false;MAP.colorOpen=false;MAP.panelFor=null;}
 function updatePanelState(){
   const n=N(MAP.sel);if(!n)return;
   if(MAP.panelSig!==panelSig(n))renderPanel();
@@ -3174,7 +3276,10 @@ mpanel.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventD
 mpanel.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||b.disabled)return;
   if(b.dataset.add){if(MAP.editing)commitMapEdit(false);mapAddChild(MAP.sel,b.dataset.add);return;}
-  if(b.hasAttribute('data-free-struct')){if(MAP.editing)commitMapEdit(false);MAP.structOpen=!MAP.structOpen;updatePanelState();return;}
+  if(b.hasAttribute('data-free-struct')){if(MAP.editing)commitMapEdit(false);MAP.structOpen=!MAP.structOpen;MAP.colorOpen=false;updatePanelState();return;}
+  if(b.hasAttribute('data-free-color')){if(MAP.editing)commitMapEdit(false);MAP.colorOpen=!MAP.colorOpen;MAP.structOpen=false;updatePanelState();return;}
+  if(b.dataset.color!==undefined){if(MAP.editing)commitMapEdit(false);setColor(MAP.sel,b.dataset.color);return;}
+  if(b.hasAttribute('data-cnames')){MAP.colorBack=MAP.sel;openColorNames();return;}
   if(b.dataset.struct){if(MAP.editing)commitMapEdit(false);applyStruct(b.dataset.struct,MAP.sel);return;}
   if(b.hasAttribute('data-structs-manage')){MAP.structBack=MAP.sel;openStructs();return;}
   if(b.dataset.ref){if(MAP.editing)commitMapEdit(false);openItem(b.dataset.ref,{node:MAP.sel});return;}
@@ -3218,9 +3323,10 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Tab'){e.preventDefault();if(e.shiftKey)outdent(id,false);else mapAddChild(id);return;}
   if(e.key===' '||e.key==='F2'){e.preventDefault();startMapEdit(id,'end');return;}
   if((e.key==='Delete'||e.key==='Backspace')&&id!==zoomId()){e.preventDefault();delNode(id);return;}
-  if(e.key==='Escape'){e.preventDefault();if(MAP.structOpen){MAP.structOpen=false;updatePanelState();}else if(MAP.methodsOpen){MAP.methodsOpen=false;updatePanelState();}else deselectMap();return;}
+  if(e.key==='Escape'){e.preventDefault();if(MAP.structOpen){MAP.structOpen=false;updatePanelState();}else if(MAP.colorOpen){MAP.colorOpen=false;updatePanelState();}else if(MAP.methodsOpen){MAP.methodsOpen=false;updatePanelState();}else deselectMap();return;}
   if(mod&&e.shiftKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();if(id!==zoomId())move(id,e.key==='ArrowUp'?-1:1);return;}
   if(e.key.startsWith('Arrow')&&!mod&&!e.altKey){e.preventDefault();mapNav(e.key);return;}
+  if(!mod&&!e.altKey&&!e.shiftKey&&/^(Digit|Numpad)[0-5]$/.test(e.code)&&freestyle()&&N(id).type==='f'){e.preventDefault();const d=+e.code.slice(-1);setColor(id,d?CK[d-1]:null);return;}
   if(!mod&&!e.altKey&&!e.shiftKey&&e.code==='KeyL'){e.preventDefault();if(N(id).type==='c')pickMethod(id);else toast('Cách luận chứng chọn ở một luận điểm.');return;}
   if(mod&&e.code==='Period'){e.preventDefault();if(e.shiftKey)zoomOut();else zoomTo(id);}
 });
@@ -3233,12 +3339,36 @@ $('#depthCtl').addEventListener('click',e=>{
   store.mapDepth=+b.dataset.depth;MAP.open.clear();MAP.key=null;save();renderMap();
 });
 function renderLegend(){
-  const dig=inDig(),free=freestyle(),key=free?'f':dig?'d':'p';if($('#legend').dataset.mode===key)return;$('#legend').dataset.mode=key;
-  if(free){$('#legend').innerHTML='';return;}
+  const dig=inDig(),free=freestyle(),key=free?'f':dig?'d':'p';
+  if(free){renderColorLegend();return;}
+  if($('#legend').dataset.mode===key)return;$('#legend').dataset.mode=key;
   $('#legend').innerHTML=(dig?[['q','Câu hỏi','','d'],['ans','Trả lời','','d']]:[['c','Luận điểm chính','','c'],['c','Luận điểm phụ',' sub','c'],['a','Luận cứ','','a']]).map(([k,l,x,g])=>'<button type="button" data-gl="'+g+'" title="Định nghĩa: '+l+'"><i class="badge t-'+k+x+'"></i>'+l+'</button>').join('')+
     '<button type="button" data-gl="'+(dig?'d':'m')+'" title="Chỗ còn hở"><i class="badge t-'+(dig?'q':'c')+' hollow"></i>'+(dig?'Chưa trả lời':'Còn hở')+'</button>';
 }
-$('#legend').addEventListener('click',e=>{const b=e.target.closest('[data-gl]');if(b)openGloss(b.dataset.gl);});
+$('#legend').addEventListener('click',e=>{
+  const cf=e.target.closest('[data-cfocus]');if(cf){MAP.cfocus=MAP.cfocus===cf.dataset.cfocus?null:cf.dataset.cfocus;renderMap();return;}
+  if(e.target.closest('[data-cnames]')){openColorNames();return;}
+  const b=e.target.closest('[data-gl]');if(b)openGloss(b.dataset.gl);
+});
+function renderColorLegend(){
+  const lg=$('#legend'),cnt=colorCounts(N(zoomId())),used=CK.filter(k=>cnt[k]);
+  const sig='f|'+used.map(k=>k+cnt[k]+colorName(k)).join()+'|'+(MAP.cfocus||'');
+  if(lg.dataset.mode===sig)return;lg.dataset.mode=sig;
+  lg.innerHTML=used.map(k=>'<button type="button" class="k-'+k+'" data-cfocus="'+k+'" aria-pressed="'+(MAP.cfocus===k)+'" title="'+(MAP.cfocus===k?'Bỏ lọc, hiện lại mọi ý':'Làm nổi các ý “'+esc(colorName(k))+'”')+'"><i class="sw k-'+k+'"></i>'+esc(colorName(k))+'<span class="lg-n">'+cnt[k]+'</span></button>').join('')+
+    (used.length?'<button type="button" class="lg-set" data-cnames title="Đặt tên cho 5 màu, dùng chung mọi cây Freestyle">Đặt tên màu</button>':'');
+}
+function renderNoteTog(){
+  const b=$('#noteTog'),free=freestyle();b.hidden=$('#noteSep').hidden=!free;if(!free)return;
+  const h=notesHidden();b.innerHTML=(h?IC.eye:IC.eyeOff)+(h?'Hiện ghi chú':'Ẩn ghi chú');
+  b.title=h?'Hiện lại mọi dòng ghi chú trên sơ đồ cây này':'Giấu các dòng ghi chú trên sơ đồ cây này, chỉ còn nội dung chính';
+}
+$('#noteTog').addEventListener('click',()=>{
+  if(MAP.editing)commitMapEdit(false);
+  const id=curTree().id;store.noteHide=store.noteHide||{};
+  if(store.noteHide[id])delete store.noteHide[id];else store.noteHide[id]=1;
+  MAP.peek.clear();save();renderMap();
+  toast(notesHidden()?'Đã ẩn ghi chú. Bấm nút ≡ ở mép dưới một thẻ để xem ghi chú của ý đó.':'Đã hiện lại ghi chú');
+});
 
 /* ---------- navigation ---------- */
 function setView(v){
@@ -3344,7 +3474,7 @@ function newTree(){
   });
 }
 /* ---------- insights ---------- */
-let insTab='open';
+let insTab='open',insColor=null;
 function renderInsights(){
   const t=curTree(),s=stats(t.root);
   $('#insSheet [data-tab="m"]').hidden=freestyle();
@@ -3361,15 +3491,19 @@ function renderInsights(){
     })(t.root,null,false);
   }else{
     (function w(n,p){
-      if(freestyle()?n.type==='f'&&!!n.text.trim():isOpen(n,p))items.push({n,cls:(n.type?'t-'+n.type:'t-none')+(freestyle()?'':' hollow'),ctx:freestyle()?(p&&p.type==='dig'?'Đào sâu: '+(contentOf(P(p.id).text)||'(trống)'):'Trong: '+(p?contentOf(p.text):'Cây')):gapOf(n,p)+' · '+(p?(p.type==='dig'?'đào sâu: '+(P(p.id).text.trim()||'(trống)'):'trong: '+(p.text.trim()||'(trống)')):'Gốc')});
+      if(freestyle()?n.type==='f'&&!!n.text.trim()&&(!insColor||colorOf(n)===insColor):isOpen(n,p))items.push({n,cls:(n.type?'t-'+n.type:'t-none')+(freestyle()?(colorOf(n)?' kc k-'+n.color:''):' hollow'),ctx:freestyle()?(p&&p.type==='dig'?'Đào sâu: '+(contentOf(P(p.id).text)||'(trống)'):'Trong: '+(p?contentOf(p.text):'Cây')):gapOf(n,p)+' · '+(p?(p.type==='dig'?'đào sâu: '+(P(p.id).text.trim()||'(trống)'):'trong: '+(p.text.trim()||'(trống)')):'Gốc')});
       n.children.forEach(c=>w(c,n));if(n.dig)n.dig.children.forEach(c=>w(c,n.dig));
     })(t.root,null);
   }
   const empty={open:freestyle()?'Chưa có ý nào trong cây.':'Không còn chỗ hở: luận điểm nào cũng có luận cứ và đủ khung luận chứng, luận cứ nào cũng có dẫn chứng.',m:'Chưa có luận điểm nào trong cây này.'};
-  $('#ilist').innerHTML=items.length?items.map(it=>'<button type="button" class="iitem" data-tree="'+t.id+'" data-id="'+it.n.id+'"><i class="badge '+it.cls+'"></i><span class="it"><span class="it-t">'+esc(contentOf(it.n.text)||'(chưa viết)')+'</span><span class="it-p">'+esc(trunc(it.ctx,80))+'</span></span></button>').join(''):'<p class="inote">'+empty[insTab]+'</p>';
+  let chips='';
+  if(freestyle()){const cnt=colorCounts(t.root),used=CK.filter(k=>cnt[k]);if(insColor&&!cnt[insColor])insColor=null;
+    if(used.length)chips='<div class="ins-colors" role="group" aria-label="Lọc theo màu"><button type="button" data-insc="" aria-pressed="'+!insColor+'">Tất cả</button>'+used.map(k=>'<button type="button" class="k-'+k+'" data-insc="'+k+'" aria-pressed="'+(insColor===k)+'"><i class="sw k-'+k+'"></i>'+esc(colorName(k))+' · '+cnt[k]+'</button>').join('')+'</div>';}
+  $('#ilist').innerHTML=chips+(items.length?items.map(it=>'<button type="button" class="iitem" data-tree="'+t.id+'" data-id="'+it.n.id+'"><i class="badge '+it.cls+'"></i><span class="it"><span class="it-t">'+esc(contentOf(it.n.text)||'(chưa viết)')+'</span><span class="it-p">'+esc(trunc(it.ctx,80))+'</span></span></button>').join(''):'<p class="inote">'+empty[insTab]+'</p>');
 }
 $('#insSheet').addEventListener('click',e=>{
   const tab=e.target.closest('[data-tab]');if(tab){insTab=tab.dataset.tab;renderInsights();return;}
+  const ic=e.target.closest('[data-insc]');if(ic){insColor=ic.dataset.insc||null;renderInsights();return;}
   const it=e.target.closest('.iitem');if(it)navigateTo(it.dataset.tree,it.dataset.id);
 });
 
@@ -3410,7 +3544,7 @@ function fallbackCopy(text,okMsg,after){
   if(after)after();
   setTimeout(()=>{const t=$('#manualCopy');if(t){t.focus();t.select();}},60);
 }
-function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),structs:structList(),lib:lib(),images:Object.fromEntries(IMG)};}
+function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),structs:structList(),...(store.colors.updated?{colors:store.colors}:{}),lib:lib(),images:Object.fromEntries(IMG)};}
 function markBackup(){store.lastBackup=Date.now();saveNow();renderHeader();}
 function mergeBackup(text){
   let d;try{d=JSON.parse(text);}catch(e){toast('Dữ liệu không đọc được. Hãy dán đúng nội dung sao lưu.');return false;}
@@ -3438,6 +3572,7 @@ function mergeBackup(text){
       if(!ex){store.structs.push(v);sa++;}else if(v.updated>(ex.updated||0)){Object.assign(ex,v);sa++;}
     });
   }
+  if(d&&!Array.isArray(d)&&d.colors){const c=normColors(d.colors);if(c.updated>(store.colors.updated||0))store.colors=c;}
   if(d&&d.images&&typeof d.images==='object')Object.keys(d.images).forEach(k=>{const v=d.images[k];if(typeof v==='string'&&v.startsWith('data:image/'))saveImg(k,v);});
   store.changedAt=Date.now();saveNow();render();
   toast('Đã gộp: thêm '+added+' cây, cập nhật '+updated+' cây'+(ia?', '+ia+' dẫn chứng':'')+(sa?', '+sa+' cấu trúc mở ý':''));
@@ -3500,7 +3635,7 @@ function openBackup(){
 // layout: daosau/<code>/data = {state, updatedAt, stamp, origin, device}; daosau/<code>/img/<key> = picture
 const syncURL=p=>FB_DB+'/daosau/'+encodeURIComponent(CS.code)+'/'+p+'.json';
 function csSave(){try{localStorage.setItem(SYNCK,JSON.stringify(CS));}catch(e){}}
-function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],structs:structList(),hideSample:!!store.hideSample,gone:store.gone||{}};}
+function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],structs:structList(),hideSample:!!store.hideSample,gone:store.gone||{},...(store.colors&&store.colors.updated?{colors:store.colors}:{})};}
 const sharedSnap=()=>JSON.stringify(sharedOf());
 const untouchedSample=t=>t.sample&&t.updated===t.created;
 function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length))||structList().some(s=>s.updated);}
@@ -3604,6 +3739,7 @@ function applyShared(d){
   store.principles=Array.isArray(d.principles)?d.principles:[];
   if(Array.isArray(d.structs))store.structs=d.structs.map(normStruct).filter(Boolean);   // a copy from before structures existed keeps this device's own
   store.hideSample=!!d.hideSample;store.gone=d.gone&&typeof d.gone==='object'?d.gone:{};
+  if(d.colors)store.colors=normColors(d.colors);
   if(!trees.some(t=>t.id===store.cur))store.cur=trees[0].id;
   for(const k in hist)delete hist[k];
   navStack.length=0;
@@ -3640,7 +3776,8 @@ function mergeShared(a,b){
   const la=a.lib||{},lb=b.lib||{};
   const lib=(a.lib||b.lib)?Object.assign({},lb,la,{groups:byId(la.groups,lb.groups),folders:byId(la.folders,lb.folders),items:byId(la.items,lb.items,true)}):null;
   const structs=byId(a.structs,b.structs,true).filter(s=>!(gone[s.id]>=(s.updated||0)));
-  return {trees,lib,principles:byId(a.principles,b.principles,true),structs,hideSample:!!(a.hideSample||b.hideSample),gone};
+  const colors=((b.colors&&b.colors.updated)||0)>((a.colors&&a.colors.updated)||0)?b.colors:a.colors;
+  return {trees,lib,principles:byId(a.principles,b.principles,true),structs,hideSample:!!(a.hideSample||b.hideSample),gone,...(colors?{colors}:{})};
 }
 
 // pictures travel one by one, beside the data
@@ -3757,7 +3894,8 @@ function askConflict(){
 // one place for guidance: how to use the app, and every shortcut
 const HELP_FREE='<p class="lead">Freestyle là nơi brainstorm tự do. Mỗi ý có thể là câu hỏi, câu trả lời, giả thuyết, ví dụ hoặc việc cần làm; app không gán loại và không chấm chỗ hở.</p>'+
   '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
-  '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp.</p>';
+  '<h3>Tô màu và ghi chú</h3><ul><li>Chọn một ý, bấm icon <b>Tô màu</b> (vòng tròn) hoặc gõ phím <b>1</b> đến <b>5</b>; phím <b>0</b> bỏ màu. Mặc định: Vàng – Quan trọng, Đỏ – Cần xét, Xanh lá – Đã chốt, Xanh dương – Hỏi lại khách, Xám – Để sau.</li><li>Đổi tên màu ở <b>Đặt tên màu</b>. Tên dùng chung cho mọi cây Freestyle.</li><li>Góc dưới sơ đồ hiện chú thích các màu đang dùng. Bấm một màu để làm mờ các ý khác, bấm lại để bỏ lọc. Danh sách <b>ý</b> trên cùng cũng lọc được theo màu.</li><li>Nút <b>Ẩn ghi chú</b> cạnh Độ sâu giấu các dòng ghi chú trên sơ đồ của cây này. Thẻ có ghi chú hiện nút nhỏ ≡ ở mép dưới: bấm để xem riêng ý đó. Khi sửa chữ, ghi chú luôn hiện.</li></ul>'+
+  '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp. Tô màu nằm trong Thao tác khác.</p>';
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
   '<h3>Đào sâu bằng câu hỏi</h3><ul><li>Chọn một luận điểm hay luận cứ rồi bấm <b>Đào sâu</b>: màn hình chỉ còn ý đó và các câu hỏi về nó.</li><li>Bấm một mẫu câu hỏi (Tại sao? · Là gì? · Làm thế nào? · Nếu có/Nếu không · Lợi ích/Rủi ro · 5W1H), trả lời, rồi hỏi tiếp câu trả lời. Ví dụ: “Cần đánh răng mỗi ngày” → Tại sao? → “Vì răng bẩn sẽ bị sâu” → Tại sao răng bẩn lại bị sâu? → …</li><li>Câu hỏi quá rộng để trả lời một lần? Chọn nó rồi bấm <b>Câu hỏi nhỏ hơn</b> để tách. Trả lời hết các câu nhỏ thì câu hỏi gốc cũng hết nét đứt.</li><li>Ý đã được đào sâu có dấu <b>?</b> kèm số câu hỏi trên sơ đồ chính. Bấm “Quay lại” hoặc Esc để về sơ đồ chính.</li></ul>'+
@@ -3792,6 +3930,8 @@ const SHORTCUTS=[
   {h:'Sơ đồ',rows:[
     [['Enter','Tab'],'Khi chưa chọn ý nào: thêm luận điểm chính'],
     [['Nhấp đúp','Space','F2'],'Sửa chữ ý đang chọn'],
+    [['1 – 5'],'Freestyle: tô màu ý đang chọn'],
+    [['0'],'Freestyle: bỏ màu ý đang chọn'],
     [['Tab'],'Ở luận điểm: thêm luận điểm phụ. Ở luận cứ: thêm dẫn chứng. Khi đào sâu: ở câu hỏi thêm trả lời, ở trả lời hỏi tiếp'],
     [['Enter'],'Thêm ý ngang hàng với ý đang chọn'],
     [['Shift+Tab'],'Đưa ý ra một tầng'],
@@ -4805,6 +4945,42 @@ function placementIssue(n){
 /* ---------- cấu trúc mở ý: named sets of child ideas, set up here and used on any idea ---------- */
 function structPreview(s){return s.items.join(' · ');}
 // the list the structure icon of the floating panel opens
+function colorMenuHTML(n){
+  return '<div class="free-colors" role="group" aria-label="Tô màu ý"><div class="fs-h">Tô màu</div>'+
+    CK.map((k,i)=>'<button type="button" class="k-'+k+'" data-color="'+k+'" aria-pressed="'+(n.color===k)+'"><i class="sw k-'+k+'"></i><span class="fc-n">'+esc(colorName(k))+'</span><kbd>'+(i+1)+'</kbd></button>').join('')+
+    '<button type="button" data-color="" aria-pressed="'+!colorOf(n)+'"><i class="sw none"></i><span class="fc-n">Bỏ màu</span><kbd>0</kbd></button>'+
+    '<button type="button" class="fs-set" data-cnames>'+IC.sliders+'Đặt tên màu</button></div>';
+}
+// where there is no floating panel (outline, phones): the same choice in a dialog
+function openColorPicker(id){
+  const n=N(id);if(!n||!freestyle()||n.type!=='f')return;
+  const body=document.createElement('div');body.className='cl-pick';
+  body.innerHTML='<p class="lead">Tô màu cho “'+esc(trunc(contentOf(n.text)||'(trống)',80))+'”.</p>'+
+    CK.map(k=>'<button type="button" class="cl-opt k-'+k+'" data-color="'+k+'" aria-pressed="'+(n.color===k)+'"><i class="sw k-'+k+'"></i><span>'+esc(colorName(k))+'</span></button>').join('')+
+    '<button type="button" class="cl-opt" data-color="" aria-pressed="'+!colorOf(n)+'"><i class="sw none"></i><span>Bỏ màu</span></button>';
+  body.addEventListener('click',e=>{const b=e.target.closest('[data-color]');if(b){closeSheet('dlg');setColor(id,b.dataset.color);}});
+  dialog('Tô màu',body,[{label:'Đặt tên màu',run:()=>{openColorNames({back:()=>openColorPicker(id)});return false;}},{label:'Đóng',kind:'primary'}],{kind:'colorpick'});
+}
+// what each colour means, set once for every Freestyle tree; an empty name keeps the default
+function openColorNames(opt){
+  opt=opt||{};
+  const body=document.createElement('div');body.className='evform';
+  body.innerHTML='<p class="lead">Đặt tên cho từng màu một lần, dùng chung cho mọi cây Freestyle. Để trống thì dùng tên mặc định.</p><div class="cl-names">'+
+    CK.map(k=>'<label><i class="sw k-'+k+'"></i><span>'+COLORS[k].label+'</span><input data-cname="'+k+'" maxlength="40" autocomplete="off" placeholder="'+esc(COLORS[k].name)+'"></label>').join('')+'</div>';
+  CK.forEach(k=>{body.querySelector('[data-cname="'+k+'"]').value=store.colors.names[k]||'';});
+  const back=()=>{if(opt.back){opt.back();return false;}};
+  const submit=()=>{
+    const names={};
+    CK.forEach(k=>{const v=body.querySelector('[data-cname="'+k+'"]').value.replace(/\s+/g,' ').trim();if(v&&v!==COLORS[k].name)names[k]=v;});
+    store.colors={names,updated:Date.now()};store.changedAt=Date.now();save();
+    if(store.view==='map')renderMap();else renderOutline();
+    toast('Đã lưu tên màu');
+    return back();
+  };
+  body.addEventListener('keydown',e=>{if(e.isComposing||e.keyCode===229)return;if(e.key==='Enter'){e.preventDefault();if(submit()!==false)closeSheet('dlg');}});
+  dialog('Đặt tên màu',body,[{label:'Huỷ',run:back},{label:'Lưu',kind:'primary',run:submit}],{kind:'colornames'});
+  body.querySelector('input').focus();
+}
 function structMenuHTML(){
   const list=structList();
   return '<div class="free-structs" role="group" aria-label="Chọn cấu trúc mở ý"><div class="fs-h">Mở ý theo cấu trúc</div>'+
@@ -4934,7 +5110,7 @@ function renderMobile(){
   if(path.length>2)h+=path.slice(0,-1).map(x=>'<button data-mobile-go="'+esc(x.id)+'">'+esc(trunc(contentOf(x.type==='dig'?P(x.id).text:x.text)||'Cây',24))+'</button>').join('<span class="sep">/</span>');
   h+='</nav><section class="mobile-heading">'+(freestyle()&&n.type==='f'?'':'<span class="mobile-eyebrow">'+esc(label)+'</span>');
   if(root)h+='<h1>'+esc(contentOf(n.text)||'Cây chưa đặt tên')+'</h1>';
-  else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>';
+  else h+='<div class="mobile-copy">'+markupToHTML((host||n).text||'(Chưa viết nội dung)')+'</div>'+(colorOf(n)?'<span class="mobile-ctag k-'+n.color+'"><i class="sw k-'+n.color+'"></i>'+esc(colorName(n.color))+'</span>':'');
   h+='<div class="mobile-next">';
   if(root)h+='<button class="btn primary" data-mobile-next="'+(freestyle()?'f':'c')+'" data-node="'+esc(n.id)+'">'+IC.plus+(freestyle()?' Ý mới':' Luận điểm chính')+'</button>'+(freestyle()?'<button class="btn" data-mobile-next="struct" data-node="'+esc(n.id)+'">Mở ý theo cấu trúc</button>':'')+'<button class="btn" data-mobile-action="title">Sửa chủ đề</button>';
   else if(!host)h+='<button class="btn" data-mobile-edit="'+esc(n.id)+'">Sửa nội dung</button><button class="btn" data-mobile-more="'+esc(n.id)+'">Thao tác khác</button>';
@@ -4951,7 +5127,7 @@ function renderMobile(){
   h+='<div class="mobile-meta"><span>'+n.children.length+' ý trong nhánh này</span><span>Chạm vào ý để mở</span></div>';
   if(!n.children.length)h+='<div class="mobile-empty">'+(freestyle()?'Chưa có ý nào. Thêm ý rồi mở từng nhánh để đào sâu.':n.type==='a'?'Bổ sung dẫn chứng để làm rõ luận cứ này.':root?'Bắt đầu bằng một luận điểm chính. Sau đó mở từng ý để triển khai tiếp.':'Nhánh này chưa có ý. Chọn bước tiếp theo bên dưới để viết.')+'</div>';
   n.children.forEach(c=>{
-    h+='<article class="mobile-card"><button class="mobile-card-main" data-mobile-go="'+esc(c.id)+'">'+(freestyle()?'':'<span class="mobile-kind"><i class="badge t-'+(c.type||'none')+'"></i>'+esc(kindLabel(c,n,isSub(c))||'Ý')+'</span>')+'<span class="mobile-copy">'+markupToHTML(c.text||'(Chưa viết nội dung)')+'</span><span class="mobile-card-tail"><span>'+c.children.length+' ý con'+(!freestyle()&&evCount(c)?' · '+evCount(c)+' dẫn chứng':'')+'</span>'+IC.chev+'</span></button><div class="mobile-card-footer"><button data-mobile-edit="'+esc(c.id)+'">Sửa</button><button data-mobile-more="'+esc(c.id)+'">Thao tác khác</button></div></article>';
+    h+='<article class="mobile-card'+(colorOf(c)?' kc k-'+c.color:'')+'"><button class="mobile-card-main" data-mobile-go="'+esc(c.id)+'">'+(freestyle()?'':'<span class="mobile-kind"><i class="badge t-'+(c.type||'none')+'"></i>'+esc(kindLabel(c,n,isSub(c))||'Ý')+'</span>')+'<span class="mobile-copy">'+markupToHTML(c.text||'(Chưa viết nội dung)')+'</span><span class="mobile-card-tail"><span>'+(colorOf(c)?'<span class="mobile-ctag k-'+c.color+'"><i class="sw k-'+c.color+'"></i>'+esc(colorName(c.color))+'</span> · ':'')+c.children.length+' ý con'+(!freestyle()&&evCount(c)?' · '+evCount(c)+' dẫn chứng':'')+'</span>'+IC.chev+'</span></button><div class="mobile-card-footer"><button data-mobile-edit="'+esc(c.id)+'">Sửa</button><button data-mobile-more="'+esc(c.id)+'">Thao tác khác</button></div></article>';
   });
   h+='<div class="mobile-next">'+mobileNextHTML(n)+'</div>';
   $('#mobilePage').innerHTML=h;
@@ -4960,6 +5136,7 @@ function mobileMore(id){
   const n=N(id);if(!n)return;const p=P(id),i=p?p.children.indexOf(n):-1;
   const body=document.createElement('div');body.className='mobile-actions';
   body.innerHTML='<p class="lead">'+esc(trunc(contentOf(n.text)||'Ý chưa viết',110))+'</p><button class="btn" data-choice="edit">Sửa nội dung</button>'+mobileNextHTML(n)+
+    (freestyle()&&n.type==='f'?'<button class="btn" data-choice="color">Tô màu'+(colorOf(n)?' · '+esc(colorName(n.color)):'')+'</button>':'')+
     (isProof(n)&&!withinDig(n)?'<button class="btn" data-choice="dig">'+(freestyle()?'Đào sâu':'Đào sâu bằng câu hỏi')+'</button>':'')+
     (p&&METHODS[p.method]?'<button class="btn" data-choice="role">Đổi vai trò trong luận chứng</button>':'')+
     (i>0?'<button class="btn" data-choice="up">↑ Chuyển lên</button>':'')+
@@ -4971,6 +5148,7 @@ function mobileMore(id){
     const a=b.dataset.choice;
     if(a==='edit')openMobileEditor(id);
     if(a==='dig')mobileGo(digOf(n).id);
+    if(a==='color')openColorPicker(id);
     if(a==='role')openArgue(id);
     if(a==='up'||a==='down')move(id,a==='up'?-1:1);
     if(a==='delete'){
