@@ -2823,8 +2823,10 @@ svg.addEventListener('wheel',onMapWheel,{passive:false});
 const pts=new Map();let pan=null,pinch=null,moved=false,downTarget=null;
 /* ---------- moving ideas by dragging a card: each card is a magnet ----------
    Picked up, a card lets go of its parent and carries its whole branch along. Near another card it clings:
-   on the card or in the gap on its right it becomes that idea's last child; on its top or bottom edge it goes
-   just above or below it, in whatever branch that card sits. Let go anywhere else and nothing moves. */
+   on the card or in the gap on its right it becomes that idea's last child; on its left part it takes that idea's
+   place and holds it as a child; on its top or bottom edge it goes just above or below it, in whatever branch that
+   card sits. Let go far from every card and it stands on its own, at the first level of the map. Brought back over
+   where it started, it snaps home and nothing moves; Esc does the same. */
 let ndrag=null;
 const SNAP=34;   // map units: how close the pointer must come before a card pulls
 function canDrag(id){return !!(N(id)&&P(id)&&id!==zoomId()&&MAP.editing!==id);}
@@ -2838,6 +2840,7 @@ function startNodeDrag(){
   if(MAP.editing)commitMapEdit(false);
   d.active=true;moved=true;pan=null;
   d.branch=branchIds(N(d.id));d.start=mapPt(d.x,d.y);d.cx=d.x;d.cy=d.y;
+  d.free=P(d.id).id!==zoomId();   // already at the first level, it has nothing to come loose from
   const G=$('#mapG');
   // the link to the old parent lets go; links inside the branch travel with it
   d.edges=$$('.edges path',G).filter(p=>d.branch.has(p.dataset.c)||d.branch.has(p.dataset.p));
@@ -2860,50 +2863,64 @@ function dragFrame(){
   const p=mapPt(d.cx,d.cy);let dx=p.x-d.start.x,dy=p.y-d.start.y;
   const drop=findDrop(d,p);
   if(!drop||!d.drop||drop.id!==d.drop.id||drop.mode!==d.drop.mode){
-    if(d.drop){const g=$('#mapG .mn[data-id="'+d.drop.id+'"]');if(g)g.classList.remove('magnet');}
+    if(d.drop&&d.drop.id){const g=$('#mapG .mn[data-id="'+d.drop.id+'"]');if(g)g.classList.remove('magnet');}
     d.drop=drop;if(drop&&navigator.vibrate&&d.touch)try{navigator.vibrate(6);}catch(_){}
   }
-  // a card in reach pulls the carried one to where it would hang: under its last child, or just right of it
-  if(drop&&drop.mode==='child'){
-    const t=MAP.lay.get(drop.id),kids=N(drop.id).children.map(c=>MAP.lay.get(c.id)).filter((L,i)=>L&&!d.branch.has(N(drop.id).children[i].id));
-    if(t){const last=kids.reduce((a,L)=>!a||L.y>a.y?L:a,null);dx=(last?last.x:t.x+t.w+46)-d.L.x;dy=(last?last.y+last.h+12:t.y+t.h/2-d.L.h/2)-d.L.y;}
-  }
+  // a card in reach pulls the carried one to where it would hang; back over its old place it snaps home
+  const t=drop&&drop.id&&MAP.lay.get(drop.id);
+  if(drop&&drop.mode==='home'){dx=0;dy=0;}
+  else if(t&&drop.mode==='child'){
+    const kids=N(drop.id).children.filter(c=>!d.branch.has(c.id)).map(c=>MAP.lay.get(c.id)).filter(Boolean);
+    const last=kids.reduce((a,L)=>!a||L.y>a.y?L:a,null);
+    dx=(last?last.x:t.x+t.w+46)-d.L.x;dy=(last?last.y+last.h+12:t.y+t.h/2-d.L.h/2)-d.L.y;
+  }else if(t&&drop.mode==='parent'){dx=t.x-36-d.L.w-d.L.x;dy=t.y+t.h/2-d.L.h/2-d.L.y;}
   d.gs.forEach(o=>o.g.setAttribute('transform','translate('+(o.L.x+dx)+','+(o.L.y+dy)+')'));
-  d.edges.forEach(e=>{if(e.classList.contains('carried'))e.setAttribute('transform','translate('+dx+','+dy+')');});
-  drawDrop(d,d.L.x+dx,d.L.y+dy+d.L.h/2);
+  d.edges.forEach(e=>{
+    if(e.classList.contains('carried'))e.setAttribute('transform','translate('+dx+','+dy+')');
+    else e.style.display=drop&&drop.mode==='home'?'inline':'';   // home again: the old link holds
+  });
+  drawDrop(d,d.L.x+dx,d.L.y+dy);
 }
 // the card that pulls hardest: the nearest one around the pointer, counting the gap on its right where its children hang
 function findDrop(d,p){
+  const H=d.L;
+  if(p.x>=H.x-8&&p.x<=H.x+H.w+8&&p.y>=H.y-6&&p.y<=H.y+H.h+6)return {mode:'home'};
   let best=null,bd=Infinity;
   d.targets.forEach(t=>{
     const L=t.L,dist=(x0,x1)=>Math.hypot(p.x<x0?x0-p.x:p.x>x1?p.x-x1:0,p.y<L.y?L.y-p.y:p.y>L.y+L.h?p.y-L.y-L.h:0);
     const v=Math.min(dist(L.x,L.x+L.w),dist(L.x+L.w,L.x+L.w+40)+1);
     if(v<bd){bd=v;best=t;}
   });
-  if(!best||bd>SNAP)return null;
+  if(!best||bd>SNAP)return d.free?{mode:'free'}:null;
   const L=best.L,rel=(p.y-L.y)/L.h;let mode='child';
-  if(!best.root&&p.x<=L.x+L.w){if(rel<0.3)mode='before';else if(rel>0.7)mode='after';}
+  if(!best.root&&p.x<=L.x+L.w){
+    if(rel<0.3)mode='before';else if(rel>0.7)mode='after';
+    else if(p.x<L.x+Math.min(48,L.w*0.3))mode='parent';
+  }
   return {id:best.id,mode};
 }
-function drawDrop(d,cx,cy){
-  const drop=d.drop;
+// x, y: where the carried card stands now
+function drawDrop(d,x,y){
+  const drop=d.drop,cy=y+d.L.h/2;
   d.link.setAttribute('d','');d.bar.setAttribute('width',0);d.tip.style.display='none';
-  if(!drop)return;
-  const t=MAP.lay.get(drop.id),g=$('#mapG .mn[data-id="'+drop.id+'"]');if(!t)return;
-  let label,ty;
-  if(drop.mode==='child'){
-    if(g)g.classList.add('magnet');
-    const x1=t.x+t.w,y1=t.y+t.h/2,mx=(x1+cx)/2;
-    d.link.setAttribute('d','M'+x1+' '+y1+'C'+mx+' '+y1+' '+mx+' '+cy+' '+cx+' '+cy);
-    label='Gắn vào làm ý con';ty=t.y-8;
-  }else{
-    const y=drop.mode==='before'?t.y-8:t.y+t.h+4;
-    d.bar.setAttribute('x',t.x);d.bar.setAttribute('y',y);d.bar.setAttribute('width',t.w);
-    label=drop.mode==='before'?'Chèn lên trên ý này':'Chèn xuống dưới ý này';ty=drop.mode==='before'?y-6:y+24;
+  if(!drop||drop.mode==='home')return;
+  const curve=(x1,y1,x2,y2)=>{const mx=(x1+x2)/2;d.link.setAttribute('d','M'+x1+' '+y1+'C'+mx+' '+y1+' '+mx+' '+y2+' '+x2+' '+y2);};
+  let label,tx0,ty;
+  if(drop.mode==='free'){label='Tách thành ý độc lập';tx0=x;ty=y-8;}
+  else{
+    const t=MAP.lay.get(drop.id),g=$('#mapG .mn[data-id="'+drop.id+'"]');if(!t)return;
+    tx0=t.x;
+    if(drop.mode==='child'){if(g)g.classList.add('magnet');curve(t.x+t.w,t.y+t.h/2,x,cy);label='Gắn vào làm ý con';ty=t.y-8;}
+    else if(drop.mode==='parent'){if(g)g.classList.add('magnet');curve(x+d.L.w,cy,t.x,t.y+t.h/2);label='Làm ý cha của ý này';ty=t.y-8;}
+    else{
+      const by=drop.mode==='before'?t.y-8:t.y+t.h+4;
+      d.bar.setAttribute('x',t.x);d.bar.setAttribute('y',by);d.bar.setAttribute('width',t.w);
+      label=drop.mode==='before'?'Chèn lên trên ý này':'Chèn xuống dưới ý này';ty=drop.mode==='before'?by-6:by+24;
+    }
   }
   const tx=d.tip.lastChild;tx.textContent=label;
   d.tip.firstChild.setAttribute('width',Math.ceil(tx.getComputedTextLength())+18);
-  d.tip.setAttribute('transform','translate('+t.x+','+ty+')');d.tip.style.display='';
+  d.tip.setAttribute('transform','translate('+tx0+','+ty+')');d.tip.style.display='';
 }
 // near the edge of the screen the map slides along, so a card can travel to a far branch
 function dragEdge(){
@@ -2914,17 +2931,30 @@ function dragEdge(){
   if(vx||vy){MAP.tx+=vx;MAP.ty+=vy;applyT();dragFrame();}
   d.raf=requestAnimationFrame(dragEdge);
 }
-// the card lets go of its parent and clings to another idea: as its last child, or just above or below it
+// the card lets go of its parent and clings elsewhere: as an idea's last child, as its new parent,
+// just above or below it, or on its own at the first level of the map
 function dropNode(id,tid,mode){
-  const n=N(id),t=N(tid),from=P(id);if(!n||!t||!from||branchIds(n).has(tid))return false;
+  const n=N(id),from=P(id);if(!n||!from)return false;
+  if(mode==='free'){if(from.id===zoomId())return false;mode='child';tid=zoomId();}
+  const t=N(tid);if(!t||branchIds(n).has(tid))return false;
+  // a new parent gives an idea the first role its frame still lacks, as a new idea would get
+  const reparent=(c,p)=>{delete c.role;autoRole(p,c);};
+  if(mode==='parent'){
+    const tp=P(tid);if(!tp)return false;
+    pushUndo();
+    from.children.splice(from.children.indexOf(n),1);
+    tp.children.splice(tp.children.indexOf(t),1,n);n.children.push(t);
+    if(from!==tp)reparent(n,tp);reparent(t,n);
+    n.collapsed=false;MAP.open.add(n.id);
+    return true;
+  }
   const to=mode==='child'?t:P(tid);if(!to)return false;
   const rest=to.children.filter(c=>c!==n),at=mode==='child'?rest.length:rest.indexOf(t)+(mode==='after'?1:0);
   if(from===to&&rest.slice(0,at).concat(n,rest.slice(at)).every((c,i)=>c===to.children[i]))return false;
   pushUndo();
   from.children.splice(from.children.indexOf(n),1);
   to.children.splice(at,0,n);
-  // a new parent gives it the first role its frame still lacks, as a new idea would get
-  if(from!==to){delete n.role;autoRole(to,n);}
+  if(from!==to)reparent(n,to);
   if(mode==='child'){t.collapsed=false;MAP.open.add(t.id);}
   return true;
 }
@@ -2932,14 +2962,17 @@ function endNodeDrag(commit){
   const d=ndrag;ndrag=null;if(!d)return;clearTimeout(d.timer);if(d.raf)cancelAnimationFrame(d.raf);
   svg.classList.remove('ndragging');if(d.fx)d.fx.remove();
   if(!d.active)return;
-  const drop=commit&&d.drop,t=drop&&N(drop.id);
-  if(drop&&dropNode(d.id,drop.id,drop.mode)){
+  const drop=commit&&d.drop,t=drop&&drop.id&&N(drop.id);
+  if(drop&&drop.mode!=='home'&&dropNode(d.id,drop.id,drop.mode)){
     afterStruct(d.id);
-    toast(drop.mode==='child'?'Đã gắn vào “'+trunc(contentOf((t.type==='dig'?P(t.id):t).text)||'ý này',40)+'”':'Đã chuyển ý sang chỗ mới',{label:'Hoàn tác',run:undo});
+    const name=t?trunc(contentOf((t.type==='dig'?P(t.id):t).text)||'ý này',40):'';
+    toast(drop.mode==='child'?'Đã gắn vào “'+name+'”':drop.mode==='parent'?'Đã làm ý cha của “'+name+'”':drop.mode==='free'?'Đã tách thành ý độc lập':'Đã chuyển ý sang chỗ mới',{label:'Hoàn tác',run:undo});
     return;
   }
   MAP.sel=d.id;focusId=d.id;renderMap();showToolbar();updateToolbarState();ensureMapVisible(d.id);
 }
+// Esc while carrying a card puts it back where it was
+document.addEventListener('keydown',e=>{if(ndrag&&ndrag.active&&e.key==='Escape'){e.preventDefault();e.stopPropagation();endNodeDrag(false);}},true);
 svg.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'&&e.button!==0)return;
   try{svg.setPointerCapture(e.pointerId);}catch(_){}
@@ -3918,12 +3951,12 @@ function askConflict(){
 }
 // one place for guidance: how to use the app, and every shortcut
 const HELP_FREE='<p class="lead">Freestyle là nơi brainstorm tự do. Mỗi ý có thể là câu hỏi, câu trả lời, giả thuyết, ví dụ hoặc việc cần làm; app không gán loại và không chấm chỗ hở.</p>'+
-  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc.</li><li><b>Kéo thả</b> một thẻ để chuyển nó cùng các ý con sang chỗ khác: thả lên một thẻ để gắn vào làm ý con, thả ở mép trên hoặc dưới để chèn lên trên hoặc xuống dưới, kể cả ở nhánh khác.</li><li>Bấm icon <b>Tô màu</b> (vòng tròn) để tô một trong 5 màu. Góc dưới sơ đồ đếm số ý theo màu; bấm một màu để làm nổi các ý màu đó.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
+  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Tạo cây, chọn <b>Freestyle</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây Freestyle.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc.</li><li><b>Kéo thả</b> một thẻ để chuyển nó cùng các ý con sang chỗ khác: thả lên một thẻ để gắn vào làm ý con, thả ở phần bên trái thẻ để làm ý cha của ý đó, thả ở mép trên hoặc dưới để chèn lên trên hoặc xuống dưới, kể cả ở nhánh khác. Thả ra chỗ trống để tách thành ý độc lập. Đưa về chỗ cũ hoặc bấm Esc để huỷ.</li><li>Bấm icon <b>Tô màu</b> (vòng tròn) để tô một trong 5 màu. Góc dưới sơ đồ đếm số ý theo màu; bấm một màu để làm nổi các ý màu đó.</li><li>Bấm <b>Quay lại</b> để về cây chính.</li></ol>'+
   '<p class="fine">Trên điện thoại, mở Từng nhánh, chạm một ý để xem ý con, dùng Sửa và + Ý mới để viết tiếp.</p>';
 const HELP_USE='<p class="lead">Mỗi cây là một chủ đề lớn, ví dụ “Nuôi một chú chó”. Trong cây, thêm các luận điểm chính (các chủ đề nhỏ), tách chúng thành luận điểm phụ, rồi chọn cách luận chứng và điền luận cứ.</p>'+
   '<h3>Dựng một cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Viết luận điểm chính đầu tiên, ví dụ “Chó cần được dắt đi dạo mỗi ngày”. Muốn thêm luận điểm chính khác, bấm ô <b>+ Luận điểm chính</b> ở cuối sơ đồ.</li><li>Chọn một luận điểm, bấm <b>Luận điểm phụ</b> để tách nhỏ.</li><li>Ở luận điểm cần chứng minh, chọn một trong 5 cách luận chứng. Sơ đồ hiện các ô nét đứt cho từng luận cứ cần có; bấm vào ô để viết.</li><li>Chọn một luận cứ để thêm dẫn chứng: viết tay hoặc lấy từ Kho dẫn chứng.</li></ol>'+
   '<h3>Đào sâu bằng câu hỏi</h3><ul><li>Chọn một luận điểm hay luận cứ rồi bấm <b>Đào sâu</b>: màn hình chỉ còn ý đó và các câu hỏi về nó.</li><li>Bấm một mẫu câu hỏi (Tại sao? · Là gì? · Làm thế nào? · Nếu có/Nếu không · Lợi ích/Rủi ro · 5W1H), trả lời, rồi hỏi tiếp câu trả lời. Ví dụ: “Cần đánh răng mỗi ngày” → Tại sao? → “Vì răng bẩn sẽ bị sâu” → Tại sao răng bẩn lại bị sâu? → …</li><li>Câu hỏi quá rộng để trả lời một lần? Chọn nó rồi bấm <b>Câu hỏi nhỏ hơn</b> để tách. Trả lời hết các câu nhỏ thì câu hỏi gốc cũng hết nét đứt.</li><li>Ý đã được đào sâu có dấu <b>?</b> kèm số câu hỏi trên sơ đồ chính. Bấm “Quay lại” hoặc Esc để về sơ đồ chính.</li></ul>'+
-  '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn. Ví dụ: nội dung “Kẹo làm sâu răng”, ghi chú “vì đường bám vào răng nếu không đánh răng”.</li><li><b>Kéo thả</b> một thẻ như một viên nam châm: thẻ tách khỏi ý cha và mang theo cả nhánh con. Đưa tới gần một thẻ khác: thả lên thẻ hoặc khoảng trống bên phải thẻ để <b>gắn vào làm ý con</b>; thả ở mép trên hoặc mép dưới để <b>chèn lên trên</b> hoặc <b>xuống dưới</b> ý đó, kể cả ở nhánh khác. Thả ra chỗ trống thì thẻ về chỗ cũ. Trên điện thoại: chạm giữ rồi kéo. ⌘Z để hoàn tác.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
+  '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn. Ví dụ: nội dung “Kẹo làm sâu răng”, ghi chú “vì đường bám vào răng nếu không đánh răng”.</li><li><b>Kéo thả</b> một thẻ như một viên nam châm: thẻ tách khỏi ý cha và mang theo cả nhánh con. Đưa tới gần một thẻ khác: thả lên thẻ hoặc khoảng trống bên phải thẻ để <b>gắn vào làm ý con</b>; thả ở phần bên trái thẻ để <b>làm ý cha</b> của ý đó; thả ở mép trên hoặc mép dưới để <b>chèn lên trên</b> hoặc <b>xuống dưới</b> ý đó, kể cả ở nhánh khác. Thả ra chỗ trống, xa mọi thẻ, để <b>tách thành ý độc lập</b> ở tầng đầu. Đưa thẻ về chỗ cũ hoặc bấm Esc để huỷ. Trên điện thoại: chạm giữ rồi kéo. ⌘Z để hoàn tác.</li><li>Viền nét đứt là chỗ lập luận còn hở. Nút đếm “chỗ hở” trên cùng liệt kê các chỗ này.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li><li>Nút quyển sách (hoặc phím <kbd>?</kbd>) mở định nghĩa và 5 cách luận chứng.</li></ul>'+
   '<h3>Kho dẫn chứng</h3><ul><li>Nút <b>Kho dẫn chứng</b> trên cùng: lưu bài báo, hình ảnh, số liệu theo nhóm và thư mục, dùng chung cho mọi cây.</li><li>Chọn một luận cứ rồi bấm <b>Từ kho</b>: dẫn chứng nằm ngay trong luận cứ đó.</li></ul>'+
   '<h3>Trên điện thoại</h3><ul><li>Chạm một ý để chọn, chạm hai lần để sửa chữ. Thanh dưới cùng có những gì thêm được và các nút sửa, luận chứng, dẫn chứng, phóng vào, xoá.</li><li>Kéo để di chuyển, chụm hai ngón để phóng to.</li></ul>'+
   '<h3>Dữ liệu</h3><ul><li>Dữ liệu lưu trong trình duyệt của từng máy. Bật <b>Đồng bộ đám mây</b> (biểu tượng đám mây trên cùng) để lưu lên Firebase và dùng chung giữa các máy bằng một mã đồng bộ; xoá dữ liệu trình duyệt cũng không mất.</li><li>Bấm <b>Đào Sâu</b> › Sao lưu &amp; chuyển máy để tải file sao lưu dự phòng.</li></ul>';
