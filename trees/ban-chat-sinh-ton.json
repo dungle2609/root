@@ -1,0 +1,1101 @@
+{
+ "app": "dao-sau",
+ "v": 4,
+ "exportedAt": "2026-10-02T20:30:56.066Z",
+ "trees": [
+  {
+   "id": "ban-chat-sinh-ton",
+   "created": 1790973056066,
+   "updated": 1790973056066,
+   "mode": "freestyle",
+   "root": {
+    "id": "ban-chat-sinh-ton-000",
+    "text": "Vì sao mình chỉ có năng lượng khi phải sinh tồn?\n> Đào sâu từ cuộc nói chuyện với một người bạn · 02/10/2026\n> Màu: 🟢 kết luận · 🔴 rủi ro, cái bẫy · 🟡 việc nên làm · 🔵 câu hỏi tự hỏi · ⚪ căn cứ",
+    "type": null,
+    "status": null,
+    "collapsed": false,
+    "children": [
+     {
+      "id": "ban-chat-sinh-ton-001",
+      "text": "Kết luận ngắn: đọc nhánh này trước",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-002",
+        "text": "Thứ mất đi khi an toàn không phải nỗi sợ, mà là **cấu trúc** nỗi sợ mang lại miễn phí\n> Thử việc cho đủ cả gói: mục tiêu rõ, hạn chót, người chấm, phản hồi mỗi ngày, cái giá nếu thua. An toàn lấy cả gói đi cùng lúc, và mình tưởng là mất động lực.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "g"
+       },
+       {
+        "id": "ban-chat-sinh-ton-003",
+        "text": "Hai giả thuyết đều đúng một nửa, và là hai đầu của cùng một đường cong\n> Rủi ro quá nhỏ, quá xa → không đủ lực để chạy. Rủi ro quá lớn, quá mơ hồ → quá tải nên né. Thử việc rơi đúng vùng giữa.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "g"
+       },
+       {
+        "id": "ban-chat-sinh-ton-004",
+        "text": "Gốc rễ: động lực đang được **giao cho hoàn cảnh**\n> Hoàn cảnh ra đề, đặt hạn chót và quyết định hậu quả; mình chỉ phản ứng. Hệ \"chạy khỏi nguy hiểm\" rất khoẻ, hệ \"chạy tới điều mình muốn\" chưa được luyện.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "g"
+       },
+       {
+        "id": "ban-chat-sinh-ton-005",
+        "text": "Lời giải không phải sợ nhiều hơn, mà là tự dựng lại cấu trúc và nuôi động lực hướng tới\n> Nghĩ lớn hơn chỉ có ích khi cái lớn đó được thu nhỏ thành việc của 90 ngày tới.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "g"
+       }
+      ],
+      "color": "g"
+     },
+     {
+      "id": "ban-chat-sinh-ton-006",
+      "text": "Bản chất của sinh tồn: đào 5 tầng",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-007",
+        "text": "Tầng 1 · Cơ thể: sinh tồn là chế độ vay năng lượng để chạy nước rút\n> Gặp đe doạ: adrenaline và cortisol tăng, sự chú ý thu hẹp, cơ thể huy động dự trữ. Thiết kế cho vài tuần, không cho vài năm.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-008",
+          "text": "Hết đe doạ, cơ thể tự chuyển sang hồi phục và tiết kiệm\n> Cảm giác chùng xuống sau thử việc một phần là hồi phục bình thường, không phải lười.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-009",
+          "text": "Sống lâu dài bằng chế độ này: kiệt sức, ngủ kém, dễ cáu, sức khoẻ đi xuống",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-010",
+        "text": "Tầng 2 · Tâm lý: thứ được bảo vệ hiếm khi là mạng sống, mà là bản sắc và chỗ đứng\n> Thử việc chạm vào hai câu hỏi: \"mình có đủ giỏi không?\" và \"mình có thuộc về nơi này không?\".",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-011",
+          "text": "Thứ bị đe doạ: thu nhập, vị trí, sự công nhận, hình ảnh \"mình là người làm được\"",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-012",
+          "text": "Qua thử việc = hình ảnh đã được xác nhận → không còn gì phải bảo vệ → hết lực",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-013",
+        "text": "Tầng 3 · Cấu trúc: sinh tồn tự động tạo ra mọi thứ mà động lực cần",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-014",
+          "text": "Mục tiêu rõ: qua thử việc",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-015",
+          "text": "Hạn chót: hết tháng thứ 2",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-016",
+          "text": "Người chấm bên ngoài: quản lý, đồng nghiệp",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-017",
+          "text": "Phản hồi ngắn: ngày nào cũng biết mình đang ổn hay không",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-018",
+          "text": "Cái giá thật: có thể mất việc",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-019",
+          "text": "Lựa chọn bị thu hẹp: không còn thời gian cho việc khác, nên tập trung đến miễn phí",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-020",
+          "text": "Mới mẻ: học nhanh, thấy mình tiến bộ từng ngày",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-021",
+          "text": "An toàn lấy đi cả 7 thứ cùng lúc. Mất cấu trúc, rồi tưởng là mất động lực.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-022",
+        "text": "Tầng 4 · Quyền chọn: sinh tồn quyết định hộ mình điều gì quan trọng\n> Khi bị đe doạ, hoàn cảnh xếp thứ tự ưu tiên. Khi an toàn, câu hỏi quay về tay mình: \"Giờ mình muốn gì?\"",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-023",
+          "text": "Nhiều người ít khi phải luyện câu hỏi này: thi cử, bố mẹ, sếp, KPI đều ra đề sẵn",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-024",
+          "text": "Trì hoãn việc quan trọng thường là trì hoãn câu hỏi \"mình muốn gì\"",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         },
+         {
+          "id": "ban-chat-sinh-ton-025",
+          "text": "Căn cứ: Viktor Frankl gọi đây là \"chứng trầm uất ngày Chủ nhật\"\n> Trong \"Đi tìm lẽ sống\": cảm giác trống rỗng ập đến khi guồng bận rộn của tuần dừng lại, và người ta nhận ra cuộc sống thiếu nội dung do chính mình chọn.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-026",
+        "text": "Tầng 5 · Gốc: hai hệ động lực, chạy khỏi và chạy tới",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-027",
+          "text": "Chạy khỏi (né đe doạ): mạnh, nhanh, hẹp; tắt ngay khi hết đe doạ; tốn sức",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-028",
+          "text": "Chạy tới (hướng về điều mình muốn): khởi động chậm, lúc đầu yếu, nhưng tự nạp lại và bền",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-029",
+          "text": "Người có triệu chứng này: hệ chạy khỏi rất khoẻ vì được luyện nhiều năm, hệ chạy tới còn yếu",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         },
+         {
+          "id": "ban-chat-sinh-ton-030",
+          "text": "Căn cứ: động lực tiếp cận và né tránh (approach / avoidance) trong tâm lý học; thuyết tự quyết (Self-Determination Theory) của Deci & Ryan",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "ban-chat-sinh-ton-031",
+      "text": "Hai giả thuyết của bạn: đúng ở đâu, lệch ở đâu",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-032",
+        "text": "Giả thuyết A: chưa nghĩ đủ lớn, đủ xa nên mới thấy an toàn",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-033",
+          "text": "Đúng: nếu đích xa nhất chỉ là \"qua thử việc\", đến đích là hết đường chạy",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-034",
+          "text": "Lệch ở cách sửa: thấy thêm rủi ro xa không tạo ra lực bền\n> Rủi ro xa như AI thay việc trong 3–5 năm thì trừu tượng, chỉ là xác suất, không có ngày cụ thể. Não người giảm giá những thứ như vậy rất mạnh.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         },
+         {
+          "id": "ban-chat-sinh-ton-035",
+          "text": "Sửa lại: không phải chưa thấy rủi ro đủ lớn, mà chưa có **điều mình muốn** đủ lớn và đủ cụ thể",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         },
+         {
+          "id": "ban-chat-sinh-ton-036",
+          "text": "Căn cứ: hiện tượng giảm giá theo thời gian (temporal discounting): được hay mất càng xa thì càng bị xem nhẹ",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-037",
+        "text": "Giả thuyết B: thấy rủi ro quá lớn nên chọn cách né",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-038",
+          "text": "Đúng: rủi ro lớn + mơ hồ + không biết bắt đầu từ đâu → não chọn né để bớt khó chịu",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-039",
+          "text": "Lướt video ngắn lúc đó là đang xoa dịu cảm xúc, không phải lười",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-040",
+          "text": "Căn cứ: Tim Pychyl và Fuschia Sirois xem trì hoãn là vấn đề điều tiết cảm xúc, không phải vấn đề quản lý thời gian",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-041",
+        "text": "Gộp lại: A và B là hai đầu của một đường cong hình chữ U úp ngược\n> Áp lực quá thấp → không chạy (A). Áp lực quá cao và mơ hồ → tê liệt, né (B). Áp lực vừa đủ → làm tốt nhất. Thử việc nằm đúng vùng giữa.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-042",
+          "text": "Người dựa vào sinh tồn chỉ chạy được trong một dải hẹp, và dải đó do hoàn cảnh chọn",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-043",
+          "text": "Kỹ năng cần luyện: tự kéo áp lực về vùng giữa. Quá nhàn thì tự đặt hạn chót; quá lớn thì chia nhỏ",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "y"
+         },
+         {
+          "id": "ban-chat-sinh-ton-044",
+          "text": "Mô hình tham khảo: Yerkes–Dodson (1908). Dùng như một cách nhìn, không phải công thức chính xác",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ],
+        "color": "g"
+       },
+       {
+        "id": "ban-chat-sinh-ton-045",
+        "text": "Bạn đang nghiêng về đầu nào?\n> Nghĩ đến câu \"2 năm nữa AI làm được một nửa việc của mình\": dửng dưng là đầu A; nặng ngực rồi muốn cầm điện thoại là đầu B.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       }
+      ]
+     },
+     {
+      "id": "ban-chat-sinh-ton-046",
+      "text": "Bản chất của triệu chứng: mở theo cấu trúc Tìm ra vấn đề",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-047",
+        "text": "Fact",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-048",
+          "text": "Năng lượng cao khi bị thử thách: thử việc, việc mới, khủng hoảng",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-049",
+          "text": "Khi đã an toàn: việc quan trọng nhưng không gấp bị dời lại",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-050",
+          "text": "Thời gian trống bị lấp bởi nội dung ngắn",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-051",
+          "text": "Lặp lại qua nhiều giai đoạn, ở cả hai người, không phải một lần",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-052",
+        "text": "Desire",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-053",
+          "text": "Phát triển đều và bền, không theo từng đợt",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-054",
+          "text": "Chủ động trước biến động AI thay vì bị đẩy đi",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-055",
+          "text": "Giữ được khả năng tập trung sâu",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-056",
+        "text": "Gap",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-057",
+          "text": "Có động cơ mạnh nhưng phải chờ hoàn cảnh bật; chưa có động cơ tự khởi động",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-058",
+          "text": "Biết việc gì quan trọng, nhưng việc đó không có hạn chót, người chấm hay cái giá rõ ràng",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-059",
+        "text": "Impact",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-060",
+          "text": "Phát triển kiểu bậc thang: bật lên khi bị ép, đi ngang khi yên",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         },
+         {
+          "id": "ban-chat-sinh-ton-061",
+          "text": "Thời AI, đi ngang 1–2 năm có thể là tụt lại, vì mặt bằng chung đang dịch lên",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         },
+         {
+          "id": "ban-chat-sinh-ton-062",
+          "text": "Vô thức tự tạo khủng hoảng để có lại năng lượng: dồn việc sát hạn, nhảy việc, nhận việc quá sức",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         },
+         {
+          "id": "ban-chat-sinh-ton-063",
+          "text": "Quen trạng thái căng nên khi yên ổn lại thấy bứt rứt, trống rỗng",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-064",
+        "text": "Root cause",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-065",
+          "text": "Động lực được giao cho hoàn cảnh: hoàn cảnh ra đề, đặt hạn và quyết định hậu quả; mình chỉ phản ứng",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         },
+         {
+          "id": "ban-chat-sinh-ton-066",
+          "text": "Thiếu tấm bản đồ về điều mình muốn, nên khi đề bài bên ngoài hết thì không có đề bài bên trong thay thế",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-067",
+          "text": "Niềm tin ngầm có thể có: \"chỉ có giá trị khi đang chiến đấu\", \"yên ổn là đang thụt lùi\"\n> Suy luận, cần tự kiểm: những niềm tin này hay hình thành sau nhiều năm học và làm theo kiểu có người chấm điểm mới cố.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "ban-chat-sinh-ton-068",
+      "text": "Vì sao bây giờ chuyện này nguy hiểm hơn",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-069",
+        "text": "AI là kiểu rủi ro khó nhất với người chạy bằng sinh tồn\n> Chậm, lan rộng, mơ hồ, không có ngày hết hạn. Không đủ gần để bật chế độ chiến đấu, nhưng đủ lớn để gây lo âu âm ỉ. Như ếch trong nồi nước ấm dần.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-070",
+          "text": "Nỗi sợ giúp làm tốt con đường đã biết, nhưng thu hẹp tư duy và giảm thử nghiệm",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-071",
+          "text": "Thời AI thưởng cho người chịu khám phá và thử, đúng thứ mà chế độ sinh tồn làm yếu đi",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         },
+         {
+          "id": "ban-chat-sinh-ton-072",
+          "text": "Căn cứ: thuyết mở rộng và xây dựng (broaden-and-build) của Barbara Fredrickson: cảm xúc tích cực mở rộng tầm nghĩ, cảm xúc tiêu cực thu hẹp nó",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         },
+         {
+          "id": "ban-chat-sinh-ton-073",
+          "text": "Mặt tốt: AI làm việc học và thử rẻ đi rất nhiều, dễ có phản hồi nhanh để nuôi động lực hướng tới",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "y"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-074",
+        "text": "Nội dung ngắn không phải nguyên nhân gốc mà là chất xúc tác",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-075",
+          "text": "Lối thoát luôn sẵn trong túi mỗi khi việc thật gây khó chịu",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-076",
+          "text": "Thưởng nhanh, không cần cố, nên việc sâu trông nhạt và nặng hơn khi đặt cạnh nó",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-077",
+          "text": "Sự chú ý bị cắt vụn, khó vào trạng thái tập trung sâu mà việc quan trọng cần",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-078",
+          "text": "Vòng lặp: lo về AI → khó chịu → lướt → mất thời gian → càng lo",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         }
+        ]
+       },
+       {
+        "id": "ban-chat-sinh-ton-079",
+        "text": "Công thức của trì hoãn: an toàn trước mắt + rủi ro xa mơ hồ + lối thoát rẻ",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "g"
+       }
+      ]
+     },
+     {
+      "id": "ban-chat-sinh-ton-080",
+      "text": "Lời giải: động lực không cần chờ khủng hoảng",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-081",
+        "text": "1. Đừng tự hù doạ mình. Chép lại cấu trúc của thử việc\n> Nỗi sợ không bền và làm hẹp tư duy. Thứ đáng chép từ thử việc là cấu trúc, không phải cảm giác sợ.",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-082",
+          "text": "Thử việc tự tạo 90 ngày: 1 kết quả cụ thể, đo được",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-083",
+          "text": "Hạn chót thật, có người ngoài biết: sếp, đồng nghiệp, người bạn kia",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-084",
+          "text": "Cái giá thật: cam kết công khai, hoặc hứa giao sản phẩm cho ai đó vào một ngày cụ thể",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-085",
+          "text": "Phản hồi hằng tuần: 30 phút tự review, nhìn số",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-086",
+          "text": "Thu hẹp: mỗi quý 1 việc quan trọng chính, không hơn",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-087",
+        "text": "2. Nuôi động lực chạy tới",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-088",
+          "text": "12 tháng nữa mình muốn làm được điều gì mà hiện chưa làm được?",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "b"
+         },
+         {
+          "id": "ban-chat-sinh-ton-089",
+          "text": "Đặt mục tiêu năng lực (giỏi một kỹ năng) bên cạnh mục tiêu kết quả (doanh số)\n> Kết quả đạt xong là hết; năng lực luôn còn tầng tiếp theo để leo.",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-090",
+          "text": "Ba thứ nuôi động lực bền: được tự chọn, thấy mình giỏi lên, có người cùng đi",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-091",
+          "text": "Bắt đầu nhỏ để thấy tiến bộ trong 2 tuần đầu, vì động cơ này khởi động chậm",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-092",
+        "text": "3. Thu nhỏ rủi ro xa thành việc gần",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-093",
+          "text": "Nếu AI làm được 50% việc của mình trong 2 năm tới, phần nào còn giá trị? Phần nào cần giỏi thêm?",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "b"
+         },
+         {
+          "id": "ban-chat-sinh-ton-094",
+          "text": "Chọn 1 kỹ năng → 1 thí nghiệm 2 tuần → 1 kết quả cầm được trong tay",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-095",
+          "text": "Ví dụ với nghề BC: tự dựng quy trình chuẩn bị discovery bằng AI, đo thời gian tiết kiệm, chia sẻ lại cho team",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-096",
+          "text": "Mục đích: kéo rủi ro từ vùng quá lớn, quá mơ hồ về vùng vừa đủ để hành động",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "g"
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-097",
+        "text": "4. Xử lý trì hoãn như một vấn đề cảm xúc",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-098",
+          "text": "Gọi tên cảm giác khi né việc: chán, sợ làm dở, hay mơ hồ không biết bắt đầu từ đâu?",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-099",
+          "text": "Mơ hồ → chia đến bước đầu tiên làm được trong 10 phút",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-100",
+          "text": "Sợ làm dở → cho phép bản nháp xấu",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-101",
+          "text": "Tha thứ cho lần trì hoãn trước thay vì tự trách",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-102",
+          "text": "Căn cứ: Wohl, Pychyl & Bennett (2010): sinh viên tự tha thứ cho việc trì hoãn ôn thi lần trước thì trì hoãn ít hơn ở kỳ thi sau",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "s"
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-103",
+        "text": "5. Thiết kế môi trường, đừng dựa vào ý chí",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-104",
+          "text": "Gỡ app video ngắn khỏi màn hình chính, đặt giới hạn thời gian",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-105",
+          "text": "Giờ làm việc sâu: điện thoại để phòng khác",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-106",
+          "text": "Đặt giờ làm việc sâu thành lịch cố định, giữ như giữ lịch hẹn với khách",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-107",
+        "text": "6. Chấp nhận nhịp theo mùa",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-108",
+          "text": "Phát triển bền không có nghĩa là lúc nào cũng căng",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-109",
+          "text": "Chủ động chia nhịp: 6–8 tuần chạy nước rút, 1–2 tuần hồi phục",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-110",
+          "text": "Chùng xuống sau giai đoạn căng là bình thường; chỉ thành vấn đề khi hồi phục kéo dài thành đi ngang",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": [],
+          "color": "r"
+         }
+        ],
+        "color": "y"
+       },
+       {
+        "id": "ban-chat-sinh-ton-111",
+        "text": "7. Đổi cách nhìn về bản thân",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [
+         {
+          "id": "ban-chat-sinh-ton-112",
+          "text": "Từ \"người làm tốt khi bị dồn vào chân tường\" sang \"người tự ra đề cho mình\"",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         },
+         {
+          "id": "ban-chat-sinh-ton-113",
+          "text": "Mỗi lần giữ được cam kết khi không ai ép là thêm một bằng chứng cho con người mới đó",
+          "type": "f",
+          "status": null,
+          "collapsed": false,
+          "children": []
+         }
+        ],
+        "color": "y"
+       }
+      ]
+     },
+     {
+      "id": "ban-chat-sinh-ton-114",
+      "text": "Câu hỏi tự chẩn đoán cho bạn và người bạn",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-115",
+        "text": "Khi trì hoãn, cảm giác là chán (thiếu áp lực) hay sợ (quá áp lực)?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       },
+       {
+        "id": "ban-chat-sinh-ton-116",
+        "text": "Có mục tiêu nào mình vẫn theo đuổi kể cả khi không ai chấm điểm?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       },
+       {
+        "id": "ban-chat-sinh-ton-117",
+        "text": "Lần gần nhất tự đặt hạn chót và giữ được là khi nào? Điều gì giúp mình giữ được?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       },
+       {
+        "id": "ban-chat-sinh-ton-118",
+        "text": "Khi mọi thứ yên ổn, mình thấy thoải mái hay bứt rứt?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       },
+       {
+        "id": "ban-chat-sinh-ton-119",
+        "text": "Mình có hay để việc sát hạn mới làm vì \"có áp lực mới làm được\"?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       },
+       {
+        "id": "ban-chat-sinh-ton-120",
+        "text": "Nếu biết chắc không bao giờ mất việc, mình vẫn muốn giỏi lên ở điều gì?",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": [],
+        "color": "b"
+       }
+      ],
+      "color": "b"
+     },
+     {
+      "id": "ban-chat-sinh-ton-121",
+      "text": "Việc tiếp theo",
+      "type": "f",
+      "status": null,
+      "collapsed": false,
+      "children": [
+       {
+        "id": "ban-chat-sinh-ton-122",
+        "text": "Tuần này: mỗi người tự trả lời 6 câu tự chẩn đoán, gửi cho nhau",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": []
+       },
+       {
+        "id": "ban-chat-sinh-ton-123",
+        "text": "Trong 7 ngày: mỗi người chốt 1 thử việc tự tạo 90 ngày: 1 kết quả, 1 hạn chót, 1 cái giá",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": []
+       },
+       {
+        "id": "ban-chat-sinh-ton-124",
+        "text": "Hai người làm người chấm cho nhau: check-in 30 phút mỗi 2 tuần",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": []
+       },
+       {
+        "id": "ban-chat-sinh-ton-125",
+        "text": "Ngày thứ 90: tự chấm qua hay trượt, rồi đặt vòng tiếp theo",
+        "type": "f",
+        "status": null,
+        "collapsed": false,
+        "children": []
+       }
+      ],
+      "color": "y"
+     }
+    ]
+   }
+  }
+ ]
+}
