@@ -4318,8 +4318,24 @@ document.addEventListener('keydown',e=>{
 },true);
 
 $$('kbd.modk').forEach(k=>{k.textContent=MODK;});
+// where you were when the page was left (the tree list, outline or map, the branch read on a phone, the idea
+// selected) comes back when it is opened again; kept on this device only, never synced
+const UIK='daosau.ui';
+function saveUI(){
+  try{localStorage.setItem(UIK,JSON.stringify({tree:store.cur,view:store.view,home:!$('#homeSheet').hidden,mb:MB.mode,mbId:MB.id,sel:store.view==='map'?MAP.sel:null}));}catch(e){}
+}
+window.addEventListener('pagehide',saveUI);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveUI();});
+const UI=(()=>{try{const v=JSON.parse(localStorage.getItem(UIK)||'null');return v&&typeof v==='object'?v:{};}catch(e){return {};}})();
+const sameTree=UI.tree===store.cur;
+if(sameTree&&UI.view==='outline')store.view='outline';
+if(sameTree&&(UI.mb==='map'||UI.mb==='branch'))MB.mode=UI.mb;
+reindex();
+if(sameTree&&UI.mbId&&IDX.has(UI.mbId)){MB.key=curTree().id+'|'+zoomId();MB.id=UI.mbId;}
 render();
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(store.view==='map'){MAP.key=null;renderMap();}});
+if(sameTree&&UI.sel&&IDX.has(UI.sel)&&store.view==='map'&&!mobileReading())selectMap(UI.sel);
+if(UI.home)openHome();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(store.view==='map'){MAP.key=null;renderMap();if(MAP.sel&&!mobileReading())ensureMapVisible(MAP.sel);}});
 // cloud sync starts once the page is ready
 SY.last=CS.dirty?null:sharedSnap();
 if(CS.code)syncStart();else setSync('off');
