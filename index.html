@@ -682,15 +682,11 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
 .home-top{display:flex;align-items:center;gap:10px;width:min(1100px,100%);margin:0 auto;padding:0 20px 14px}
 .home-t{flex:1;min-width:0}
 .home-t h2{margin:0;font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:-.01em}
-.home-grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;align-content:start;width:min(1100px,100%);margin:0 auto;padding:4px 20px 20px}
-.hcard{display:flex;flex-direction:column;gap:6px;min-height:140px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-align:left}
+.home-grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;align-content:start;width:min(1100px,100%);margin:0 auto;padding:4px 20px 20px}
+.hcard{display:flex;align-items:center;min-height:64px;padding:12px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--line);text-align:left}
 .hcard:hover{border-color:var(--line-2);box-shadow:var(--shadow)}
 .hcard.cur{border-color:var(--q)}
-.hcard .ht{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.35;color:var(--ink)}
-.hcard .hc{font-size:12.5px;line-height:1.4;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.hcard .hm{display:flex;flex-wrap:wrap;gap:4px}
-.hcard .hm i{font-style:normal;font-size:12px;padding:2px 8px;border-radius:7px;background:color-mix(in srgb,var(--f) 12%,var(--surface));color:var(--ink)}
-.hcard .hs{margin-top:auto;font-size:12px;color:var(--muted)}
+.hcard .ht{font-family:var(--serif);font-size:16.5px;font-weight:600;line-height:1.35;color:var(--ink);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .home-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:min(1100px,100%);margin:0 auto;padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .home-foot .fine{margin-left:auto}
 .badge.t-top{background:var(--btn);border-color:var(--btn)}
@@ -789,7 +785,7 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
   #mobileEditorSheet .fine{margin:0}
   .home-top{padding:0 16px 12px;flex-wrap:wrap}
   .home-grid{grid-template-columns:minmax(0,1fr);padding:4px 16px 20px}
-  .hcard{min-height:125px}
+  .hcard{min-height:56px}
   .home-foot{padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px))}
   .home-foot .btn{flex:1;font-size:12px}
   .home-foot .fine{margin:0;font-size:11px}
@@ -2772,14 +2768,8 @@ $('#toastAct').addEventListener('mousedown',e=>e.preventDefault());
 /* ---------- home: every tree at a glance ---------- */
 function renderTrees(){
   const list=[...store.trees].sort((a,b)=>(b.updated||0)-(a.updated||0));
-  $('#homeGrid').innerHTML=list.map(t=>{
-    const mains=t.root.children;
-    return '<button type="button" class="hcard'+(t.id===store.cur?' cur':'')+'" data-tree="'+t.id+'">'+
-      '<span class="ht">'+esc(contentOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span>'+
-      (t.root.ev&&t.root.ev.length?'<span class="hc">'+esc(t.root.ev[0])+'</span>':'')+
-      (mains.length?'<span class="hm">'+mains.slice(0,4).map(m=>'<i>'+esc(trunc(contentOf(m.text),40))+'</i>').join('')+(mains.length>4?'<i>+'+(mains.length-4)+'</i>':'')+'</span>':'<span class="hc">Chưa có ý nào</span>')+
-      '<span class="hs">'+mains.length+' ý chính · '+freeCount(t.root)+' ý · sửa '+ago(t.updated)+'</span></button>';
-  }).join('');
+  // only the titles, newest first, so the list stays easy to scan
+  $('#homeGrid').innerHTML=list.map(t=>'<button type="button" class="hcard'+(t.id===store.cur?' cur':'')+'" data-tree="'+t.id+'"><span class="ht">'+esc(contentOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span></button>').join('');
   $('#backupLine').innerHTML='Dữ liệu lưu trong trình duyệt của máy này. Sao lưu gần nhất: <span class="'+(needBackup()?'late':'')+'">'+ago(store.lastBackup)+'</span>';
 }
 function openHome(){renderTrees();openSheet('homeSheet');}
