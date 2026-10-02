@@ -682,11 +682,53 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
 .home-top{display:flex;align-items:center;gap:10px;width:min(1100px,100%);margin:0 auto;padding:0 20px 14px}
 .home-t{flex:1;min-width:0}
 .home-t h2{margin:0;font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:-.01em}
-.home-grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;align-content:start;width:min(1100px,100%);margin:0 auto;padding:4px 20px 20px}
-.hcard{display:flex;align-items:center;min-height:64px;padding:12px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--line);text-align:left}
-.hcard:hover{border-color:var(--line-2);box-shadow:var(--shadow)}
-.hcard.cur{border-color:var(--q)}
-.hcard .ht{font-family:var(--serif);font-size:16.5px;font-weight:600;line-height:1.35;color:var(--ink);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.home-top,.home-tools,.home-list{width:min(860px,100%)}
+/* the tree list: groups the owner makes, each a short list of tree titles, newest first */
+.home-tools{display:flex;align-items:center;gap:8px;margin:0 auto;padding:0 20px 4px}
+.home-search{flex:1;min-width:0;height:40px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--muted)}
+.home-search:focus-within{border-color:var(--line-2);box-shadow:0 0 0 3px var(--ring)}
+.home-search svg.i{width:17px;height:17px}
+.home-search input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;font:15px var(--font);color:var(--ink)}
+.home-list{flex:1;overflow:auto;margin:0 auto;padding:2px 20px 24px}
+.hg{margin-top:18px}
+.hg-h{display:flex;align-items:center;gap:4px;min-height:32px;margin:0 0 6px}
+.hg-name{display:flex;align-items:center;gap:8px;flex:1;min-width:0;min-height:32px;text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.hg-name .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hg-name .c{font-weight:600;letter-spacing:0;color:var(--muted);font-variant-numeric:tabular-nums}
+.hg-name svg.i{width:14px;height:14px;color:var(--muted);transition:transform .15s}
+.hg.fold .hg-name svg.i{transform:rotate(-90deg)}
+.hg-dot{width:9px;height:9px;border-radius:50%;background:var(--kc,transparent);border:1.5px solid var(--kc,var(--muted));flex:none}
+.hg-act{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.hg-act:hover,.hg-act:focus-visible{background:var(--surface-2);color:var(--ink)}
+.hg-act svg.i{width:17px;height:17px}
+.hg-list{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.hg.fold .hg-list{display:none}
+.hrow{display:flex;align-items:stretch;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:0}
+.hrow.cur{background:var(--sel);box-shadow:inset 3px 0 0 var(--q)}
+.hrow-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;min-height:48px;padding:10px 4px 10px 16px;text-align:left}
+.hrow .ht{flex:1;min-width:0;font-size:15px;font-weight:500;line-height:1.4;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow-main:hover .ht{color:var(--q)}
+.hrow .hm{font-size:12.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hrow-mv{flex:none;width:44px;display:grid;place-items:center;color:var(--muted);opacity:0}
+.hrow:hover .hrow-mv,.hrow-mv:focus-visible{opacity:1}
+.hrow-mv:hover{color:var(--ink)}
+.hrow-mv svg.i{width:17px;height:17px}
+@media (hover:none){.hrow-mv{opacity:.65}}
+.hg-empty{padding:12px 16px;font-size:13.5px;color:var(--muted)}
+.home-hint{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:14px 0 0;padding:12px 14px;border:1px dashed var(--line-2);border-radius:12px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.home-hint p{margin:0;flex:1 1 260px}
+/* picking a group: in the tree form, and when moving a tree */
+.gpick{display:flex;flex-wrap:wrap;gap:6px}
+.gpick button{display:flex;align-items:center;gap:7px;min-height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line-2);background:var(--surface);font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.gpick button[aria-pressed="true"]{border-color:var(--kc,var(--ink-2));background:color-mix(in srgb,var(--kc,var(--ink-2)) 12%,var(--surface));color:var(--ink);font-weight:600}
+.gpick .hg-dot{width:8px;height:8px}
+.gpick .gnew{border-style:dashed;color:var(--muted)}
+.gpick-new{margin-top:8px}
+.gf-colors{justify-content:flex-start;gap:6px;padding:0}
+.gf-colors button{width:40px;height:40px}
+.gf-colors .sw{width:24px;height:24px}
+.gf-acts{display:flex;flex-wrap:wrap;gap:8px}
 .home-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:min(1100px,100%);margin:0 auto;padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .home-foot .fine{margin-left:auto}
 .badge.t-top{background:var(--btn);border-color:var(--btn)}
@@ -784,8 +826,9 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
   #mobileEditorSheet .dlg-body{display:flex;flex-direction:column;gap:12px;flex:1}
   #mobileEditorSheet .fine{margin:0}
   .home-top{padding:0 16px 12px;flex-wrap:wrap}
-  .home-grid{grid-template-columns:minmax(0,1fr);padding:4px 16px 20px}
-  .hcard{min-height:56px}
+  .home-tools{padding:0 16px 4px}
+  .home-list{padding:2px 16px 24px}
+  .hrow .hm{font-size:12px}
   .home-foot{padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px))}
   .home-foot .btn{flex:1;font-size:12px}
   .home-foot .fine{margin:0;font-size:11px}
@@ -901,7 +944,8 @@ body.editing .mapctl{bottom:calc(var(--tbh,104px) + 12px)}
       <button class="btn primary" data-act="newTree" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Cây mới</span></button>
       <button class="ib" data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <div class="home-grid" id="homeGrid"></div>
+    <div class="home-tools"><label class="home-search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input id="homeQ" type="search" placeholder="Tìm cây…" autocomplete="off" spellcheck="false" aria-label="Tìm cây theo tên"></label><button class="btn" type="button" data-gnew>+ Nhóm mới</button></div>
+    <div class="home-list" id="homeGrid"></div>
     <div class="home-foot"><button class="btn sm" data-act="import" type="button">Nhập note cũ / văn bản</button><button class="btn sm" data-act="backup" type="button">Sao lưu &amp; chuyển máy</button><span class="fine" id="backupLine"></span></div>
   </div>
 </div>
@@ -1004,6 +1048,8 @@ const IC={
   check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
   circle:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" stroke-dasharray="3 3"/></svg>',
   plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  dots:'<svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>',
+  folder:'<svg class="i" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2.2h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M12 11v5M9.5 13.5h5"/></svg>',
   question:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5.1 2.1c-1.4 1.2-2.1 1.8-2.1 3.4"/><circle cx="12" cy="18" r=".8" fill="currentColor" stroke="none"/></svg>',
   magnify:'<svg class="i" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>',
   struct:'<svg class="i" viewBox="0 0 24 24"><rect x="2" y="9.25" width="6" height="5.5" rx="1.6"/><path d="M8 12c3 0 3-6.5 6-6.5M8 12h6M8 12c3 0 3 6.5 6 6.5"/><path d="M16.5 5.5h4.5M16.5 12h4.5M16.5 18.5h4.5"/></svg>',
@@ -1112,6 +1158,16 @@ function normStruct(s){
   return name&&items.length?{id:s.id,name,items,created:+s.created||0,updated:+s.updated||0}:null;
 }
 function structList(){return store&&Array.isArray(store.structs)?store.structs:[];}
+// Groups of trees (Khách hàng, Kỹ năng bán hàng, Cá nhân…): made by the owner, synced like structures.
+// A tree names its group by id; a tree with no group, or whose group was removed, sits under "Chưa xếp nhóm".
+const GCOL=['b','y','g','r','s'];
+function normGroup(g){
+  if(!g||typeof g!=='object'||typeof g.id!=='string'||!g.id)return null;
+  const name=String(g.name==null?'':g.name).replace(/\s+/g,' ').trim().slice(0,60);
+  return name?{id:g.id,name,color:COLORS[g.color]?g.color:'s',order:+g.order||0,created:+g.created||0,updated:+g.updated||0}:null;
+}
+const tgroups=()=>(store&&Array.isArray(store.groups)?store.groups:[]).slice().sort((a,b)=>a.order-b.order||a.created-b.created);
+const tgroupOf=id=>!!id&&tgroups().find(g=>g.id===id)||null;
 const structOf=id=>structList().find(s=>s.id===id)||null;
 // two items, or two names, are the same when they read the same without accents, case or extra spaces
 const itemKey=t=>fold(t).replace(/\s+/g,' ').trim();
@@ -1161,6 +1217,7 @@ if(!store){
 }
 if(Array.isArray(store.structs))store.structs=store.structs.map(normStruct).filter(Boolean);
 else{store.structs=[seedStruct()];saveNow();}
+store.groups=Array.isArray(store.groups)?store.groups.map(normGroup).filter(Boolean):[];
 // added once to every device; a 6W1H someone removed (its tombstone in gone) stays removed
 if(!structOf('st-6w1h')&&!(store.gone&&store.gone['st-6w1h'])){store.structs.push(seed6w1h());saveNow();}
 store.view='map';
@@ -2767,41 +2824,163 @@ $('#toastAct').addEventListener('mousedown',e=>e.preventDefault());
 
 /* ---------- home: every tree at a glance ---------- */
 function renderTrees(){
-  const list=[...store.trees].sort((a,b)=>(b.updated||0)-(a.updated||0));
-  // only the titles, newest first, so the list stays easy to scan
-  $('#homeGrid').innerHTML=list.map(t=>'<button type="button" class="hcard'+(t.id===store.cur?' cur':'')+'" data-tree="'+t.id+'"><span class="ht">'+esc(contentOf(t.root.text).trim()||'Cây chưa đặt tên')+'</span></button>').join('');
+  const raw=$('#homeQ').value.trim(),q=fold(raw),groups=tgroups(),known=new Set(groups.map(g=>g.id)),shut=store.homeFold||{};
+  const name=t=>contentOf(t.root.text).trim()||'Cây chưa đặt tên';
+  const match=t=>!q||fold(name(t)).includes(q);
+  const recent=(a,b)=>(b.updated||0)-(a.updated||0);
+  const row=t=>'<div class="hrow'+(t.id===store.cur?' cur':'')+'"><button type="button" class="hrow-main" data-tree="'+t.id+'"><span class="ht">'+esc(name(t))+'</span><span class="hm">'+freeCount(t.root)+' ý · '+ago(t.updated)+'</span></button>'+
+    '<button type="button" class="hrow-mv" data-tmove="'+t.id+'" title="Chuyển sang nhóm khác" aria-label="Chuyển “'+esc(trunc(name(t),40))+'” sang nhóm khác">'+IC.folder+'</button></div>';
+  // one section per group; the key of the section without a group is '_none'
+  const section=(g,ts)=>{
+    const key=g?g.id:'_none',fold_=!q&&!!shut[key],label=g?g.name:groups.length?'Chưa xếp nhóm':'Tất cả cây';
+    return '<section class="hg'+(fold_?' fold':'')+(g?' k-'+g.color:'')+'"><div class="hg-h">'+
+      '<button type="button" class="hg-name" data-gfold="'+key+'" aria-expanded="'+!fold_+'">'+IC.down+'<span class="hg-dot"></span><span class="n">'+esc(label)+'</span><span class="c">'+ts.length+'</span></button>'+
+      '<button type="button" class="hg-act" data-gtree="'+(g?g.id:'')+'" title="Cây mới trong '+(g?'nhóm này':'mục này')+'" aria-label="Cây mới trong '+esc(label)+'">'+IC.plus+'</button>'+
+      (g?'<button type="button" class="hg-act" data-gedit="'+g.id+'" title="Đổi tên, màu, thứ tự hoặc xoá nhóm" aria-label="Sửa nhóm '+esc(label)+'">'+IC.dots+'</button>':'')+'</div>'+
+      '<div class="hg-list">'+(ts.length?ts.map(row).join(''):'<div class="hg-empty">Chưa có cây nào. Bấm + để tạo cây trong nhóm này, hoặc chuyển cây có sẵn vào.</div>')+'</div></section>';
+  };
+  let h='';
+  groups.forEach(g=>{const ts=store.trees.filter(t=>t.group===g.id&&match(t)).sort(recent);if(!q||ts.length)h+=section(g,ts);});
+  const loose=store.trees.filter(t=>!known.has(t.group)&&match(t)).sort(recent);
+  if(loose.length)h+=section(null,loose);
+  if(!groups.length&&!q)h='<div class="home-hint"><p>Gom cây theo nhóm để dễ tìm, ví dụ Khách hàng, Kỹ năng bán hàng, Mục tiêu, Cá nhân. Tạo nhóm, rồi bấm icon thư mục ở cuối mỗi dòng để chuyển cây vào.</p><button type="button" class="btn sm" data-gnew>+ Nhóm mới</button></div>'+h;
+  if(q&&!h)h='<p class="inote">Không có cây nào tên chứa “'+esc(raw)+'”.</p>';
+  $('#homeGrid').innerHTML=h;
   $('#backupLine').innerHTML='Dữ liệu lưu trong trình duyệt của máy này. Sao lưu gần nhất: <span class="'+(needBackup()?'late':'')+'">'+ago(store.lastBackup)+'</span>';
 }
-function openHome(){renderTrees();openSheet('homeSheet');}
-$('#homeGrid').addEventListener('click',e=>{const b=e.target.closest('[data-tree]');if(b)switchTree(b.dataset.tree);});
+function openHome(){$('#homeQ').value='';renderTrees();openSheet('homeSheet');}
+$('#homeSheet').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.tree){switchTree(d.tree);return;}
+  if(d.tmove){const t=store.trees.find(x=>x.id===d.tmove);if(t)moveTreeForm(t);return;}
+  if(d.gfold){store.homeFold=store.homeFold||{};if(store.homeFold[d.gfold])delete store.homeFold[d.gfold];else store.homeFold[d.gfold]=1;save();renderTrees();return;}
+  if(d.gtree!==undefined){newTree(d.gtree);return;}
+  if(d.gedit){const g=tgroupOf(d.gedit);if(g)groupForm(g);return;}
+  if(d.gnew!==undefined)groupForm(null);
+});
+$('#homeQ').addEventListener('input',renderTrees);
+$('#homeQ').addEventListener('keydown',e=>{if(e.key==='Escape'&&e.target.value){e.preventDefault();e.stopPropagation();e.target.value='';renderTrees();}});
+function addTreeGroup(name,color){
+  name=String(name||'').replace(/\s+/g,' ').trim().slice(0,60);if(!name)return null;
+  const list=tgroups(),same=list.find(g=>itemKey(g.name)===itemKey(name));if(same)return same;
+  const now=Date.now(),g={id:'g-'+uid(),name,color:COLORS[color]?color:GCOL[list.length%GCOL.length],order:list.length?list[list.length-1].order+1:0,created:now,updated:now};
+  store.groups.push(g);store.changedAt=now;save();return g;
+}
+// moving a tree between groups is not an edit of the tree: it keeps its own time (the list stays in order of real work)
+// and stamps groupAt instead, which decides the group when two devices are merged
+function setTreeGroup(t,gid){
+  if((t.group||'')===(gid||''))return false;
+  if(gid)t.group=gid;else delete t.group;
+  t.groupAt=Date.now();store.changedAt=t.groupAt;save();return true;
+}
+// the chips to pick a group with: every group, "no group", and a new one typed on the spot
+function gpickHTML(sel,withNew){
+  return '<div class="gpick" role="group" aria-label="Nhóm">'+tgroups().map(g=>'<button type="button" class="k-'+g.color+'" data-gpick="'+g.id+'" aria-pressed="'+(sel===g.id)+'"><span class="hg-dot"></span>'+esc(g.name)+'</button>').join('')+
+    '<button type="button" data-gpick="" aria-pressed="'+(!sel)+'"><span class="hg-dot"></span>Chưa xếp nhóm</button>'+
+    (withNew?'<button type="button" class="gnew" data-gpick="__new" aria-pressed="'+(sel==='__new')+'">+ Nhóm mới</button>':'')+'</div>'+
+    (withNew?'<div class="gpick-new fld"'+(sel==='__new'?'':' hidden')+'><input class="gpick-in" maxlength="60" autocomplete="off" placeholder="Tên nhóm mới, ví dụ: Khách hàng"></div>':'');
+}
+// wires the chips inside box; returns a reader that gives the chosen group id (creating a new group if one was typed),
+// '' for no group, or null when a new group was chosen but left unnamed
+function gpickWire(box,sel){
+  let pick=sel||'';
+  box.addEventListener('click',e=>{
+    const b=e.target.closest('[data-gpick]');if(!b)return;
+    pick=b.dataset.gpick;$$('[data-gpick]',box).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    const nw=box.querySelector('.gpick-new');if(nw){nw.hidden=pick!=='__new';if(pick==='__new')nw.querySelector('input').focus();}
+  });
+  return ()=>{
+    if(pick!=='__new')return tgroupOf(pick)?pick:'';
+    const g=addTreeGroup(box.querySelector('.gpick-in').value);return g?g.id:null;
+  };
+}
+function moveTreeForm(t){
+  const body=document.createElement('div');body.className='evform';
+  body.innerHTML='<p class="lead">“'+esc(trunc(contentOf(t.root.text).trim()||'Cây chưa đặt tên',90))+'”</p>'+gpickHTML(t.group&&tgroupOf(t.group)?t.group:'',true);
+  const read=gpickWire(body,t.group&&tgroupOf(t.group)?t.group:'');
+  const done=()=>{
+    const gid=read();if(gid===null){toast('Hãy đặt tên cho nhóm mới');body.querySelector('.gpick-in').focus();return false;}
+    if(setTreeGroup(t,gid)){renderTrees();const g=tgroupOf(gid);toast(g?'Đã chuyển vào “'+trunc(g.name,40)+'”':'Đã chuyển về “Chưa xếp nhóm”');}
+  };
+  // one tap on an existing group moves the tree straight away
+  body.addEventListener('click',e=>{const b=e.target.closest('[data-gpick]');if(b&&b.dataset.gpick!=='__new'){if(done()!==false)closeSheet('dlg');}});
+  body.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('gpick-in')){e.preventDefault();if(done()!==false)closeSheet('dlg');}});
+  dialog('Chuyển sang nhóm',body,[{label:'Huỷ'},{label:'Chuyển',kind:'primary',run:done}],{kind:'gmove'});
+}
+// a group: its name and colour; an existing one can also move up or down, or be removed (its trees stay)
+function groupForm(g){
+  const isNew=!g,body=document.createElement('div');body.className='evform';
+  let col=g?g.color:GCOL[tgroups().length%GCOL.length];
+  const n=g?store.trees.filter(t=>t.group===g.id).length:0;
+  body.innerHTML='<label class="fld"><span>Tên nhóm</span><input id="gfName" maxlength="60" autocomplete="off" placeholder="Ví dụ: Khách hàng, Kỹ năng bán hàng, Cá nhân"></label>'+
+    '<div class="fld"><span>Màu</span><div class="cl-row gf-colors" role="group" aria-label="Màu nhóm">'+CK.map(k=>'<button type="button" class="k-'+k+'" data-gcol="'+k+'" aria-pressed="'+(col===k)+'" aria-label="'+COLORS[k].label+'"><i class="sw k-'+k+'"></i></button>').join('')+'</div></div>'+
+    (isNew?'':'<div class="gf-acts"><button type="button" class="btn sm" data-gmove="-1">↑ Đưa lên</button><button type="button" class="btn sm" data-gmove="1">↓ Đưa xuống</button><button type="button" class="btn sm quiet" data-gdel>Xoá nhóm</button></div>'+
+      '<p class="fine">Xoá nhóm thì '+(n?n+' cây trong nhóm chuyển về “Chưa xếp nhóm”':'không ảnh hưởng tới cây nào')+'. Không mất cây nào.</p>');
+  body.querySelector('#gfName').value=g?g.name:'';
+  const submit=()=>{
+    const name=$('#gfName').value.replace(/\s+/g,' ').trim();
+    if(!name){toast('Hãy đặt tên cho nhóm');$('#gfName').focus();return false;}
+    if(tgroups().some(x=>x!==g&&itemKey(x.name)===itemKey(name))){toast('Đã có nhóm tên “'+trunc(name,40)+'”');$('#gfName').focus();return false;}
+    if(isNew)addTreeGroup(name,col);
+    else{Object.assign(g,{name,color:col,updated:Date.now()});store.changedAt=Date.now();save();}
+    renderTrees();toast(isNew?'Đã tạo nhóm “'+trunc(name,40)+'”':'Đã lưu nhóm');
+  };
+  body.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+    if(d.gcol){col=d.gcol;$$('[data-gcol]',body).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));return;}
+    if(d.gmove){
+      const list=tgroups(),i=list.indexOf(g),j=i+(+d.gmove),o=list[j];if(!o)return;
+      const now=Date.now(),a=g.order;g.order=o.order;o.order=a;if(g.order===o.order)g.order+=+d.gmove;
+      g.updated=o.updated=now;store.changedAt=now;save();closeSheet('dlg');renderTrees();return;
+    }
+    if(d.gdel!==undefined){
+      const i=store.groups.indexOf(g);if(i<0)return;
+      store.groups.splice(i,1);store.gone=store.gone||{};store.gone[g.id]=Date.now();store.changedAt=Date.now();save();closeSheet('dlg');renderTrees();
+      toast('Đã xoá nhóm “'+trunc(g.name,40)+'”',{label:'Hoàn tác',run:()=>{
+        if(store.gone)delete store.gone[g.id];g.updated=Date.now();
+        if(!store.groups.includes(g))store.groups.push(g);
+        store.changedAt=Date.now();save();renderTrees();
+      }});
+    }
+  });
+  body.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='gfName'){e.preventDefault();if(submit()!==false)closeSheet('dlg');}});
+  dialog(isNew?'Nhóm mới':'Sửa nhóm',body,[{label:'Huỷ'},{label:isNew?'Tạo nhóm':'Lưu',kind:'primary',run:submit}],{kind:'gform'});
+  const inp=body.querySelector('#gfName');inp.focus();if(!isNew)inp.select();
+}
 // a tree is a topic: its name, and a few lines of context
-function treeForm(t,onDone){
-  const isNew=!t;
+function treeForm(t,onDone,opt){
+  const isNew=!t;opt=opt||{};
+  // a new tree goes where it was asked for (the + of a group), else into the group of the tree open now
+  const sel=isNew?(opt.group!==undefined?(tgroupOf(opt.group)?opt.group:''):(tgroupOf(curTree().group)?curTree().group:'')):(tgroupOf(t.group)?t.group:'');
   const body=document.createElement('div');body.className='evform';
   body.innerHTML='<label class="fld"><span>Tên cây (chủ đề)</span><input id="tfName" autocomplete="off" placeholder="Ví dụ: Base.vn, Nuôi một chú chó, Học bơi"></label>'+
+    '<div class="fld tf-group"><span>Nhóm</span>'+gpickHTML(sel,true)+'</div>'+
     '<label class="fld"><span>Bối cảnh (không bắt buộc, mỗi dòng một ý)</span><textarea id="tfCtx" rows="3" placeholder="Ví dụ: Ai, ở đâu, lúc nào, muốn đạt điều gì"></textarea></label>';
   body.querySelector('#tfName').value=t?plainOf(t.root.text):'';body.querySelector('#tfCtx').value=t?(t.root.ev||[]).join('\n'):'';
+  const readGroup=gpickWire(body.querySelector('.tf-group'),sel);
   const save=()=>{
     const name=$('#tfName').value.replace(/\s+/g,' ').trim();if(!name){toast('Hãy đặt tên cho cây');return false;}
+    const gid=readGroup();if(gid===null){toast('Hãy đặt tên cho nhóm mới');body.querySelector('.gpick-in').focus();return false;}
     const ctx=$('#tfCtx').value.split(/\n+/).map(v=>v.replace(/\s+/g,' ').trim()).filter(Boolean);
     const tree=t||blankTree();
     if(!isNew)pushUndo();
     if(!t||name!==plainOf(t.root.text))tree.root.text=runsToMarkup([{t:name,b:false,i:false}]);if(ctx.length)tree.root.ev=ctx;else delete tree.root.ev;
+    if((tree.group||'')!==(gid||'')){if(gid)tree.group=gid;else delete tree.group;tree.groupAt=Date.now();}
     if(isNew){store.trees.unshift(tree);store.cur=tree.id;}
     reindex();touch();onDone&&onDone(tree);
   };
-  body.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='tfName'){e.preventDefault();if(save()!==false)closeSheet('dlg');}});
-  dialog(isNew?'Cây mới':'Tên cây và bối cảnh',body,[{label:'Huỷ'},{label:isNew?'Tạo cây':'Lưu',kind:'primary',run:save}]);
+  body.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='tfName'||e.target.classList.contains('gpick-in'))){e.preventDefault();if(save()!==false)closeSheet('dlg');}});
+  dialog(isNew?'Cây mới':'Tên cây, nhóm và bối cảnh',body,[{label:'Huỷ'},{label:isNew?'Tạo cây':'Lưu',kind:'primary',run:save}]);
   const inp=body.querySelector('#tfName');inp.focus();inp.select();
 }
-function newTree(){
+function newTree(gid){
   closeAllSheets();
   treeForm(null,tree=>{
     render();window.scrollTo(0,0);
     // straight into the first idea
     if(store.view==='map')setTimeout(()=>mapAddChild(tree.root.id),60);
     else focusNode(tree.root.id,'end');
-  });
+  },typeof gid==='string'?{group:gid}:null);
 }
 /* ---------- insights ---------- */
 let insColor=null;
@@ -2860,7 +3039,7 @@ function fallbackCopy(text,okMsg,after){
   if(after)after();
   setTimeout(()=>{const t=$('#manualCopy');if(t){t.focus();t.select();}},60);
 }
-function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),structs:structList(),lib:lib(),images:Object.fromEntries(IMG)};}
+function backupObj(){return {app:'dao-sau',v:4,exportedAt:new Date().toISOString(),trees:store.trees,...(prins().length?{principles:prins()}:{}),structs:structList(),...(store.groups.length?{groups:store.groups}:{}),lib:lib(),images:Object.fromEntries(IMG)};}
 function markBackup(){store.lastBackup=Date.now();saveNow();renderHeader();}
 function mergeBackup(text){
   let d;try{d=JSON.parse(text);}catch(e){toast('Dữ liệu không đọc được. Hãy dán đúng nội dung sao lưu.');return false;}
@@ -2870,7 +3049,7 @@ function mergeBackup(text){
   let added=0,updated=0;
   trees.forEach(raw=>{
     if(!raw||!raw.root)return;
-    const t={id:typeof raw.id==='string'?raw.id:uid(),created:raw.created||Date.now(),updated:raw.updated||Date.now(),mode:raw.mode==='freestyle'?'freestyle':'argument',root:normNode(raw.root),ctx:Array.isArray(raw.ctx)?raw.ctx:null};
+    const t={id:typeof raw.id==='string'?raw.id:uid(),created:raw.created||Date.now(),updated:raw.updated||Date.now(),mode:raw.mode==='freestyle'?'freestyle':'argument',root:normNode(raw.root),ctx:Array.isArray(raw.ctx)?raw.ctx:null,...(typeof raw.group==='string'&&raw.group?{group:raw.group}:{}),...(+raw.groupAt?{groupAt:+raw.groupAt}:{})};
     if(raw.sample)t.sample=true;
     const ex=store.trees.find(x=>x.id===t.id);
     if(!ex){store.trees.push(t);added++;}
@@ -2886,6 +3065,14 @@ function mergeBackup(text){
       if(gone[v.id]>=(v.updated||0))return;   // removed on this device after that backup was made
       const ex=structOf(v.id);
       if(!ex){store.structs.push(v);sa++;}else if(v.updated>(ex.updated||0)){Object.assign(ex,v);sa++;}
+    });
+  }
+  if(d&&!Array.isArray(d)&&Array.isArray(d.groups)){
+    const gone=store.gone||{};
+    d.groups.map(normGroup).filter(Boolean).forEach(v=>{
+      if(gone[v.id]>=(v.updated||0))return;
+      const ex=store.groups.find(g=>g.id===v.id);
+      if(!ex)store.groups.push(v);else if(v.updated>(ex.updated||0))Object.assign(ex,v);
     });
   }
   if(d&&d.images&&typeof d.images==='object')Object.keys(d.images).forEach(k=>{const v=d.images[k];if(typeof v==='string'&&v.startsWith('data:image/'))saveImg(k,v);});
@@ -2948,10 +3135,10 @@ function openBackup(){
 // layout: daosau/<code>/data = {state, updatedAt, stamp, origin, device}; daosau/<code>/img/<key> = picture
 const syncURL=p=>FB_DB+'/daosau/'+encodeURIComponent(CS.code)+'/'+p+'.json';
 function csSave(){try{localStorage.setItem(SYNCK,JSON.stringify(CS));}catch(e){}}
-function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],structs:structList(),hideSample:!!store.hideSample,gone:store.gone||{}};}
+function sharedOf(){return {trees:store.trees,lib:store.lib||null,principles:store.principles||[],structs:structList(),hideSample:!!store.hideSample,gone:store.gone||{},...(store.groups.length?{groups:store.groups}:{})};}
 const sharedSnap=()=>JSON.stringify(sharedOf());
 const untouchedSample=t=>t.sample&&t.updated===t.created;
-function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length))||structList().some(s=>s.updated);}
+function hasOwnData(){return store.trees.some(t=>!untouchedSample(t)&&(plainOf(t.root.text).trim()||t.root.children.length))||structList().some(s=>s.updated)||store.groups.length>0;}
 const devName=()=>{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'Máy khác';};
 function syncErr(e){
   const m=String(e&&e.message||e||'');
@@ -3053,6 +3240,8 @@ function applyShared(d){
   store.principles=Array.isArray(d.principles)?d.principles:[];
   if(Array.isArray(d.structs))store.structs=d.structs.map(normStruct).filter(Boolean);   // a copy from before structures existed keeps this device's own
   store.hideSample=!!d.hideSample;store.gone=d.gone&&typeof d.gone==='object'?d.gone:{};
+  if(Array.isArray(d.groups))store.groups=d.groups.map(normGroup).filter(Boolean);   // a copy from before groups existed keeps this device's own
+  store.groups=store.groups.filter(g=>!(store.gone[g.id]>=(g.updated||0)));
   if(!trees.some(t=>t.id===store.cur))store.cur=trees[0].id;
   for(const k in hist)delete hist[k];
   navStack.length=0;
@@ -3084,12 +3273,15 @@ function mergeShared(a,b){
   const B=(b.trees||[]).filter(t=>!(untouchedSample(t)&&A.some(x=>x.sample)));
   const pick=new Map(),order=[];
   A.concat(B).forEach(t=>{if(!t||!t.root)return;const ex=pick.get(t.id);if(!ex){pick.set(t.id,t);order.push(t.id);}else if((t.updated||0)>(ex.updated||0))pick.set(t.id,t);});
-  const trees=order.map(id=>pick.get(id)).filter(t=>!(gone[t.id]>=(t.updated||0)));
+  // the group follows the latest move between groups, whichever copy of the tree wins
+  const moved=new Map();A.concat(B).forEach(t=>{if(t&&t.groupAt&&(!moved.has(t.id)||t.groupAt>moved.get(t.id).groupAt))moved.set(t.id,t);});
+  const trees=order.map(id=>{const t=pick.get(id),m=moved.get(id);if(!m||m===t||(t.groupAt||0)>=m.groupAt)return t;const c=Object.assign({},t,{groupAt:m.groupAt});if(m.group)c.group=m.group;else delete c.group;return c;}).filter(t=>!(gone[t.id]>=(t.updated||0)));
   const byId=(x,y,newer)=>{const m=new Map();(x||[]).forEach(i=>{if(i&&i.id)m.set(i.id,i);});(y||[]).forEach(i=>{if(!i||!i.id)return;const ex=m.get(i.id);if(!ex||(newer&&(i.updated||0)>(ex.updated||0)))m.set(i.id,i);});return [...m.values()];};
   const la=a.lib||{},lb=b.lib||{};
   const lib=(a.lib||b.lib)?Object.assign({},lb,la,{groups:byId(la.groups,lb.groups),folders:byId(la.folders,lb.folders),items:byId(la.items,lb.items,true)}):null;
   const structs=byId(a.structs,b.structs,true).filter(s=>!(gone[s.id]>=(s.updated||0)));
-  return {trees,lib,principles:byId(a.principles,b.principles,true),structs,hideSample:!!(a.hideSample||b.hideSample),gone};
+  const groups=byId(a.groups,b.groups,true).filter(g=>!(gone[g.id]>=(g.updated||0)));
+  return {trees,lib,principles:byId(a.principles,b.principles,true),structs,hideSample:!!(a.hideSample||b.hideSample),gone,...(groups.length?{groups}:{})};
 }
 
 // pictures travel one by one, beside the data
@@ -3205,7 +3397,7 @@ function askConflict(){
 }
 // one place for guidance: how to use the app, and every shortcut
 const HELP='<p class="lead">Mỗi cây là một chủ đề, ví dụ một khách hàng hay một vấn đề cần nghĩ cho ra. Trong cây, viết ý tự do: câu hỏi, câu trả lời, giả thuyết, ví dụ hay việc cần làm. App không gán loại cho ý.</p>'+
-  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b> và đặt tên chủ đề.</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc. Ý đã đào sâu có dấu <b>?</b> kèm số ý trên sơ đồ. Bấm <b>Quay lại</b> hoặc Esc để về cây chính.</li><li>Bấm icon <b>Tô màu</b> (vòng tròn) để tô một trong 5 màu. Góc dưới sơ đồ đếm số ý theo màu; bấm một màu để làm nổi các ý màu đó.</li></ol>'+
+  '<h3>Dựng cây</h3><ol class="gl-steps"><li>Bấm chữ <b>Đào Sâu</b> trên cùng để xem các cây, rồi bấm <b>Cây mới</b>, đặt tên chủ đề và chọn nhóm.</li><li>Các cây được gom theo <b>nhóm</b> bạn tự đặt, ví dụ Khách hàng, Kỹ năng bán hàng, Cá nhân. Tạo nhóm bằng nút <b>+ Nhóm mới</b>; bấm icon thư mục ở cuối một dòng để chuyển cây sang nhóm khác; bấm <b>⋯</b> cạnh tên nhóm để đổi tên, màu, thứ tự hoặc xoá nhóm (cây trong nhóm không bị xoá).</li><li>Thêm nhiều ý ở tầng đầu bằng ô <b>+ Ý mới</b>. Chọn một ý, bấm icon <b>Thêm ý</b> để viết ý con. Rê chuột lên icon để xem tên thao tác.</li><li>Bấm icon <b>Mở ý theo cấu trúc</b> (hình một ý toả ra nhiều ý con) rồi chọn tên một cấu trúc để thêm cả bộ ý con một lần. Có sẵn <b>Tìm ra vấn đề</b> (Fact, Desire, Gap, Impact, Root cause) và <b>6W1H</b> (Là gì, Tại sao, Ai, Ai khác, Khi nào, Ở đâu, Như thế nào). Ý đã có sẵn thì được giữ nguyên, không tạo trùng.</li><li>Tạo, sửa, xoá cấu trúc ở <b>⋯ › Cấu trúc mở ý</b>. Mỗi cấu trúc có tên và danh sách ý con, dùng chung cho mọi cây.</li><li>Chọn <b>Đào sâu</b> để mở không gian riêng cho ý đó, rồi tiếp tục thêm ý hoặc mở ý theo cấu trúc. Ý đã đào sâu có dấu <b>?</b> kèm số ý trên sơ đồ. Bấm <b>Quay lại</b> hoặc Esc để về cây chính.</li><li>Bấm icon <b>Tô màu</b> (vòng tròn) để tô một trong 5 màu. Góc dưới sơ đồ đếm số ý theo màu; bấm một màu để làm nổi các ý màu đó.</li></ol>'+
   '<h3>Trên sơ đồ</h3><ul><li>Bấm một ý để chọn, <b>nhấp đúp</b> để sửa chữ. Khi đang gõ, <b>Alt+Enter</b> hoặc <b>⌘+Enter</b> để xuống dòng, <b>⌘B</b> in đậm, <b>⌘I</b> in nghiêng; Enter là xong.</li><li><b>Nội dung và ghi chú:</b> mỗi dòng trong một ý là nội dung (<b>⌥1</b>) hoặc ghi chú (<b>⌥2</b>). Ghi chú là lời diễn giải thêm cho nội dung, chữ nhỏ hơn và nhạt hơn.</li><li><b>Kéo thả</b> một thẻ như một viên nam châm: thẻ tách khỏi ý cha và mang theo cả nhánh con. Đưa tới gần một thẻ khác: thả lên thẻ hoặc khoảng trống bên phải thẻ để <b>gắn vào làm ý con</b>; thả ở phần bên trái thẻ để <b>làm ý cha</b> của ý đó; thả ở mép trên hoặc mép dưới để <b>chèn lên trên</b> hoặc <b>xuống dưới</b> ý đó, kể cả ở nhánh khác. Thả ra chỗ trống, xa mọi thẻ, để <b>tách thành ý độc lập</b> ở tầng đầu. Đưa thẻ về chỗ cũ hoặc bấm Esc để huỷ. Trên điện thoại: chạm giữ rồi kéo. ⌘Z để hoàn tác.</li><li>Bấm tên cây trên cùng để đổi tên và ghi bối cảnh.</li></ul>'+
   '<h3>Kho dẫn chứng</h3><ul><li>Nút <b>Kho dẫn chứng</b> trên cùng: lưu bài báo, hình ảnh, số liệu theo nhóm và thư mục, dùng chung cho mọi cây.</li></ul>'+
   '<h3>Trên điện thoại</h3><ul><li>Ở <b>Từng nhánh</b>, chạm vào một ý để đọc các ý con, dùng <b>Quay lại</b> để lên một tầng. Bấm <b>Sửa</b> để viết; <b>Thao tác khác</b> để tô màu, đổi thứ tự hoặc xoá.</li><li>Mở <b>Sơ đồ</b> ở thanh dưới khi cần xem tổng thể. Kéo để di chuyển, chụm hai ngón để phóng to.</li></ul>'+
